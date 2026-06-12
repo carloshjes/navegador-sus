@@ -85,10 +85,15 @@ npm run build          # produção em dist/
 npm run fetch:coordinates  # re-extrai coordenadas do CNES (reescreve o JSON)
 ```
 
-## Deploy — passo a passo (pendente: requer contas do usuário)
+## Deploy — concluído em 12/06/2026
 
-A máquina não tinha `gh` instalado e o wrangler não estava autenticado,
-então a publicação ficou para o usuário (≈10 min):
+**URL pública: <https://navegador-sus.pages.dev>** (Cloudflare Pages,
+deploy contínuo: push na `main` publica automaticamente). Repositório:
+<https://github.com/carloshjes/navegador-sus>. Verificação pós-deploy:
+HTTP 200, os 7 headers de segurança ativos (incluindo
+`x-robots-tag: noindex`) e o bundle servindo o dataset real.
+
+Passo a passo executado (registro para replicar em projetos futuros):
 
 1. **GitHub:** criar repositório vazio `navegador-sus` (público;
    sem README/license — o repo local já os tem). Depois:
@@ -107,10 +112,11 @@ então a publicação ficou para o usuário (≈10 min):
 4. **Conferir:** abrir a URL e (a) ver a contagem de unidades, (b) checar
    os headers (DevTools → Network → documento → Headers) — deve haver
    `x-robots-tag: noindex`.
-5. Colar a URL pública neste arquivo (campo abaixo) e no chat de
-   planejamento.
 
-**URL pública:** _(preencher após o deploy)_
+Notas do caminho real no painel (jun/2026): o fluxo padrão "Create" leva
+a **Workers** — o Pages fica no link discreto "Looking to deploy Pages?
+Get started" no rodapé; e o framework preset correto chama-se
+**React (Vite)** (não confundir com "VitePress", que é outra ferramenta).
 
 ## Em aberto (herdado + novo)
 
@@ -135,5 +141,5 @@ então a publicação ficou para o usuário (≈10 min):
 |---|---|
 | `npm run dev`, `npm run build`, `npm test` verdes | ✅ (+ 3 e2e Playwright verdes) |
 | Coordenadas extraídas ou justificadas unidade a unidade | ✅ 34 + 2 suspeitas justificadas + 3 pendentes justificadas |
-| Deploy público acessível | ⏳ passo a passo acima — depende das contas do usuário |
+| Deploy público acessível | ✅ <https://navegador-sus.pages.dev> (contínuo, via GitHub) |
 | `CLAUDE.md` e `docs/resumo-etapa-1.md` escritos | ✅ |
