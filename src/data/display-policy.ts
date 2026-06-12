@@ -88,6 +88,17 @@ export function compareUnitsForListing(a: HealthUnit, b: HealthUnit): number {
 }
 
 /**
+ * User-facing PT-BR notices for restricted units. The dataset stores
+ * prose in accent-stripped ASCII (research artifact); UI copy needs
+ * proper Portuguese, so presentation text lives here — same meaning,
+ * no data values changed.
+ */
+export const RESTRICTION_NOTICES: Readonly<Partial<Record<string, string>>> = {
+  'ubs-prisional':
+    'Atendimento exclusivo à população privada de liberdade — não é porta de entrada para o público geral.',
+}
+
+/**
  * Search aliases — alternate spellings users may type, WITHOUT touching
  * the canonical JSON. Sources: Etapa 0 conflict #5 (Estevam/Estevão) and
  * the old "DST" acronym still on the CNES record of the SAE.
