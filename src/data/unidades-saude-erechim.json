@@ -189,10 +189,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.611340731,
+        "lng": -52.112807484,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7220",
@@ -252,10 +252,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.660819,
+        "lng": -52.2591664,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3522-1099",
@@ -309,10 +309,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.61133405,
+        "lng": -52.27511876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3321-2444",
@@ -367,10 +367,10 @@
         "zipCode": "99700-970"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.52633405,
+        "lng": -52.25275876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7229",
@@ -426,10 +426,10 @@
         "zipCode": "99713-244"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6462962,
+        "lng": -52.2981912,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7230",
@@ -482,10 +482,10 @@
         "zipCode": "99711-146"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.61233405,
+        "lng": -52.21275876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7223",
@@ -538,10 +538,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.7277227,
+        "lng": -52.5370694,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3321-2966",
@@ -597,10 +597,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.61533405,
+        "lng": -52.15275876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3519-1787",
@@ -656,10 +656,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6432663,
+        "lng": -52.2413476,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3519-1841",
@@ -710,10 +710,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6427152,
+        "lng": -52.2564348,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3522-9510",
@@ -764,10 +764,11 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.22633405,
+        "lng": -52.27225876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12",
+        "flag": "suspect"
       },
       "phone": {
         "value": "(54) 3321-3199",
@@ -815,10 +816,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6350143,
+        "lng": -52.2737288,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3321-4846",
@@ -869,10 +870,11 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.68933405,
+        "lng": -52.89275876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12",
+        "flag": "suspect"
       },
       "phone": {
         "value": null,
@@ -910,10 +912,10 @@
         "zipCode": "99700-970"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.632405,
+        "lng": -52.2752876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3321-5982",
@@ -954,10 +956,10 @@
         "zipCode": "99708-480"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.66268,
+        "lng": -52.2606588,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": null,
@@ -1100,10 +1102,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.63132405,
+        "lng": -52.27152876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "192",
@@ -1141,10 +1143,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.63624075,
+        "lng": -52.28329883205872,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-2100",
@@ -1194,10 +1196,10 @@
         "zipCode": "99700-372"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6033405,
+        "lng": -52.2750876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-8400",
@@ -1237,10 +1239,10 @@
         "zipCode": "99700-460"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6333405,
+        "lng": -52.2753876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7203",
@@ -1284,10 +1286,10 @@
         "zipCode": "99704-090"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6431594,
+        "lng": -52.2657324,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-9000, ramal 112",
@@ -1326,10 +1328,10 @@
         "zipCode": "99700-370"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6353888,
+        "lng": -52.2698373,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7239",
@@ -1367,10 +1369,10 @@
         "zipCode": "99700-516"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6289004,
+        "lng": -52.2811127,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7238",
@@ -1406,10 +1408,10 @@
         "zipCode": "99700-460"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.622722539242304,
+        "lng": -52.279907531457155,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7200",
@@ -1447,10 +1449,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.635324,
+        "lng": -52.2841538,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7221 (recepcao UMRS)",
@@ -1489,10 +1491,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6354314,
+        "lng": -52.2844505,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7221 (recepcao UMRS)",
@@ -1530,10 +1532,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.635431087598715,
+        "lng": -52.28444970884692,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7221 (recepcao UMRS)",
@@ -1569,10 +1571,10 @@
         "zipCode": "99700-460"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6373405,
+        "lng": -52.2758976,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3519-2322",
@@ -1610,10 +1612,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.623134095,
+        "lng": -52.227158976,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": null,
@@ -1652,10 +1654,10 @@
         "zipCode": "99700-460"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.63139405,
+        "lng": -52.27518976,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3520-7212",
@@ -1693,10 +1695,10 @@
         "zipCode": "99700-460"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6334705,
+        "lng": -52.2775876,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3519-2322",
@@ -1775,10 +1777,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6318846,
+        "lng": -52.2816093,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": null,
@@ -1814,10 +1816,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6337405,
+        "lng": -52.2758776,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": null,
@@ -1853,10 +1855,10 @@
         "zipCode": "99700-460"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6334705,
+        "lng": -52.2758776,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": "(54) 3522-7200, ramal 8926",
@@ -1894,10 +1896,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.634,
+        "lng": -52.274,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": null,
@@ -1933,10 +1935,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.634,
+        "lng": -52.274,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": null,
@@ -1972,10 +1974,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6340731,
+        "lng": -52.2807484,
+        "source": "cnes",
+        "checkedAt": "2026-06-12"
       },
       "phone": {
         "value": null,
