@@ -6,7 +6,8 @@
     "Mudancas em relacao ao schema 0.1 de referencia (justificadas no relatorio): campo 'status' (active|planned|deactivated|verify), campo 'managedBy', campo 'accessRestriction', campo 'lastCnesUpdate', campo 'email', e 'flag: geocode-manually' dentro de coordinates.",
     "Nenhuma coordenada foi inventada. O CNES publica lat/lng, mas a interface acessivel nesta pesquisa nao expoe o campo; todas as unidades estao marcadas geocode-manually. Caminhos de extracao documentados no relatorio (secao Coordenadas).",
     "Nomes de profissionais de saude NAO foram coletados, conforme briefing (secao 2).",
-    "confidence: official-recent (fonte oficial atualizada em 2026), official-stale (oficial, possivelmente desatualizada), unverified (nao encontrado; verificar manualmente)."
+    "confidence: official-recent (fonte oficial atualizada em 2026), official-stale (oficial, possivelmente desatualizada), unverified (nao encontrado; verificar manualmente).",
+    "Higiene de dados da Etapa 1 (2026-06-12), unica alteracao de conteudo da fase: o telefone do ponto-saude-caic trazia um comentario dentro de 'value'; o valor cru do CNES foi preservado em 'conflicts' e 'value' ficou null. Nenhum outro valor foi alterado. O arquivo em docs/ e o snapshot original da Etapa 0."
   ],
   "sources": [
     {
@@ -959,10 +960,10 @@
         "flag": "geocode-manually"
       },
       "phone": {
-        "value": "(54) 3212922 (numero possivelmente incompleto no CNES)",
-        "source": "cnes-ficha",
-        "confidence": "official-recent",
-        "checkedAt": "2026-06-11"
+        "value": null,
+        "source": null,
+        "confidence": "unverified",
+        "checkedAt": null
       },
       "openingHours": {
         "value": "Seg-Sex 7h30-17h",
@@ -975,7 +976,7 @@
       "coverageNeighborhoods": [],
       "conflicts": [
         "Nao consta na lista oficial de 13 UBSs da prefeitura (pref-ubs), mas esta ativo no CNES com atualizacao em 26/05/2026.",
-        "Telefone registrado no CNES tem 7 digitos ('3212922') - aparenta erro de digitacao no cadastro; confirmar numero correto."
+        "Telefone registrado no CNES (ficha consultada em 2026-06-11) e '(54) 3212922', com 7 digitos - aparenta digito faltante no cadastro; confirmar numero correto. Higiene de dados da Etapa 1 (2026-06-12): o valor cru foi movido do campo phone para este registro e phone ficou null ate confirmacao, pois um numero nao discavel nao deve ser exibido como telefone."
       ],
       "openQuestions": ["Confirmar vinculo administrativo, servicos e publico atendido."],
       "notes": "",
