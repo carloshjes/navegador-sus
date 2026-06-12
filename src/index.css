@@ -1,111 +1,99 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import 'tailwindcss';
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/*
+ * ============================================================================
+ * PROVISIONAL DESIGN TOKENS — navegador-sus
+ * ============================================================================
+ * The definitive visual direction is still pending (briefing §8). This is a
+ * sober, institutional placeholder palette. Swapping the visual identity
+ * later should cost ONLY edits to this @theme block: components reference
+ * tokens, never raw hex values.
+ *
+ * Accessibility contract (WCAG 2.2 AA):
+ *   - normal text needs contrast >= 4.5:1; large text and graphical
+ *     elements (e.g. focus ring) need >= 3:1.
+ *   - every pair used below was COMPUTED (not eyeballed); ratios annotated.
+ * Fonts: system stack for now — typography decision ships with the visual
+ * direction (briefing §8).
+ */
+@theme {
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell,
+    'Helvetica Neue', Arial, sans-serif;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Surfaces */
+  --color-surface: #ffffff;
+  --color-surface-muted: #eef3f5; /* page sections, list stripes */
+  --color-edge: #c9d6dc; /* decorative borders (no AA text requirement) */
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  /* Text */
+  --color-ink: #16242e; /* 15.84:1 on surface, 14.16:1 on surface-muted */
+  --color-ink-muted: #46606c; /* 6.67:1 on surface,  5.96:1 on surface-muted */
+
+  /* Brand (provisional institutional teal-blue) */
+  --color-primary: #0f5e68; /* 7.44:1 on surface; white on it: 7.44:1 */
+  --color-primary-strong: #0a454c; /* hover/active; white on it: 10.67:1 */
+  --color-primary-soft: #e3f0f2; /* tinted bg; primary text on it: 6.38:1 */
+
+  /* Emergency bar (SAMU 192 / Bombeiros 193 — briefing §2) */
+  --color-emergency: #a11d12; /* white text on it: 7.78:1 */
+
+  /* Focus ring — deliberately NOT the brand color so it stays visible on
+     primary-colored controls. 6.70:1 on surface (needs only 3:1). */
+  --color-focus: #1d4ed8;
+
+  /* Data-confidence seals (Badge). One pair per Confidence level of the
+     0.2 schema; "verified-local" is already provisioned for the upcoming
+     phone-verification round.
+     text-on-bg ratios: ok 6.87:1 · stale 7.44:1 · unverified 6.92:1 ·
+     local 6.38:1 */
+  --color-conf-recent: #1e5e2e;
+  --color-conf-recent-bg: #e7f4ea;
+  --color-conf-stale: #714508;
+  --color-conf-stale-bg: #fcf3df;
+  --color-conf-unverified: #8a3a0b;
+  --color-conf-unverified-bg: #fdefe3;
+  --color-conf-local: #0f5e68;
+  --color-conf-local-bg: #e3f0f2;
+
+  /* Touch target floor: WCAG 2.2 / mobile-first → 44px minimum (2.75rem).
+     Use min-h-touch / min-w-touch on anything tappable. */
+  --spacing-touch: 2.75rem;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-ink font-sans;
+    /* Generous typography for the target audience: >= 16px body text. */
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Strong, always-visible keyboard focus (WCAG 2.2 focus-visible).
+     The offset keeps the ring legible on colored controls. */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Respect users who asked the OS for less motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+@layer utilities {
+  /* Breathing room for phones with bottom home-indicator (iOS safe area). */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
   }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }
