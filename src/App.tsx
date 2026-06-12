@@ -1,105 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { EmergencyBar } from './components/EmergencyBar'
+import { Card } from './components/Card'
+import { activeUnits, dataset } from './data/units'
+
+/** "2026-06-11" -> "11/06/2026" (UI is PT-BR; data dates are ISO). */
+function formatDateBR(isoDate: string): string {
+  const [year, month, day] = isoDate.split('-')
+  return `${day}/${month}/${year}`
+}
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+    /* pb reserves room for the fixed EmergencyBar so content never hides
+       behind it (the bar itself handles the iOS safe area). */
+    <div className="flex min-h-dvh flex-col pb-14">
+      {/* Keyboard/screen-reader users can jump straight to content. */}
+      <a
+        href="#conteudo"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:font-semibold focus:text-primary"
+      >
+        Pular para o conteúdo
+      </a>
+
+      <header className="bg-primary text-white">
+        <div className="mx-auto flex w-full max-w-screen-md flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
+          <p className="text-lg font-bold">navegador-sus</p>
+          <p className="rounded-full border border-white/60 px-3 py-0.5 text-sm">
+            versão em desenvolvimento
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
+      <main id="conteudo" className="mx-auto w-full max-w-screen-md grow px-4 py-8">
+        <h1 className="text-2xl font-bold">
+          Rede pública de saúde de Erechim/RS{' '}
+          <span className="font-normal text-ink-muted">(guia em construção)</span>
+        </h1>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        {/* Loads the real dataset: proof that the data pipeline works. */}
+        <Card className="mt-6">
+          <p className="text-lg">
+            O guia conhece hoje{' '}
+            <strong className="text-primary">{activeUnits.length} unidades ativas</strong>{' '}
+            da rede pública de saúde do município.
+          </p>
+          <p className="mt-2 text-ink-muted">
+            O diretório completo, com busca por serviço e bairro, chega na próxima fase.
+            Os dados ainda estão em verificação.
+          </p>
+        </Card>
+      </main>
+
+      <footer className="bg-surface-muted">
+        <div className="mx-auto w-full max-w-screen-md px-4 py-6 text-ink-muted">
+          <p>
+            Este app informa e direciona; <strong>não substitui</strong> os canais
+            oficiais. Em caso de divergência, vale a informação da unidade ou da
+            Secretaria Municipal de Saúde.
+          </p>
+          <p className="mt-2 text-sm">
+            Dados públicos (CNES/DataSUS e Prefeitura de Erechim) levantados em{' '}
+            {formatDateBR(dataset.generatedAt)}.
+          </p>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg className="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg className="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg className="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg className="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </footer>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <EmergencyBar />
+    </div>
   )
 }
 
