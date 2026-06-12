@@ -7,6 +7,13 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
+    /* Type safety: explicit nulls are the backbone of the data model —
+       without strict null checks the provenance contracts are decorative. */
+    "strict": true,
+
+    /* The dataset is imported as a typed JSON module. */
+    "resolveJsonModule": true,
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
