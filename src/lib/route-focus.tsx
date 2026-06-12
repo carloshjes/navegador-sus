@@ -10,15 +10,15 @@ import { useLocation } from 'react-router'
  */
 export function useRouteFocus(): void {
   const { pathname } = useLocation()
-  const isFirstRender = useRef(true)
+  // Compare against the previous pathname instead of counting renders:
+  // React StrictMode mounts effects twice in development, which would
+  // defeat a naive "skip first render" flag and steal focus on load.
+  const lastPathname = useRef(pathname)
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    const title = document.getElementById('page-title')
-    title?.focus()
+    if (lastPathname.current === pathname) return
+    lastPathname.current = pathname
+    document.getElementById('page-title')?.focus()
   }, [pathname])
 }
 

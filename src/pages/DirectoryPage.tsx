@@ -119,11 +119,10 @@ export function DirectoryPage() {
         antes de ir.
       </p>
 
-      {/* Search + filters; state mirrored in the URL (shareable links). */}
-      <search>
+      {/* Search + filters; state mirrored in the URL (shareable links).
+          <search> is already a search landmark — no role attribute needed. */}
+      <search aria-label="Buscar e filtrar unidades">
         <form
-          role="search"
-          aria-label="Buscar e filtrar unidades"
           className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"
           onSubmit={(event) => event.preventDefault()}
         >
