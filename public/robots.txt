@@ -1,0 +1,7 @@
+# navegador-sus — prototype with data still under verification.
+# Crawling is disallowed on purpose, matching the X-Robots-Tag: noindex
+# header in _headers. When the phone-verification round lands and the
+# noindex header is removed, replace this with an allow-all policy
+# (User-agent: * / Disallow:) in the same commit.
+User-agent: *
+Disallow: /
