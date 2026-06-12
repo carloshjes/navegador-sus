@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Vite
+.vite/
+*.local
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment files (none expected in v1 — app has no secrets by design)
+.env
+.env.*
+
+# Living worksheet for the phone-verification round (Etapa 1 decision):
+# it is filled outside the repo and taken to the planning chat on claude.ai;
+# committing a snapshot would create two competing "official" versions.
+verificacao-telefonica-unidades.xlsx
