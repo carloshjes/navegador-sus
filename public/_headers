@@ -1,0 +1,39 @@
+# Security headers for Cloudflare Pages (adapted from the user's previous
+# Worker-proxy project). Comments explain WHY each header exists.
+
+/*
+  # Strict CSP: this app loads nothing from third parties — everything is
+  # 'self' (built by Vite into /assets). data: images allowed for inline
+  # SVG favicons/markers. NOTE for Phase 3 (map): Leaflet tiles will
+  # require adding the OpenStreetMap tile domains (e.g. tile.openstreetmap.org)
+  # to img-src and possibly connect-src.
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+  # Force HTTPS for a year, subdomains included. The app handles health
+  # information lookups; no request should ever travel in cleartext.
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # Browsers must trust our declared MIME types, never sniff content —
+  # blocks a class of content-confusion attacks.
+  X-Content-Type-Options: nosniff
+
+  # Send only the origin (no path/query) to other sites, and nothing on
+  # HTTPS->HTTP downgrades. Outbound links (prefecture, CNES) should not
+  # learn which unit page the user came from.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Lock down powerful browser features. geolocation=(self) because Phase 3
+  # computes "which unit serves me" ON DEVICE (briefing §2: location never
+  # leaves the phone). Everything else this app will never need.
+  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=(), usb=()
+
+  # This site must never be embedded in an iframe (clickjacking protection).
+  # frame-ancestors above is the CSP equivalent; this covers old browsers.
+  X-Frame-Options: DENY
+
+  # KEEP UNTIL DATA IS VERIFIED: the prototype is public but must NOT be
+  # indexed by search engines while unit data is unverified (the phone
+  # verification round was postponed). REMOVE this header — and only
+  # this header — after the verification round lands as verified-local
+  # in the dataset and the team decides to go public.
+  X-Robots-Tag: noindex
