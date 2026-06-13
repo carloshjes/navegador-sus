@@ -120,18 +120,41 @@ export interface UnknownField {
 export type ProvenancedField<T> = KnownField<T> | UnknownField
 
 /**
+ * Where a resolved coordinate came from:
+ *  - cnes: CNES open-data API (Etapa 1);
+ *  - osm-geocoding: Nominatim geocoding of the address (Etapa 3);
+ *  - manual-map-check: point fixed by visual map review when sources
+ *    disagreed — a recorded human decision, not a guess (Etapa 3);
+ *  - shared-address: inherited from another unit at the same building
+ *    (e.g. the PA inherits the UMRS point).
+ */
+export type CoordinateSource =
+  | 'cnes'
+  | 'osm-geocoding'
+  | 'manual-map-check'
+  | 'shared-address'
+
+/**
  * Geographic position, discriminated by resolution state:
  *  - resolved: lat/lng pair with source and check date (a lone latitude
  *    cannot exist by construction); may carry `flag: 'suspect'` when the
  *    point falls outside the Erechim bounding box (manual review needed);
  *  - pending: nothing yet — flagged for manual geocoding.
+ *
+ * `crossCheck` records the second-source verification status:
+ *  - 'ok': Nominatim corroborated the CNES point within ~500 m;
+ *  - 'unconfirmed': plotted from the official CNES point (recent, inside
+ *    the Erechim box) but NOT corroborated by a second source — the unit
+ *    is still shown on the map, with the app's standing "data under
+ *    verification" caveat, and is on the priority list for the phone round.
  */
 export interface ResolvedCoordinates {
   lat: number
   lng: number
-  source: 'cnes' | 'osm-geocoding'
+  source: CoordinateSource
   checkedAt: string
   flag?: 'suspect'
+  crossCheck?: 'ok' | 'unconfirmed'
 }
 
 export interface PendingCoordinates {

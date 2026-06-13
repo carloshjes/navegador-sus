@@ -58,6 +58,33 @@ export function isLinkable(unit: HealthUnit): boolean {
   return displayCategory(unit) !== 'hidden'
 }
 
+/** Care-facing categories — the units a citizen might physically visit. */
+const MAPPABLE_CATEGORIES: ReadonlySet<DisplayCategory> = new Set([
+  'care',
+  'care-restricted',
+  'care-cautious',
+  'coming-soon',
+])
+
+/**
+ * Whether a unit may be plotted on the map. Requires (a) a care-facing
+ * category — management/surveillance bodies and hidden units stay off the
+ * map — and (b) a VERIFIED coordinate: corroborated (crossCheck) or a
+ * human-decided/derived point (manual-map-check, osm-geocoding,
+ * shared-address). A bare CNES point with no cross-check, an unresolved
+ * `suspect` flag, or a pending coordinate is NOT plotted (Etapa 3,
+ * Tarefa 1: "map only takes a checked coordinate"). This leaves SAMU
+ * (a phone channel), the prison unit and the address-less rehab unit
+ * off the map by construction.
+ */
+export function isMappable(unit: HealthUnit): boolean {
+  if (!MAPPABLE_CATEGORIES.has(displayCategory(unit))) return false
+  const c = unit.coordinates
+  if (c.lat === null) return false
+  if (c.flag === 'suspect') return false
+  return c.crossCheck != null || c.source !== 'cnes'
+}
+
 /**
  * Stable, predictable listing order: citizen-facing relevance first
  * (entry doors, urgency, hospitals), then specialty network. Ties break

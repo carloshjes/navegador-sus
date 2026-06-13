@@ -189,10 +189,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": -27.611340731,
-        "lng": -52.112807484,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.635,
+        "lng": -52.285,
+        "source": "manual-map-check",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-7220",
@@ -255,7 +255,8 @@
         "lat": -27.660819,
         "lng": -52.2591664,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "ok"
       },
       "phone": {
         "value": "(54) 3522-1099",
@@ -313,7 +314,8 @@
         "lat": -27.61133405,
         "lng": -52.27511876,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "unconfirmed"
       },
       "phone": {
         "value": "(54) 3321-2444",
@@ -348,7 +350,8 @@
       ],
       "conflicts": [],
       "openQuestions": [
-        "Mapear abrangencia completa; noticias de 2026 indicam que a unidade esta proxima do limite recomendado de cadastros por equipe ESF (quentuchas-jan26)."
+        "Mapear abrangencia completa; noticias de 2026 indicam que a unidade esta proxima do limite recomendado de cadastros por equipe ESF (quentuchas-jan26).",
+        "Coordenada do CNES (oficial-recente, dentro da caixa de Erechim) usada no mapa SEM cross-check independente do OSM. Prioridade na verificacao posterior: confirmar o ponto exato."
       ],
       "notes": "Atende hoje o Residencial Imigrante, demanda que a futura UBS Novo Atlantico devera absorver (quentuchas-jan26, quentuchas-fev26).",
       "lastCnesUpdate": null
@@ -368,10 +371,10 @@
         "zipCode": "99700-970"
       },
       "coordinates": {
-        "lat": -27.52633405,
-        "lng": -52.25275876,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.641,
+        "lng": -52.315,
+        "source": "manual-map-check",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-7229",
@@ -430,7 +433,8 @@
         "lat": -27.6462962,
         "lng": -52.2981912,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "ok"
       },
       "phone": {
         "value": "(54) 3520-7230",
@@ -483,10 +487,10 @@
         "zipCode": "99711-146"
       },
       "coordinates": {
-        "lat": -27.61233405,
-        "lng": -52.21275876,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.65,
+        "lng": -52.287,
+        "source": "manual-map-check",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-7223",
@@ -542,10 +546,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": -27.7277227,
-        "lng": -52.5370694,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.6480158,
+        "lng": -52.2767887,
+        "source": "osm-geocoding",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3321-2966",
@@ -601,10 +605,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": -27.61533405,
-        "lng": -52.15275876,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.6540503,
+        "lng": -52.2555519,
+        "source": "osm-geocoding",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3519-1787",
@@ -663,7 +667,8 @@
         "lat": -27.6432663,
         "lng": -52.2413476,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "ok"
       },
       "phone": {
         "value": "(54) 3519-1841",
@@ -717,7 +722,8 @@
         "lat": -27.6427152,
         "lng": -52.2564348,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "unconfirmed"
       },
       "phone": {
         "value": "(54) 3522-9510",
@@ -749,7 +755,10 @@
       "servicesNote": "Conjunto generico das UBSs (pref-carta); confirmar por unidade.",
       "coverageNeighborhoods": [],
       "conflicts": [],
-      "openQuestions": ["Confirmar horario e abrangencia."],
+      "openQuestions": [
+        "Confirmar horario e abrangencia.",
+        "Coordenada do CNES (oficial-recente, dentro da caixa de Erechim) usada no mapa SEM cross-check independente do OSM. Prioridade na verificacao posterior: confirmar o ponto exato."
+      ],
       "notes": "Reforma e ampliacao entregues no fim de 2024 (R$ 929 mil; nova sala de imunizacao, 5 novos consultorios, sanitarios acessiveis PCD) - pref e portal-noticias-dez24. Atende cerca de 11 mil moradores da regiao, segundo a prefeitura (set/2025).",
       "lastCnesUpdate": null
     },
@@ -768,11 +777,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": -27.22633405,
-        "lng": -52.27225876,
-        "source": "cnes",
-        "checkedAt": "2026-06-12",
-        "flag": "suspect"
+        "lat": -27.759,
+        "lng": -52.241,
+        "source": "manual-map-check",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3321-3199",
@@ -823,7 +831,8 @@
         "lat": -27.6350143,
         "lng": -52.2737288,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "unconfirmed"
       },
       "phone": {
         "value": "(54) 3321-4846",
@@ -853,7 +862,8 @@
       ],
       "openQuestions": [
         "Obter logradouro exato no distrito.",
-        "Confirmar horario, servicos e abrangencia rural."
+        "Confirmar horario, servicos e abrangencia rural.",
+        "Coordenada do CNES (oficial-recente, dentro da caixa de Erechim) usada no mapa SEM cross-check independente do OSM. Prioridade na verificacao posterior: confirmar o ponto exato."
       ],
       "notes": "Uma das duas UBSs distritais citadas pelas noticias de 2026 (quentuchas-fev26).",
       "lastCnesUpdate": null
@@ -919,7 +929,8 @@
         "lat": -27.632405,
         "lng": -52.2752876,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "unconfirmed"
       },
       "phone": {
         "value": "(54) 3321-5982",
@@ -940,7 +951,8 @@
         "Nao consta na lista oficial de 13 UBSs da prefeitura (pref-ubs), mas esta ativo no CNES com atualizacao em 27/05/2026. Hipotese: ponto de apoio vinculado a outra UBS - confirmar com a Secretaria antes de exibir como unidade autonoma."
       ],
       "openQuestions": [
-        "Confirmar vinculo administrativo, servicos e se atende demanda espontanea."
+        "Confirmar vinculo administrativo, servicos e se atende demanda espontanea.",
+        "Coordenada do CNES (oficial-recente, dentro da caixa de Erechim) usada no mapa SEM cross-check independente do OSM. Prioridade na verificacao posterior: confirmar o ponto exato."
       ],
       "notes": "",
       "lastCnesUpdate": "2026-05-27"
@@ -963,7 +975,8 @@
         "lat": -27.66268,
         "lng": -52.2606588,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "ok"
       },
       "phone": {
         "value": null,
@@ -1003,10 +1016,10 @@
         "zipCode": null
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.6269778,
+        "lng": -52.2343388,
+        "source": "osm-geocoding",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": null,
@@ -1041,7 +1054,8 @@
       ],
       "openQuestions": [
         "Acompanhar cronograma da obra e data de inauguracao.",
-        "Obter codigo CNES quando cadastrada."
+        "Obter codigo CNES quando cadastrada.",
+        "Ponto aproximado: o Nominatim localizou a Rua Antonio Sebaniski (esquina da futura UBS), mas nao a esquina exata com a Rua Valdemar Pedro Farias (nao mapeada). Suficiente para um pino em obra; refinar quando a unidade for inaugurada/cadastrada."
       ],
       "notes": "Sera a 14a UBS do municipio (11 urbanas + 2 distritais + esta). Capacidade prevista: ate 8 mil usuarios; ~4 mil na abertura, com 2 equipes ESF. Parceria Municipio + Estado + URI Erechim via COAPES, anunciada em 06/03/2026. NAO exibir como unidade ativa no app.",
       "lastCnesUpdate": null
@@ -1061,10 +1075,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": null,
-        "lng": null,
-        "source": null,
-        "flag": "geocode-manually"
+        "lat": -27.635,
+        "lng": -52.285,
+        "source": "shared-address",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-7221",
@@ -1150,7 +1164,8 @@
         "lat": -27.63624075,
         "lng": -52.28329883205872,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "ok"
       },
       "phone": {
         "value": "(54) 3520-2100",
@@ -1200,10 +1215,10 @@
         "zipCode": "99700-372"
       },
       "coordinates": {
-        "lat": -27.6033405,
-        "lng": -52.2750876,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.6344079,
+        "lng": -52.2689,
+        "source": "osm-geocoding",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-8400",
@@ -1246,7 +1261,8 @@
         "lat": -27.6333405,
         "lng": -52.2753876,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "unconfirmed"
       },
       "phone": {
         "value": "(54) 3520-7203",
@@ -1270,7 +1286,8 @@
       "coverageNeighborhoods": [],
       "conflicts": [],
       "openQuestions": [
-        "Confirmar lista completa de especialidades ofertadas hoje e o fluxo de encaminhamento/regulacao."
+        "Confirmar lista completa de especialidades ofertadas hoje e o fluxo de encaminhamento/regulacao.",
+        "Coordenada do CNES (oficial-recente, dentro da caixa de Erechim) usada no mapa SEM cross-check independente do OSM. Prioridade na verificacao posterior: confirmar o ponto exato."
       ],
       "notes": "Mesmo endereco da Secretaria Municipal de Saude.",
       "lastCnesUpdate": "2026-06-05"
@@ -1293,7 +1310,8 @@
         "lat": -27.6431594,
         "lng": -52.2657324,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "ok"
       },
       "phone": {
         "value": "(54) 3520-9000, ramal 112",
@@ -1335,7 +1353,8 @@
         "lat": -27.6353888,
         "lng": -52.2698373,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "ok"
       },
       "phone": {
         "value": "(54) 3520-7239",
@@ -1376,7 +1395,8 @@
         "lat": -27.6289004,
         "lng": -52.2811127,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "ok"
       },
       "phone": {
         "value": "(54) 3520-7238",
@@ -1412,10 +1432,10 @@
         "zipCode": "99700-460"
       },
       "coordinates": {
-        "lat": -27.622722539242304,
-        "lng": -52.279907531457155,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.6309296,
+        "lng": -52.2755975,
+        "source": "osm-geocoding",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-7200",
@@ -1453,10 +1473,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": -27.635324,
-        "lng": -52.2841538,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.635,
+        "lng": -52.285,
+        "source": "shared-address",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-7221 (recepcao UMRS)",
@@ -1495,10 +1515,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": -27.6354314,
-        "lng": -52.2844505,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.635,
+        "lng": -52.285,
+        "source": "shared-address",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-7221 (recepcao UMRS)",
@@ -1536,10 +1556,10 @@
         "zipCode": "99700-054"
       },
       "coordinates": {
-        "lat": -27.635431087598715,
-        "lng": -52.28444970884692,
-        "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "lat": -27.635,
+        "lng": -52.285,
+        "source": "shared-address",
+        "checkedAt": "2026-06-13"
       },
       "phone": {
         "value": "(54) 3520-7221 (recepcao UMRS)",
@@ -1578,7 +1598,8 @@
         "lat": -27.6373405,
         "lng": -52.2758976,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "unconfirmed"
       },
       "phone": {
         "value": "(54) 3519-2322",
@@ -1596,7 +1617,8 @@
       "coverageNeighborhoods": [],
       "conflicts": [],
       "openQuestions": [
-        "Confirmar se oferece testagem por demanda espontanea e dispensacao de PrEP/PEP."
+        "Confirmar se oferece testagem por demanda espontanea e dispensacao de PrEP/PEP.",
+        "Coordenada do CNES (oficial-recente, dentro da caixa de Erechim) usada no mapa SEM cross-check independente do OSM. Prioridade na verificacao posterior: confirmar o ponto exato."
       ],
       "notes": "Nome no CNES usa a sigla antiga 'DST'.",
       "lastCnesUpdate": "2026-06-05"
@@ -1661,7 +1683,8 @@
         "lat": -27.63139405,
         "lng": -52.27518976,
         "source": "cnes",
-        "checkedAt": "2026-06-12"
+        "checkedAt": "2026-06-12",
+        "crossCheck": "unconfirmed"
       },
       "phone": {
         "value": "(54) 3520-7212",
@@ -1679,7 +1702,8 @@
       "coverageNeighborhoods": [],
       "conflicts": [],
       "openQuestions": [
-        "Confirmar quais medicamentos sao retirados aqui vs nas farmacias das UBSs (incl. judicializados/especiais)."
+        "Confirmar quais medicamentos sao retirados aqui vs nas farmacias das UBSs (incl. judicializados/especiais).",
+        "Coordenada do CNES (oficial-recente, dentro da caixa de Erechim) usada no mapa SEM cross-check independente do OSM. Prioridade na verificacao posterior: confirmar o ponto exato."
       ],
       "notes": "Programa federal Farmacia Popular opera por farmacias PRIVADAS credenciadas (fora do escopo v1); a dispensacao publica municipal ocorre aqui e nas UBSs - detalhado no relatorio.",
       "lastCnesUpdate": "2026-05-27"

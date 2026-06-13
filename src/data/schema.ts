@@ -34,9 +34,10 @@ const coordinatesSchema = z.union([
   z.strictObject({
     lat: z.number(),
     lng: z.number(),
-    source: z.enum(['cnes', 'osm-geocoding']),
+    source: z.enum(['cnes', 'osm-geocoding', 'manual-map-check', 'shared-address']),
     checkedAt: isoDate,
     flag: z.literal('suspect').optional(),
+    crossCheck: z.enum(['ok', 'unconfirmed']).optional(),
   }),
   z.strictObject({
     lat: z.null(),
