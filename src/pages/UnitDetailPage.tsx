@@ -2,7 +2,12 @@ import { useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
 import { dataset } from '../data/units'
 import type { HealthUnit, ProvenancedField } from '../data/types'
-import { displayCategory, isLinkable, RESTRICTION_NOTICES } from '../data/display-policy'
+import {
+  displayCategory,
+  isLinkable,
+  isMappable,
+  RESTRICTION_NOTICES,
+} from '../data/display-policy'
 import { SERVICE_LABELS, UNIT_TYPE_LABELS } from '../data/labels'
 import { hubMates } from '../lib/hubs'
 import { formatDateBR, HOURS_BADGE_LABELS, telHref } from '../lib/provenance-ui'
@@ -190,6 +195,18 @@ function UnitDetail({ unit }: { unit: HealthUnit }) {
 
           <AddressBlock unit={unit} />
         </dl>
+
+        {/* "Ver no mapa" is a link, not an embedded minimap: a minimap
+            would pull Leaflet into the detail bundle and cost the
+            Performance 100. Only shown when the unit is actually plotted. */}
+        {isMappable(unit) && (
+          <Link
+            to={`/mapa?focus=${unit.id}`}
+            className="mt-4 inline-flex min-h-touch items-center font-semibold text-primary underline underline-offset-4"
+          >
+            Ver no mapa →
+          </Link>
+        )}
       </Card>
 
       {unit.services.length > 0 && (

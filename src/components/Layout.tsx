@@ -36,7 +36,10 @@ export function Layout() {
           <p className="rounded-full border border-white/60 px-3 py-0.5 text-sm">
             versão em desenvolvimento
           </p>
-          <nav aria-label="Seções do guia" className="ms-auto">
+          <nav aria-label="Seções do guia" className="ms-auto flex gap-1">
+            <NavLink to="/mapa" className={navLinkClass}>
+              Mapa
+            </NavLink>
             <NavLink to="/onde-ir" className={navLinkClass}>
               Onde ir?
             </NavLink>

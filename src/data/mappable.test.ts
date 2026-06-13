@@ -15,6 +15,7 @@ describe('map plotting policy (Etapa 3, Tarefa 1)', () => {
     for (const unit of dataset.units.filter(isMappable)) {
       const c = unit.coordinates
       expect(c.lat, unit.id).not.toBeNull()
+      if (c.lat === null) continue // narrows to ResolvedCoordinates
       const checked = c.crossCheck != null || c.source !== 'cnes'
       expect(checked, `${unit.id} plotted without a check`).toBe(true)
     }

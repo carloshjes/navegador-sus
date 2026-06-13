@@ -2,12 +2,12 @@
 # Worker-proxy project). Comments explain WHY each header exists.
 
 /*
-  # Strict CSP: this app loads nothing from third parties — everything is
-  # 'self' (built by Vite into /assets). data: images allowed for inline
-  # SVG favicons/markers. NOTE for Phase 3 (map): Leaflet tiles will
-  # require adding the OpenStreetMap tile domains (e.g. tile.openstreetmap.org)
-  # to img-src and possibly connect-src.
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  # Strict CSP: the app's code/styles are all 'self' (built by Vite into
+  # /assets). data: images allow inline SVG favicons. Phase 3 map: Leaflet
+  # fetches raster tiles (images) from tile.openstreetmap.org — added to
+  # img-src only. No third-party scripts, styles or XHR: script-src,
+  # style-src and connect-src stay 'self'.
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
   # Force HTTPS for a year, subdomains included. The app handles health
   # information lookups; no request should ever travel in cleartext.
