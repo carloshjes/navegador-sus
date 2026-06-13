@@ -97,3 +97,14 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
+
+/* Leaflet zoom controls default to ~30px; raise them to the 44px touch
+   target floor (briefing §3, WCAG 2.5.5). Loaded only on /mapa, where
+   Leaflet's stylesheet is present. */
+.leaflet-touch .leaflet-bar a,
+.leaflet-control-zoom a {
+  width: 2.75rem;
+  height: 2.75rem;
+  line-height: 2.75rem;
+  font-size: 1.375rem;
+}
