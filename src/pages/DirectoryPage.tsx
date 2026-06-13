@@ -5,7 +5,7 @@ import type { HealthUnit, ServiceSlug, UnitType } from '../data/types'
 import { compareUnitsForListing, displayCategory } from '../data/display-policy'
 import { SERVICE_LABELS, UNIT_TYPE_LABELS } from '../data/labels'
 import { matchesQuery } from '../lib/search'
-import { haversineMeters } from '../lib/geo'
+import { withDistances } from '../lib/nearby'
 import { useGeolocation } from '../lib/useGeolocation'
 import { usePageTitle } from '../lib/route-focus'
 import { Button } from '../components/Button'
@@ -105,20 +105,7 @@ export function DirectoryPage() {
   // geocoding (briefing §2).
   const geo = useGeolocation()
   const userPosition = geo.state.status === 'granted' ? geo.state.position : null
-  const careWithDistance = care.map((unit) => ({
-    unit,
-    distance:
-      userPosition && unit.coordinates.lat !== null
-        ? haversineMeters(userPosition, {
-            lat: unit.coordinates.lat,
-            lng: unit.coordinates.lng,
-          })
-        : undefined,
-  }))
-  if (userPosition) {
-    // Units without a coordinate sort to the end (Infinity).
-    careWithDistance.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
-  }
+  const careWithDistance = withDistances(care, userPosition)
 
   const nothingFound = care.length + comingSoon.length + institutional.length === 0
   const filtering =
