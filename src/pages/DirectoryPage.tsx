@@ -5,6 +5,8 @@ import type { HealthUnit, ServiceSlug, UnitType } from '../data/types'
 import { compareUnitsForListing, displayCategory } from '../data/display-policy'
 import { SERVICE_LABELS, UNIT_TYPE_LABELS } from '../data/labels'
 import { matchesQuery } from '../lib/search'
+import { haversineMeters } from '../lib/geo'
+import { useGeolocation } from '../lib/useGeolocation'
 import { usePageTitle } from '../lib/route-focus'
 import { Button } from '../components/Button'
 import { UnitCard } from '../components/UnitCard'
@@ -97,6 +99,26 @@ export function DirectoryPage() {
   const institutional = sections.institutional.filter((unit) =>
     matchesFilters(unit, filters),
   )
+
+  // "Perto de mim": position read on-device only, used here to sort the
+  // care units by straight-line distance. Never sent anywhere; no reverse
+  // geocoding (briefing §2).
+  const geo = useGeolocation()
+  const userPosition = geo.state.status === 'granted' ? geo.state.position : null
+  const careWithDistance = care.map((unit) => ({
+    unit,
+    distance:
+      userPosition && unit.coordinates.lat !== null
+        ? haversineMeters(userPosition, {
+            lat: unit.coordinates.lat,
+            lng: unit.coordinates.lng,
+          })
+        : undefined,
+  }))
+  if (userPosition) {
+    // Units without a coordinate sort to the end (Infinity).
+    careWithDistance.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
+  }
 
   const nothingFound = care.length + comingSoon.length + institutional.length === 0
   const filtering =
@@ -199,6 +221,59 @@ export function DirectoryPage() {
         </form>
       </search>
 
+      {/* "Perto de mim": the explanation comes BEFORE the permission prompt
+          (briefing §2 — location stays on the device, never sent). */}
+      <section aria-label="Ordenar pelas mais próximas" className="mt-6">
+        {geo.state.status !== 'granted' && (
+          <div className="rounded-lg border border-edge bg-surface-muted p-4">
+            <p className="text-ink-muted">
+              Podemos ordenar as unidades pelas mais próximas de você. Sua localização é
+              usada <strong>só neste aparelho</strong> e nunca é enviada a nenhum
+              servidor.
+            </p>
+            <Button
+              onClick={geo.request}
+              variant="secondary"
+              className="mt-3"
+              disabled={geo.state.status === 'prompting'}
+            >
+              {geo.state.status === 'prompting'
+                ? 'Obtendo localização…'
+                : 'Ver as mais próximas de mim'}
+            </Button>
+            {geo.state.status === 'denied' && (
+              <p className="mt-3 text-ink-muted">
+                Tudo bem — sem a localização, você pode{' '}
+                <strong>filtrar por bairro</strong> acima para encontrar unidades perto de
+                você.
+              </p>
+            )}
+            {geo.state.status === 'unavailable' && (
+              <p className="mt-3 text-ink-muted">
+                Não foi possível obter a localização neste dispositivo. Use o{' '}
+                <strong>filtro por bairro</strong> acima.
+              </p>
+            )}
+          </div>
+        )}
+        {geo.state.status === 'granted' && (
+          <div className="rounded-lg bg-primary-soft p-4">
+            <p className="font-semibold text-primary">
+              Unidades ordenadas pelas mais próximas de você.
+            </p>
+            {/* Fixed honesty caveat — never the label "sua unidade". */}
+            <p className="mt-1 text-ink">
+              A unidade mais próxima pode <strong>não ser</strong> a que atende o seu
+              endereço — isso é definido por território (equipes de Saúde da Família).
+              Confirme na unidade ou na Secretaria de Saúde.
+            </p>
+            <Button onClick={geo.reset} variant="ghost" className="mt-2 px-0">
+              Desfazer ordenação por distância
+            </Button>
+          </div>
+        )}
+      </section>
+
       {/* Result count announced to screen readers on every change. */}
       <p aria-live="polite" className="mt-4 text-ink-muted">
         {nothingFound
@@ -226,9 +301,9 @@ export function DirectoryPage() {
             Unidades de atendimento
           </h2>
           <ul className="grid grid-cols-1 gap-3">
-            {care.map((unit) => (
+            {careWithDistance.map(({ unit, distance }) => (
               <li key={unit.id}>
-                <UnitCard unit={unit} />
+                <UnitCard unit={unit} distanceMeters={distance} />
               </li>
             ))}
           </ul>

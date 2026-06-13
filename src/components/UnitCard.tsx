@@ -3,14 +3,22 @@ import type { HealthUnit } from '../data/types'
 import { displayCategory } from '../data/display-policy'
 import { UNIT_TYPE_LABELS } from '../data/labels'
 import { HOURS_BADGE_LABELS } from '../lib/provenance-ui'
+import { formatStraightLineDistance } from '../lib/geo'
 import { Badge } from './Badge'
 import { Card } from './Card'
 
 /**
  * Directory listing card. The confidence seal on the opening hours is
  * mandatory honesty (report §10) — it never gets omitted to look nicer.
+ * `distanceMeters` is shown only when the user opted into "perto de mim".
  */
-export function UnitCard({ unit }: { unit: HealthUnit }) {
+export function UnitCard({
+  unit,
+  distanceMeters,
+}: {
+  unit: HealthUnit
+  distanceMeters?: number
+}) {
   const category = displayCategory(unit)
   const hours = unit.openingHours
 
@@ -28,6 +36,11 @@ export function UnitCard({ unit }: { unit: HealthUnit }) {
         {UNIT_TYPE_LABELS[unit.type]}
         {unit.address.neighborhood ? <> · {unit.address.neighborhood}</> : null}
       </p>
+      {distanceMeters !== undefined && (
+        <p className="mt-1 font-semibold text-primary">
+          {formatStraightLineDistance(distanceMeters)} em linha reta
+        </p>
+      )}
 
       <div className="mt-3 flex flex-wrap gap-2">
         {category === 'coming-soon' ? (
