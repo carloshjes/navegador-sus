@@ -177,7 +177,7 @@
     {
       "id": "ubs-centro-umrs",
       "cnesCode": "2248980",
-      "name": "UBS Centro (Unidade Municipal de Referencia em Saude - UMRS)",
+      "name": "UBS Centro (Unidade Municipal de Referência em Saúde - UMRS)",
       "type": "ubs",
       "status": "active",
       "managedBy": "municipal",
@@ -289,7 +289,8 @@
       "conflicts": [],
       "openQuestions": [
         "Confirmar horario atual: em mar/2023 o Decreto 5.587 alterou temporariamente para 7h30-11h30 e 13h-17h por inseguranca (jbd-progresso-horario); nao localizei o horario vigente em 2026.",
-        "Confirmar abrangencia (bairros)."
+        "Confirmar abrangencia (bairros).",
+        "Grafia da rua: \"Estevao Gavenda\" provavelmente leva acento (\"Estevao\"/\"Estevao\"), mas sem fonte oficial acentuada - manter como esta ate confirmar."
       ],
       "notes": "",
       "lastCnesUpdate": null
@@ -297,13 +298,13 @@
     {
       "id": "ubs-sao-vicente-de-paulo",
       "cnesCode": "2248905",
-      "name": "UBS Sao Vicente de Paulo",
+      "name": "UBS São Vicente de Paulo",
       "type": "ubs",
       "status": "active",
       "managedBy": "municipal",
       "address": {
         "street": "Rua Tereza Batistela, 160",
-        "neighborhood": "Sao Vicente de Paulo",
+        "neighborhood": "São Vicente de Paulo",
         "city": "Erechim",
         "state": "RS",
         "zipCode": null
@@ -360,7 +361,7 @@
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Rua Casemiro Antonio Kujavinski, 557",
+        "street": "Rua Casemiro Antônio Kujavinski, 557",
         "neighborhood": "Paiol Grande",
         "city": "Erechim",
         "state": "RS",
@@ -419,7 +420,7 @@
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Rua Antonio Zucchi, 29",
+        "street": "Rua Antônio Zucchi, 29",
         "neighborhood": "Presidente Vargas",
         "city": "Erechim",
         "state": "RS",
@@ -519,20 +520,23 @@
       "conflicts": [
         "Horario estendido (ate 19h30) consta no CNES (alvara 12/03/2026), mas a prefeitura so publica horario estendido para a UBS Centro - confirmar na pratica."
       ],
-      "openQuestions": ["Confirmar abrangencia (bairros)."],
+      "openQuestions": [
+        "Confirmar abrangencia (bairros).",
+        "Grafia da rua: nosso JSON traz \"Carlos Kiwkto\" (origem CNES); mapas de terceiros trazem \"Carlos Kwitco\". Sem fonte oficial definitiva - resolver na verificacao telefonica, nao corrigir por palpite."
+      ],
       "notes": "Reforma entregue em fev/2024 (jbd-aldo-arioli).",
       "lastCnesUpdate": "2026-06-08"
     },
     {
       "id": "ubs-sao-cristovao",
       "cnesCode": "2249014",
-      "name": "UBS Sao Cristovao",
+      "name": "UBS São Cristóvão",
       "type": "ubs",
       "status": "active",
       "managedBy": "municipal",
       "address": {
         "street": "Santos Dumont, 140",
-        "neighborhood": "Sao Cristovao",
+        "neighborhood": "São Cristóvão",
         "city": "Erechim",
         "state": "RS",
         "zipCode": null
@@ -590,7 +594,7 @@
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Rua Sao Vicente de Paulo, s/n",
+        "street": "Rua São Vicente de Paulo, s/n",
         "neighborhood": "Estevam Carraro",
         "city": "Erechim",
         "state": "RS",
@@ -644,13 +648,13 @@
     {
       "id": "ubs-atlantico",
       "cnesCode": "5370302",
-      "name": "UBS Atlantico",
+      "name": "UBS Atlântico",
       "type": "ubs",
       "status": "active",
       "managedBy": "municipal",
       "address": {
         "street": "Rua Santa Badalotti, 160",
-        "neighborhood": "Atlantico",
+        "neighborhood": "Atlântico",
         "city": "Erechim",
         "state": "RS",
         "zipCode": null
@@ -752,13 +756,13 @@
     {
       "id": "ubs-capoere",
       "cnesCode": "2248948",
-      "name": "UBS Capoere",
+      "name": "UBS Capoerê",
       "type": "ubs",
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Distrito de Capoere (sede do distrito)",
-        "neighborhood": "Distrito de Capoere",
+        "street": "Distrito de Capoerê (sede do distrito)",
+        "neighborhood": "Distrito de Capoerê",
         "city": "Erechim",
         "state": "RS",
         "zipCode": null
@@ -804,13 +808,13 @@
     {
       "id": "ubs-jaguarete",
       "cnesCode": "2249375",
-      "name": "UBS Jaguarete",
+      "name": "UBS Jaguaretê",
       "type": "ubs",
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Distrito de Jaguarete (sede do distrito)",
-        "neighborhood": "Distrito de Jaguarete",
+        "street": "Distrito de Jaguaretê (sede do distrito)",
+        "neighborhood": "Distrito de Jaguaretê",
         "city": "Erechim",
         "state": "RS",
         "zipCode": null
@@ -857,7 +861,7 @@
     {
       "id": "ubs-prisional",
       "cnesCode": "2249081",
-      "name": "UBS Prisional (Posto do Presidio Estadual de Erechim)",
+      "name": "UBS Prisional (Posto do Presídio Estadual de Erechim)",
       "type": "prison-health-unit",
       "status": "active",
       "managedBy": "municipal",
@@ -900,12 +904,12 @@
     {
       "id": "ponto-saude-dom-pedro-ii",
       "cnesCode": "2248913",
-      "name": "Ponto de atendimento Dom Pedro II (consultorio municipal)",
+      "name": "Ponto de atendimento Dom Pedro II (consultório municipal)",
       "type": "health-post",
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Rua Joao Francisco Busata, 121",
+        "street": "Rua João Francisco Busata, 121",
         "neighborhood": "Progresso",
         "city": "Erechim",
         "state": "RS",
@@ -944,12 +948,12 @@
     {
       "id": "ponto-saude-caic",
       "cnesCode": "2248956",
-      "name": "Ponto de atendimento CAIC (Centro de Atendimento Integrado a Crianca)",
+      "name": "Ponto de atendimento CAIC (Centro de Atendimento Integrado à Criança)",
       "type": "health-post",
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Rua Sao Martinho, s/n",
+        "street": "Rua São Martinho, s/n",
         "neighborhood": "Progresso",
         "city": "Erechim",
         "state": "RS",
@@ -987,12 +991,12 @@
     {
       "id": "ubs-novo-atlantico-demoliner",
       "cnesCode": null,
-      "name": "UBS Novo Atlantico (em construcao)",
+      "name": "UBS Novo Atlântico (em construção)",
       "type": "ubs",
       "status": "planned",
       "managedBy": "municipal",
       "address": {
-        "street": "Esquina das ruas Antonio Sebaniski e Valdemar Pedro Farias",
+        "street": "Esquina das ruas Antônio Sebaniski e Valdemar Pedro Farias",
         "neighborhood": "Demoliner",
         "city": "Erechim",
         "state": "RS",
@@ -1131,12 +1135,12 @@
     {
       "id": "hospital-santa-terezinha-fhste",
       "cnesCode": "2707918",
-      "name": "Hospital Santa Terezinha (Fundacao Hospitalar Santa Terezinha de Erechim - FHSTE)",
+      "name": "Hospital Santa Terezinha (Fundação Hospitalar Santa Terezinha de Erechim - FHSTE)",
       "type": "hospital",
       "status": "active",
       "managedBy": "philanthropic-sus (gestao dupla)",
       "address": {
-        "street": "Rua Italia, 919",
+        "street": "Rua Itália, 919",
         "neighborhood": null,
         "city": "Erechim",
         "state": "RS",
@@ -1227,7 +1231,7 @@
     {
       "id": "cre-municipal",
       "cnesCode": "3053563",
-      "name": "Centro de Referencia em Especialidades Municipal (CRE)",
+      "name": "Centro de Referência em Especialidades Municipal (CRE)",
       "type": "specialty-center",
       "status": "active",
       "managedBy": "municipal (gestao estadual no CNES)",
@@ -1274,12 +1278,12 @@
     {
       "id": "ceo",
       "cnesCode": "7427220",
-      "name": "CEO - Centro de Especialidades Odontologicas",
+      "name": "CEO - Centro de Especialidades Odontológicas",
       "type": "dental-specialty-center",
       "status": "active",
       "managedBy": "municipal (gestao dupla)",
       "address": {
-        "street": "Rua Maranhao, 560 (esquina com Rua Sergipe)",
+        "street": "Rua Maranhão, 560 (esquina com Rua Sergipe)",
         "neighborhood": "Centro",
         "city": "Erechim",
         "state": "RS",
@@ -1316,7 +1320,7 @@
     {
       "id": "caps-ii",
       "cnesCode": "2249367",
-      "name": "CAPS II - Centro de Atencao Psicossocial",
+      "name": "CAPS II - Centro de Atenção Psicossocial",
       "type": "caps",
       "status": "active",
       "managedBy": "municipal",
@@ -1357,12 +1361,12 @@
     {
       "id": "caps-ad",
       "cnesCode": "6184383",
-      "name": "CAPS AD - Centro de Atencao Psicossocial Alcool e Drogas",
+      "name": "CAPS AD - Centro de Atenção Psicossocial Álcool e Drogas",
       "type": "caps",
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Rua Polonia, 138",
+        "street": "Rua Polônia, 138",
         "neighborhood": "Centro",
         "city": "Erechim",
         "state": "RS",
@@ -1396,12 +1400,12 @@
     {
       "id": "caps-infanto-juvenil",
       "cnesCode": "4125037",
-      "name": "CAPSi - Centro de Atencao Psicossocial Infantojuvenil",
+      "name": "CAPSi - Centro de Atenção Psicossocial Infantojuvenil",
       "type": "caps",
       "status": "active",
       "managedBy": "municipal",
       "address": {
-        "street": "Avenida Mauricio Cardoso, 928",
+        "street": "Avenida Maurício Cardoso, 928",
         "neighborhood": "Centro",
         "city": "Erechim",
         "state": "RS",
@@ -1437,7 +1441,7 @@
     {
       "id": "ambulatorio-saude-mental",
       "cnesCode": "6184375",
-      "name": "Ambulatorio de Saude Mental de Erechim",
+      "name": "Ambulatório de Saúde Mental de Erechim",
       "type": "specialty-center",
       "status": "active",
       "managedBy": "estadual (gestao E no CNES); funciona na UMRS segundo a prefeitura",
@@ -1479,7 +1483,7 @@
     {
       "id": "centro-referencia-mulher",
       "cnesCode": "2249022",
-      "name": "Centro de Referencia da Mulher (CRM)",
+      "name": "Centro de Referência da Mulher (CRM)",
       "type": "specialty-center",
       "status": "active",
       "managedBy": "municipal (gestao dupla)",
@@ -1520,7 +1524,7 @@
     {
       "id": "ambulatorio-feridas-cronicas",
       "cnesCode": "4914155",
-      "name": "Ambulatorio de Feridas Cronicas",
+      "name": "Ambulatório de Feridas Crônicas",
       "type": "specialty-center",
       "status": "active",
       "managedBy": "municipal (gestao dupla)",
@@ -1559,7 +1563,7 @@
     {
       "id": "sae-ist-hiv",
       "cnesCode": "3081842",
-      "name": "SAE - Servico de Assistencia Especializada em IST/HIV/Aids",
+      "name": "SAE - Serviço de Assistência Especializada em IST/HIV/Aids",
       "type": "specialty-center",
       "status": "active",
       "managedBy": "municipal (gestao dupla)",
@@ -1600,7 +1604,7 @@
     {
       "id": "unidade-municipal-reabilitacao",
       "cnesCode": "4212657",
-      "name": "Unidade Municipal de Reabilitacao",
+      "name": "Unidade Municipal de Reabilitação",
       "type": "rehab-center",
       "status": "active",
       "managedBy": "municipal",
@@ -1642,7 +1646,7 @@
     {
       "id": "farmacia-central",
       "cnesCode": "7561121",
-      "name": "Farmacia Central (municipal)",
+      "name": "Farmácia Central (municipal)",
       "type": "public-pharmacy",
       "status": "active",
       "managedBy": "municipal",
@@ -1683,7 +1687,7 @@
     {
       "id": "nuvepi",
       "cnesCode": "6046762",
-      "name": "Nucleo de Vigilancia Epidemiologica e Imunizacao (NUVEPI)",
+      "name": "Núcleo de Vigilância Epidemiológica e Imunização (NUVEPI)",
       "type": "surveillance",
       "status": "active",
       "managedBy": "municipal (gestao dupla)",
@@ -1724,7 +1728,7 @@
     {
       "id": "vigilancia-sanitaria",
       "cnesCode": "2249383",
-      "name": "Vigilancia Sanitaria de Erechim",
+      "name": "Vigilância Sanitária de Erechim",
       "type": "surveillance",
       "status": "active",
       "managedBy": "municipal",
@@ -1765,7 +1769,7 @@
     {
       "id": "cerest-alto-uruguai",
       "cnesCode": "7495307",
-      "name": "CEREST Alto Uruguai (Centro de Referencia em Saude do Trabalhador)",
+      "name": "CEREST Alto Uruguai (Centro de Referência em Saúde do Trabalhador)",
       "type": "specialty-center",
       "status": "active",
       "managedBy": "municipal (sede regional)",
@@ -1804,7 +1808,7 @@
     {
       "id": "academia-da-saude",
       "cnesCode": "7862024",
-      "name": "Polo Academia da Saude",
+      "name": "Polo Academia da Saúde",
       "type": "health-promotion",
       "status": "active",
       "managedBy": "municipal",
@@ -1843,7 +1847,7 @@
     {
       "id": "secretaria-municipal-saude",
       "cnesCode": "6434363",
-      "name": "Secretaria Municipal de Saude de Erechim (Central de Gestao em Saude)",
+      "name": "Secretaria Municipal de Saúde de Erechim (Central de Gestão em Saúde)",
       "type": "administration",
       "status": "active",
       "managedBy": "municipal",
@@ -1884,7 +1888,7 @@
     {
       "id": "crs-11",
       "cnesCode": "2249456",
-      "name": "11a Coordenadoria Regional de Saude (Erechim)",
+      "name": "11ª Coordenadoria Regional de Saúde (Erechim)",
       "type": "administration",
       "status": "active",
       "managedBy": "estadual",

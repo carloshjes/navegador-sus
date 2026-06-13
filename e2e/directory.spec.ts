@@ -16,9 +16,9 @@ test('citizen flow: search → filter → detail → confidence seal', async ({ 
   await expect(page).toHaveURL(/q=vacinacao/)
   await expect(page).toHaveURL(/tipo=ubs/)
 
-  await page.getByRole('link', { name: 'UBS Capoere' }).click()
+  await page.getByRole('link', { name: 'UBS Capoerê' }).click()
 
-  await expect(page.getByRole('heading', { level: 1, name: 'UBS Capoere' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'UBS Capoerê' })).toBeVisible()
   // SPA route change must move focus to the new page title.
   await expect(page.locator('#page-title')).toBeFocused()
 
