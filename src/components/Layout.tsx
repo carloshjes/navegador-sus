@@ -15,9 +15,9 @@ export function Layout() {
   useRouteFocus()
 
   return (
-    /* pb reserves room for the fixed EmergencyBar so content never hides
-       behind it (the bar itself handles the iOS safe area). */
-    <div className="flex min-h-dvh flex-col pb-14">
+    /* pb-bar reserves the EmergencyBar's height + the iOS safe-area inset
+       (Etapa Visual 2 / A2) — content never hides behind the fixed bar. */
+    <div className="flex min-h-dvh flex-col pb-bar">
       {/* Keyboard/screen-reader users can jump straight to content. */}
       <a
         href="#conteudo"
@@ -27,7 +27,10 @@ export function Layout() {
       </a>
 
       <header className="border-b border-edge bg-surface">
-        <div className="mx-auto flex w-full max-w-screen-md flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
+        {/* Compact: one row on every viewport; the dev-version badge moved
+            to the home intro (Etapa Visual 2 / B2). py-2 + the wordmark's
+            own touch target keeps the bar around 56px. */}
+        <div className="mx-auto flex w-full max-w-screen-lg items-center gap-3 px-4 py-2">
           <Link
             to="/"
             aria-label="navegador sus Erechim — página inicial"
@@ -35,9 +38,6 @@ export function Layout() {
           >
             <Logo />
           </Link>
-          <p className="rounded-pill border border-border-strong px-3 py-0.5 text-meta text-ink-muted">
-            versão em desenvolvimento
-          </p>
           <nav aria-label="Seções do guia" className="ms-auto flex gap-1">
             <NavLink to="/mapa" className={navLinkClass}>
               Mapa
@@ -49,12 +49,12 @@ export function Layout() {
         </div>
       </header>
 
-      <main id="conteudo" className="mx-auto w-full max-w-screen-md grow px-4 py-6">
+      <main id="conteudo" className="mx-auto w-full max-w-screen-lg grow px-4 py-6">
         <Outlet />
       </main>
 
       <footer className="border-t border-edge bg-surface">
-        <div className="mx-auto w-full max-w-screen-md px-4 py-6 text-ink-muted">
+        <div className="mx-auto w-full max-w-screen-lg px-4 py-6 text-ink-muted">
           <p>
             Este app informa e direciona; <strong>não substitui</strong> os canais
             oficiais. Em caso de divergência, vale a informação da unidade ou da

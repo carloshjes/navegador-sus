@@ -95,13 +95,21 @@
   --radius-lg: 14px; /* cards */
   --radius-pill: 999px; /* status seals — the welcoming pill */
 
-  /* Focus ring — deliberately NOT the brand color so it stays visible on
-     primary-colored controls. 6.7:1 on white (needs only 3:1). */
-  --color-focus: #1d4ed8;
+  /* Focus ring on the brand color (Etapa Visual 2 / A1). Primary against the
+     two surfaces of the app: 7.71:1 on white, 7.39:1 on the cream `bg`.
+     WCAG 1.4.11 only needs 3:1 — we're well above. Inside the emergency bar
+     (where primary would clash with the red), focus-visible falls back to
+     white via the `.bg-emergency :focus-visible` override below (7.07:1). */
+  --color-focus: var(--color-primary);
 
   /* Touch-target floor: WCAG 2.2 / mobile-first → 44px (2.75rem).
      Use min-h-touch / min-w-touch on anything tappable. */
   --spacing-touch: 2.75rem;
+
+  /* Visual height of the fixed EmergencyBar (without the safe-area inset).
+     The bar uses h-bar; layout pages reserve pb-bar + safe-area so content
+     never hides behind it (Etapa Visual 2 / A2). */
+  --spacing-bar: 3.5rem; /* 56px — comfortably above the 44px touch floor */
 }
 
 @layer base {
@@ -115,12 +123,19 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Strong, always-visible keyboard focus (WCAG 2.2 focus-visible).
-     The offset keeps the ring legible on colored controls. */
+  /* Strong, always-visible keyboard focus (WCAG 2.2 focus-visible). The
+     2px ring + 2px offset around the control's own border-radius reads
+     clearly without covering rounded corners (kit §4: pills, cards). */
   :focus-visible {
-    outline: 3px solid var(--color-focus);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
-    border-radius: 2px;
+  }
+
+  /* On the emergency bar (red), the primary ring would have ~1:1 contrast,
+     so swap to white (7.07:1 on emergency). Same idea on dark category tags. */
+  .bg-emergency :focus-visible,
+  [class*='bg-cat-'] :focus-visible {
+    outline-color: #ffffff;
   }
 
   /* Respect users who asked the OS for less motion. */
@@ -140,6 +155,17 @@
   /* Breathing room for phones with bottom home-indicator (iOS safe area). */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Reserve room for the fixed EmergencyBar: bar height + iOS safe area
+     (Etapa Visual 2 / A2). Stacks with any other padding the caller adds. */
+  .pb-bar {
+    padding-bottom: calc(var(--spacing-bar) + env(safe-area-inset-bottom));
+  }
+
+  /* Height of the EmergencyBar action row — paired with .pb-bar in Layout. */
+  .h-bar {
+    height: var(--spacing-bar);
   }
 }
 

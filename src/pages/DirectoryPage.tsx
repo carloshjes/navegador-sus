@@ -3,13 +3,20 @@ import { useSearchParams } from 'react-router'
 import { activeUnits, dataset } from '../data/units'
 import type { HealthUnit, ServiceSlug, UnitType } from '../data/types'
 import { compareUnitsForListing, displayCategory } from '../data/display-policy'
-import { SERVICE_LABELS, UNIT_TYPE_LABELS, UNIT_TYPE_SHORT_LABELS } from '../data/labels'
+import {
+  SERVICE_FILTER_PRIORITY,
+  SERVICE_LABELS,
+  TYPE_FILTER_PRIORITY,
+  UNIT_TYPE_LABELS,
+  UNIT_TYPE_SHORT_LABELS,
+  serviceChipLabel,
+} from '../data/labels'
 import { matchesQuery } from '../lib/search'
 import { withDistances } from '../lib/nearby'
 import { useGeolocation } from '../lib/useGeolocation'
 import { usePageTitle } from '../lib/route-focus'
 import { Button } from '../components/Button'
-import { FilterChip } from '../components/FilterChip'
+import { FilterChipGroup } from '../components/FilterChipGroup'
 import { UnitCard } from '../components/UnitCard'
 
 /** Filter state lives in the URL so any view is a shareable link. */
@@ -74,26 +81,67 @@ export function DirectoryPage() {
     return { care, comingSoon, institutional }
   }, [])
 
-  /* Filter options reflect what actually exists among displayed units. */
+  /* Filter options reflect what actually exists among displayed units.
+     Each list is ordered priority-first (Etapa Visual 2 / B5): the chips
+     the citizen reaches for live up top; the rest stay behind "Mais …". */
   const options = useMemo(() => {
     const visible = [...sections.care, ...sections.comingSoon, ...sections.institutional]
     const services = new Set<ServiceSlug>()
     const types = new Set<UnitType>()
-    const neighborhoods = new Set<string>()
+    const neighborhoodCount = new Map<string, number>()
     for (const unit of visible) {
       for (const slug of unit.services) services.add(slug)
       types.add(unit.type)
-      if (unit.address.neighborhood) neighborhoods.add(unit.address.neighborhood)
+      if (unit.address.neighborhood) {
+        const n = unit.address.neighborhood
+        neighborhoodCount.set(n, (neighborhoodCount.get(n) ?? 0) + 1)
+      }
     }
     const byLabel = (a: string, b: string) => a.localeCompare(b, 'pt-BR')
+
+    // Priority first (in their declared order), the rest alphabetical after.
+    const orderByPriority = <T extends string>(
+      all: T[],
+      priority: readonly T[],
+      label: (slug: T) => string,
+    ): T[] => {
+      const present = new Set(all)
+      const head = priority.filter((slug) => present.has(slug))
+      const headSet = new Set(head)
+      const tail = all.filter((slug) => !headSet.has(slug))
+      tail.sort((a, b) => byLabel(label(a), label(b)))
+      return [...head, ...tail]
+    }
+
+    // Neighborhoods don't have a curated priority list — rank by count of
+    // units (more cards = more likely the citizen searches it), tiebreak
+    // alphabetical. This gives the same "common upfront" effect for free.
+    const neighborhoodsRanked = [...neighborhoodCount.keys()].sort((a, b) => {
+      const delta = (neighborhoodCount.get(b) ?? 0) - (neighborhoodCount.get(a) ?? 0)
+      return delta !== 0 ? delta : byLabel(a, b)
+    })
+
     return {
-      services: [...services].sort((a, b) =>
-        byLabel(SERVICE_LABELS[a], SERVICE_LABELS[b]),
+      services: orderByPriority(
+        [...services],
+        SERVICE_FILTER_PRIORITY,
+        (s) => SERVICE_LABELS[s],
       ),
-      types: [...types].sort((a, b) => byLabel(UNIT_TYPE_LABELS[a], UNIT_TYPE_LABELS[b])),
-      neighborhoods: [...neighborhoods].sort(byLabel),
+      types: orderByPriority(
+        [...types],
+        TYPE_FILTER_PRIORITY,
+        (s) => UNIT_TYPE_LABELS[s],
+      ),
+      neighborhoods: neighborhoodsRanked,
     }
   }, [sections])
+
+  /* Visible chips per group before "Mais …" (the rest open via disclosure).
+     Type priority covers 8 of 11 types in the dataset — the remaining 3
+     fit naturally under "Mais tipos". */
+  const TYPE_VISIBLE = TYPE_FILTER_PRIORITY.length
+  const SERVICE_VISIBLE = SERVICE_FILTER_PRIORITY.length
+  const NEIGHBORHOOD_VISIBLE = 6
 
   const care = sections.care.filter((unit) => matchesFilters(unit, filters))
   const comingSoon = sections.comingSoon.filter((unit) => matchesFilters(unit, filters))
@@ -108,15 +156,13 @@ export function DirectoryPage() {
   const userPosition = geo.state.status === 'granted' ? geo.state.position : null
   const careWithDistance = withDistances(care, userPosition)
 
-  const nothingFound = care.length + comingSoon.length + institutional.length === 0
+  const totalResults = care.length + comingSoon.length + institutional.length
+  const nothingFound = totalResults === 0
   const filtering =
     filters.q !== '' ||
     filters.servico !== '' ||
     filters.tipo !== '' ||
     filters.bairro !== ''
-
-  const selectClass =
-    'min-h-touch w-full rounded-md border border-edge bg-surface px-3 text-ink'
 
   return (
     <>
@@ -126,17 +172,25 @@ export function DirectoryPage() {
       <p className="mt-2 text-ink-muted">
         O guia conhece hoje <strong>{activeUnits.length} unidades ativas</strong> da rede
         pública do município. Os dados ainda estão em verificação — confirme por telefone
-        antes de ir.
+        antes de ir.{' '}
+        {/* "versão em desenvolvimento" moved out of the header (B2): a
+            discreet inline marker, never a flashy ribbon. */}
+        <span className="ms-1 inline-block align-middle text-meta text-ink-muted">
+          (versão em desenvolvimento)
+        </span>
       </p>
 
       {/* Search + filters; state mirrored in the URL (shareable links).
-          <search> is already a search landmark — no role attribute needed. */}
+          <search> is already a search landmark — no role attribute needed.
+          All three filters are chip groups (Etapa Visual 2 / B5); the
+          textual search already covers service and neighborhood, so these
+          chips are complements with a "Mais …" disclosure for long lists. */}
       <search aria-label="Buscar e filtrar unidades">
         <form
-          className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"
+          className="mt-6 flex flex-col gap-4"
           onSubmit={(event) => event.preventDefault()}
         >
-          <div className="sm:col-span-2">
+          <div>
             <label htmlFor="busca" className="mb-1 block font-semibold">
               Buscar por nome, bairro ou serviço
             </label>
@@ -146,77 +200,51 @@ export function DirectoryPage() {
               value={filters.q}
               onChange={(event) => setFilter('q', event.target.value)}
               placeholder="Ex.: vacina, Capoerê, dentista…"
-              className={selectClass}
+              className="min-h-touch w-full rounded-md border border-edge bg-surface px-3 text-ink"
             />
           </div>
 
-          <div>
-            <label htmlFor="filtro-servico" className="mb-1 block font-semibold">
-              Serviço
-            </label>
-            <select
-              id="filtro-servico"
-              value={filters.servico}
-              onChange={(event) => setFilter('servico', event.target.value)}
-              className={selectClass}
-            >
-              <option value="">Todos os serviços</option>
-              {options.services.map((slug) => (
-                <option key={slug} value={slug}>
-                  {SERVICE_LABELS[slug]}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FilterChipGroup
+            legend="Tipo de unidade"
+            options={options.types.map((type) => ({
+              value: type,
+              label: UNIT_TYPE_SHORT_LABELS[type],
+            }))}
+            value={filters.tipo}
+            onChange={(v) => setFilter('tipo', v)}
+            prioritySlots={TYPE_VISIBLE}
+            moreLabel="Mais tipos"
+          />
 
-          {/* Type filter as chips (kit §5): rectangular toggles, primary when
-              active. Same `tipo` URL param and behavior as before — only the
-              control changed from a <select> to an accessible button group. */}
-          <fieldset className="sm:col-span-2">
-            <legend className="mb-1 block font-semibold">Tipo de unidade</legend>
-            <div className="flex flex-wrap gap-2">
-              <FilterChip
-                active={filters.tipo === ''}
-                onClick={() => setFilter('tipo', '')}
-              >
-                Todos
-              </FilterChip>
-              {options.types.map((type) => (
-                <FilterChip
-                  key={type}
-                  active={filters.tipo === type}
-                  onClick={() => setFilter('tipo', type)}
-                >
-                  {UNIT_TYPE_SHORT_LABELS[type]}
-                </FilterChip>
-              ))}
-            </div>
-          </fieldset>
+          <FilterChipGroup
+            legend="Serviço"
+            options={options.services.map((slug) => ({
+              value: slug,
+              label: serviceChipLabel(slug),
+            }))}
+            value={filters.servico}
+            onChange={(v) => setFilter('servico', v)}
+            prioritySlots={SERVICE_VISIBLE}
+            moreLabel="Mais serviços"
+          />
 
-          <div className="sm:col-span-2">
-            <label htmlFor="filtro-bairro" className="mb-1 block font-semibold">
-              Bairro da unidade
-            </label>
-            <select
-              id="filtro-bairro"
-              value={filters.bairro}
-              onChange={(event) => setFilter('bairro', event.target.value)}
-              className={selectClass}
-            >
-              <option value="">Todos os bairros</option>
-              {options.neighborhoods.map((neighborhood) => (
-                <option key={neighborhood} value={neighborhood}>
-                  {neighborhood}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FilterChipGroup
+            legend="Bairro"
+            options={options.neighborhoods.map((name) => ({
+              value: name,
+              label: name,
+            }))}
+            value={filters.bairro}
+            onChange={(v) => setFilter('bairro', v)}
+            prioritySlots={NEIGHBORHOOD_VISIBLE}
+            moreLabel="Mais bairros"
+          />
         </form>
       </search>
 
       {/* "Perto de mim": the explanation comes BEFORE the permission prompt
           (briefing §2 — location stays on the device, never sent). */}
-      <section aria-label="Ordenar pelas mais próximas" className="mt-6">
+      <section aria-label="Ordenar pelas mais próximas" className="mt-8">
         {geo.state.status !== 'granted' && (
           <div className="rounded-lg border border-edge bg-surface p-4">
             <p className="text-ink-muted">
@@ -267,11 +295,12 @@ export function DirectoryPage() {
         )}
       </section>
 
-      {/* Result count announced to screen readers on every change. */}
+      {/* Result count announced to screen readers on every change. PT-BR
+          plural: "1 resultado" vs. "N resultados" (Etapa Visual 2 / A3). */}
       <p aria-live="polite" className="mt-4 text-ink-muted">
         {nothingFound
           ? 'Nenhuma unidade encontrada.'
-          : `${care.length + comingSoon.length + institutional.length} resultado(s).`}
+          : `${totalResults} ${totalResults === 1 ? 'resultado' : 'resultados'}.`}
       </p>
 
       {nothingFound && (
@@ -289,11 +318,11 @@ export function DirectoryPage() {
       )}
 
       {care.length > 0 && (
-        <section aria-labelledby="titulo-atendimento" className="mt-6">
+        <section aria-labelledby="titulo-atendimento" className="mt-8">
           <h2 id="titulo-atendimento" className="sr-only">
             Unidades de atendimento
           </h2>
-          <ul className="grid grid-cols-1 gap-3">
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {careWithDistance.map(({ unit, distance }) => (
               <li key={unit.id}>
                 <UnitCard unit={unit} distanceMeters={distance} />
@@ -304,11 +333,11 @@ export function DirectoryPage() {
       )}
 
       {comingSoon.length > 0 && (
-        <section aria-labelledby="titulo-em-breve" className="mt-8">
+        <section aria-labelledby="titulo-em-breve" className="mt-10">
           <h2 id="titulo-em-breve" className="font-display text-display">
             Em breve
           </h2>
-          <ul className="mt-3 grid grid-cols-1 gap-3">
+          <ul className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {comingSoon.map((unit) => (
               <li key={unit.id}>
                 <UnitCard unit={unit} />
@@ -319,7 +348,7 @@ export function DirectoryPage() {
       )}
 
       {institutional.length > 0 && (
-        <section aria-labelledby="titulo-institucional" className="mt-8">
+        <section aria-labelledby="titulo-institucional" className="mt-10">
           <h2 id="titulo-institucional" className="font-display text-display">
             Órgãos e contatos institucionais
           </h2>
