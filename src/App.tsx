@@ -28,7 +28,7 @@ function App() {
             <ErrorBoundary
               fallback={
                 <div>
-                  <h1 className="text-2xl font-bold">Mapa indisponível</h1>
+                  <h1 className="font-display text-display-lg">Mapa indisponível</h1>
                   <p className="mt-2 text-ink-muted">
                     Não foi possível carregar o mapa agora. O{' '}
                     <Link to="/" className="text-primary underline underline-offset-4">

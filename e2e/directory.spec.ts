@@ -10,7 +10,8 @@ test('citizen flow: search → filter → detail → confidence seal', async ({ 
 
   // Accent-insensitive search: "vacinacao" must find vaccination units.
   await page.getByLabel('Buscar por nome, bairro ou serviço').fill('vacinacao')
-  await page.getByLabel('Tipo de unidade').selectOption('ubs')
+  // Type filter is now a chip group (kit §5); clicking sets the same URL param.
+  await page.getByRole('button', { name: 'UBS', exact: true }).click()
 
   // Filter + search state lives in the URL (shareable link).
   await expect(page).toHaveURL(/q=vacinacao/)

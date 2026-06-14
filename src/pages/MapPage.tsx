@@ -14,7 +14,7 @@ export default function MapPage() {
 
   return (
     <>
-      <h1 id="page-title" tabIndex={-1} className="text-2xl font-bold">
+      <h1 id="page-title" tabIndex={-1} className="font-display text-display-lg">
         Mapa das unidades de saúde
       </h1>
       <p className="mt-2 text-ink-muted">
@@ -37,14 +37,14 @@ export default function MapPage() {
         <li className="flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="inline-block size-3 rounded-full bg-conf-unverified"
+            className="inline-block size-3 rounded-full bg-conf-warn"
           />
           Informações em verificação
         </li>
         <li className="flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="inline-block size-3 rounded-full bg-conf-stale"
+            className="inline-block size-3 rounded-full bg-ink-muted"
           />
           Em construção
         </li>

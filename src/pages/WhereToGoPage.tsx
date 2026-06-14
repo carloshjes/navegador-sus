@@ -13,7 +13,7 @@ export function WhereToGoPage() {
 
   return (
     <>
-      <h1 id="page-title" tabIndex={-1} className="text-2xl font-bold">
+      <h1 id="page-title" tabIndex={-1} className="font-display text-display-lg">
         Onde ir? Como a rede de saúde de Erechim se organiza
       </h1>
       <p className="mt-2 text-ink-muted">
@@ -23,7 +23,7 @@ export function WhereToGoPage() {
 
       <div className="mt-6 grid grid-cols-1 gap-4">
         <Card className="border-l-4 border-l-emergency">
-          <h2 className="text-lg font-bold">Emergência com risco de vida</h2>
+          <h2 className="font-display text-title">Emergência com risco de vida</h2>
           <p className="mt-1">
             Ligue{' '}
             <a
@@ -45,7 +45,7 @@ export function WhereToGoPage() {
         </Card>
 
         <Card>
-          <h2 className="text-lg font-bold">
+          <h2 className="font-display text-title">
             Urgência que não é emergência com risco de vida
           </h2>
           <p className="mt-1">
@@ -64,7 +64,7 @@ export function WhereToGoPage() {
         </Card>
 
         <Card>
-          <h2 className="text-lg font-bold">Rotina e acompanhamento</h2>
+          <h2 className="font-display text-title">Rotina e acompanhamento</h2>
           <p className="mt-1">
             A porta de entrada do dia a dia é a{' '}
             <Link
@@ -79,7 +79,7 @@ export function WhereToGoPage() {
         </Card>
 
         <Card>
-          <h2 className="text-lg font-bold">Especialidades</h2>
+          <h2 className="font-display text-title">Especialidades</h2>
           <p className="mt-1">
             O atendimento especializado (CRE, CEO, CAPS e outros) funciona{' '}
             <strong>por encaminhamento</strong>: o caminho começa na sua UBS, que avalia e
@@ -88,7 +88,7 @@ export function WhereToGoPage() {
         </Card>
       </div>
 
-      <p className="mt-6 rounded-lg bg-surface-muted p-4 text-ink-muted">
+      <p className="mt-6 rounded-lg border border-edge bg-surface p-4 text-ink-muted">
         Na dúvida, ligue para a unidade antes de sair de casa ou consulte os canais
         oficiais da Prefeitura e da Secretaria Municipal de Saúde — em caso de
         divergência, são eles que valem.

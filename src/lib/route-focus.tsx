@@ -24,10 +24,10 @@ export function useRouteFocus(): void {
 
 /**
  * Per-page document.title — what screen readers announce and what the
- * browser tab shows. Suffix keeps the codename for orientation.
+ * browser tab shows. Suffix is the product name (kit §1).
  */
 export function usePageTitle(title: string): void {
   useEffect(() => {
-    document.title = `${title} — navegador-sus`
+    document.title = `${title} — navegador · sus Erechim`
   }, [title])
 }

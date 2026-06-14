@@ -42,7 +42,7 @@ function ProvenancedRow({
             <div>{children ?? field.value}</div>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <Badge confidence={field.confidence} label={badgeLabel} />
-              <span className="text-sm text-ink-muted">
+              <span className="text-meta text-ink-muted">
                 conferido em {formatDateBR(field.checkedAt)}
               </span>
             </div>
@@ -94,7 +94,7 @@ function AddressBlock({ unit }: { unit: HealthUnit }) {
           <Button variant="secondary" onClick={copy}>
             Copiar endereço
           </Button>
-          <span aria-live="polite" className="text-sm text-ink-muted">
+          <span aria-live="polite" className="text-meta text-ink-muted">
             {copied ? 'Endereço copiado!' : ''}
           </span>
         </div>
@@ -125,28 +125,28 @@ function UnitDetail({ unit }: { unit: HealthUnit }) {
         ← Voltar ao diretório
       </Link>
 
-      <h1 id="page-title" tabIndex={-1} className="mt-3 text-2xl font-bold">
+      <h1 id="page-title" tabIndex={-1} className="mt-3 font-display text-display-lg">
         {unit.name}
       </h1>
-      <p className="mt-1 text-lg text-ink-muted">{UNIT_TYPE_LABELS[unit.type]}</p>
+      <p className="mt-1 text-ink-muted">{UNIT_TYPE_LABELS[unit.type]}</p>
 
       {category === 'coming-soon' && (
-        <p className="mt-4 rounded-lg bg-conf-stale-bg p-4 font-semibold text-conf-stale">
+        <p className="mt-4 rounded-lg bg-conf-warn-bg p-4 font-semibold text-conf-warn">
           Em construção — esta unidade ainda não atende o público.
         </p>
       )}
       {category === 'care-cautious' && (
-        <p className="mt-4 rounded-lg bg-conf-unverified-bg p-4 font-semibold text-conf-unverified">
+        <p className="mt-4 rounded-lg bg-conf-warn-bg p-4 font-semibold text-conf-warn">
           Informações em verificação: confirme por telefone antes de ir.
         </p>
       )}
       {category === 'care-restricted' && restriction && (
-        <p className="mt-4 rounded-lg bg-conf-unverified-bg p-4 font-semibold text-conf-unverified">
+        <p className="mt-4 rounded-lg bg-conf-warn-bg p-4 font-semibold text-conf-warn">
           {restriction}
         </p>
       )}
       {category === 'institutional' && (
-        <p className="mt-4 rounded-lg bg-surface-muted p-4 text-ink-muted">
+        <p className="mt-4 rounded-lg border border-edge bg-surface p-4 text-ink-muted">
           Órgão de gestão ou vigilância da rede de saúde — para atendimento de rotina,
           procure sua UBS.
         </p>
@@ -156,7 +156,7 @@ function UnitDetail({ unit }: { unit: HealthUnit }) {
           internal research notes stay internal; the user gets the honest
           consequence. */}
       {unit.conflicts.length > 0 && category !== 'coming-soon' && (
-        <p className="mt-4 rounded-lg bg-conf-stale-bg p-4 text-conf-stale">
+        <p className="mt-4 rounded-lg bg-conf-warn-bg p-4 text-conf-warn">
           <strong>Fontes oficiais divergem</strong> sobre informações desta unidade (como
           horário ou telefone). Na dúvida, ligue antes de ir.
         </p>
@@ -211,20 +211,22 @@ function UnitDetail({ unit }: { unit: HealthUnit }) {
 
       {unit.services.length > 0 && (
         <section aria-labelledby="titulo-servicos" className="mt-6">
-          <h2 id="titulo-servicos" className="text-xl font-bold">
+          <h2 id="titulo-servicos" className="font-display text-display">
             Serviços
           </h2>
           {unit.servicesNote && (
-            <p className="mt-1 text-sm text-ink-muted">
+            <p className="mt-1 text-meta text-ink-muted">
               Lista baseada na descrição geral das fontes oficiais — confirme a oferta
               diretamente com a unidade.
             </p>
           )}
+          {/* Informational pills — neutral on purpose, so they don't read as
+              category tags (solid color) or status seals (success/warning). */}
           <ul className="mt-3 flex flex-wrap gap-2">
             {unit.services.map((slug) => (
               <li
                 key={slug}
-                className="rounded-full bg-primary-soft px-3 py-1 text-primary"
+                className="rounded-pill border border-edge bg-surface px-3 py-1 text-meta"
               >
                 {SERVICE_LABELS[slug]}
               </li>
@@ -235,10 +237,10 @@ function UnitDetail({ unit }: { unit: HealthUnit }) {
 
       {mates.length > 0 && (
         <section aria-labelledby="titulo-hub" className="mt-6">
-          <h2 id="titulo-hub" className="text-xl font-bold">
+          <h2 id="titulo-hub" className="font-display text-display">
             No mesmo endereço funcionam:
           </h2>
-          <p className="mt-1 text-sm text-ink-muted">
+          <p className="mt-1 text-meta text-ink-muted">
             Endereço igual não significa serviço igual — cada unidade abaixo tem
             atendimento próprio.
           </p>

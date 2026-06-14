@@ -6,6 +6,7 @@ import { HOURS_BADGE_LABELS } from '../lib/provenance-ui'
 import { formatStraightLineDistance } from '../lib/geo'
 import { Badge } from './Badge'
 import { Card } from './Card'
+import { CategoryTag } from './CategoryTag'
 
 /**
  * Directory listing card. The confidence seal on the opening hours is
@@ -24,7 +25,9 @@ export function UnitCard({
 
   return (
     <Card className="transition-colors hover:border-primary">
-      <h3 className="text-lg leading-snug font-bold">
+      {/* Category tag on top (kit §5): rectangle + family color. */}
+      <CategoryTag unit={unit} />
+      <h3 className="mt-2 text-unit-name">
         <Link
           to={`/unidade/${unit.id}`}
           className="text-primary underline-offset-4 hover:underline"
@@ -32,12 +35,12 @@ export function UnitCard({
           {unit.name}
         </Link>
       </h3>
-      <p className="mt-1 text-ink-muted">
+      <p className="mt-1 text-meta text-ink-muted">
         {UNIT_TYPE_LABELS[unit.type]}
         {unit.address.neighborhood ? <> · {unit.address.neighborhood}</> : null}
       </p>
       {distanceMeters !== undefined && (
-        <p className="mt-1 font-semibold text-primary">
+        <p className="mt-1 text-label text-primary">
           {formatStraightLineDistance(distanceMeters)} em linha reta
         </p>
       )}

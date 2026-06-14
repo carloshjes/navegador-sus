@@ -7,7 +7,7 @@ export function NotFoundPage() {
 
   return (
     <>
-      <h1 id="page-title" tabIndex={-1} className="text-2xl font-bold">
+      <h1 id="page-title" tabIndex={-1} className="font-display text-display-lg">
         Página não encontrada
       </h1>
       <p className="mt-2 text-ink-muted">

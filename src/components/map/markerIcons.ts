@@ -16,11 +16,12 @@ export function markerVariant(unit: HealthUnit): MarkerVariant {
 }
 
 /* Token colors (resolved to hex because Leaflet injects this HTML outside
-   React; CSS custom properties would not always inherit into the SVG). */
+   React; CSS custom properties would not always inherit into the SVG).
+   Kept in sync with the map legend on MapPage. */
 const VARIANT_COLOR: Record<MarkerVariant, string> = {
-  care: '#0f5e68', // --color-primary
-  cautious: '#8a3a0b', // --color-conf-unverified
-  planned: '#714508', // --color-conf-stale
+  care: '#0e5e4c', // --color-primary
+  cautious: '#854f0b', // --color-conf-warn
+  planned: '#5b6b66', // --color-ink-muted
 }
 
 const teardropSvg = (color: string): string =>

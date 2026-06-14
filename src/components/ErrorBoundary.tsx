@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <>
           {this.props.fallback}
           {import.meta.env.DEV && (
-            <pre className="mt-3 overflow-auto rounded bg-surface-muted p-3 text-sm text-conf-unverified">
+            <pre className="mt-3 overflow-auto rounded-md border border-edge bg-surface p-3 text-meta text-conf-warn">
               {this.state.error.message}
             </pre>
           )}

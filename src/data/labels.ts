@@ -49,6 +49,28 @@ export const SERVICE_LABELS: Record<ServiceSlug, string> = {
 }
 
 /**
+ * Short unit-type labels for the filter chips (kit §5). Chips are compact, so
+ * the first-mention gloss of UNIT_TYPE_LABELS is dropped here; the full label
+ * still appears on every card and detail page.
+ */
+export const UNIT_TYPE_SHORT_LABELS: Record<UnitType, string> = {
+  ubs: 'UBS',
+  'prison-health-unit': 'Saúde prisional',
+  'health-post': 'Ponto de atend.',
+  'urgent-care': 'Pronto atend.',
+  'mobile-emergency': 'SAMU',
+  hospital: 'Hospital',
+  'specialty-center': 'Especialidades',
+  'dental-specialty-center': 'Odonto (CEO)',
+  caps: 'CAPS',
+  'rehab-center': 'Reabilitação',
+  'public-pharmacy': 'Farmácia',
+  surveillance: 'Vigilância',
+  'health-promotion': 'Promoção',
+  administration: 'Gestão',
+}
+
+/**
  * Unit-type labels. First-mention jargon gets a plain-language gloss
  * (briefing §3: "UBS (posto de saúde)").
  */

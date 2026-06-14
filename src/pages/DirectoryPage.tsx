@@ -3,12 +3,13 @@ import { useSearchParams } from 'react-router'
 import { activeUnits, dataset } from '../data/units'
 import type { HealthUnit, ServiceSlug, UnitType } from '../data/types'
 import { compareUnitsForListing, displayCategory } from '../data/display-policy'
-import { SERVICE_LABELS, UNIT_TYPE_LABELS } from '../data/labels'
+import { SERVICE_LABELS, UNIT_TYPE_LABELS, UNIT_TYPE_SHORT_LABELS } from '../data/labels'
 import { matchesQuery } from '../lib/search'
 import { withDistances } from '../lib/nearby'
 import { useGeolocation } from '../lib/useGeolocation'
 import { usePageTitle } from '../lib/route-focus'
 import { Button } from '../components/Button'
+import { FilterChip } from '../components/FilterChip'
 import { UnitCard } from '../components/UnitCard'
 
 /** Filter state lives in the URL so any view is a shareable link. */
@@ -119,7 +120,7 @@ export function DirectoryPage() {
 
   return (
     <>
-      <h1 id="page-title" tabIndex={-1} className="text-2xl font-bold">
+      <h1 id="page-title" tabIndex={-1} className="font-display text-display-lg">
         Rede pública de saúde de Erechim/RS
       </h1>
       <p className="mt-2 text-ink-muted">
@@ -168,24 +169,29 @@ export function DirectoryPage() {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="filtro-tipo" className="mb-1 block font-semibold">
-              Tipo de unidade
-            </label>
-            <select
-              id="filtro-tipo"
-              value={filters.tipo}
-              onChange={(event) => setFilter('tipo', event.target.value)}
-              className={selectClass}
-            >
-              <option value="">Todos os tipos</option>
+          {/* Type filter as chips (kit §5): rectangular toggles, primary when
+              active. Same `tipo` URL param and behavior as before — only the
+              control changed from a <select> to an accessible button group. */}
+          <fieldset className="sm:col-span-2">
+            <legend className="mb-1 block font-semibold">Tipo de unidade</legend>
+            <div className="flex flex-wrap gap-2">
+              <FilterChip
+                active={filters.tipo === ''}
+                onClick={() => setFilter('tipo', '')}
+              >
+                Todos
+              </FilterChip>
               {options.types.map((type) => (
-                <option key={type} value={type}>
-                  {UNIT_TYPE_LABELS[type]}
-                </option>
+                <FilterChip
+                  key={type}
+                  active={filters.tipo === type}
+                  onClick={() => setFilter('tipo', type)}
+                >
+                  {UNIT_TYPE_SHORT_LABELS[type]}
+                </FilterChip>
               ))}
-            </select>
-          </div>
+            </div>
+          </fieldset>
 
           <div className="sm:col-span-2">
             <label htmlFor="filtro-bairro" className="mb-1 block font-semibold">
@@ -212,7 +218,7 @@ export function DirectoryPage() {
           (briefing §2 — location stays on the device, never sent). */}
       <section aria-label="Ordenar pelas mais próximas" className="mt-6">
         {geo.state.status !== 'granted' && (
-          <div className="rounded-lg border border-edge bg-surface-muted p-4">
+          <div className="rounded-lg border border-edge bg-surface p-4">
             <p className="text-ink-muted">
               Podemos ordenar as unidades pelas mais próximas de você. Sua localização é
               usada <strong>só neste aparelho</strong> e nunca é enviada a nenhum
@@ -269,7 +275,7 @@ export function DirectoryPage() {
       </p>
 
       {nothingFound && (
-        <div className="mt-4 rounded-lg border border-edge bg-surface-muted p-6 text-center">
+        <div className="mt-4 rounded-lg border border-edge bg-surface p-6 text-center">
           <p className="font-semibold">Nada por aqui com esses critérios.</p>
           <p className="mt-1 text-ink-muted">
             Tente outro termo (a busca aceita escrever sem acento) ou limpe os filtros.
@@ -299,7 +305,7 @@ export function DirectoryPage() {
 
       {comingSoon.length > 0 && (
         <section aria-labelledby="titulo-em-breve" className="mt-8">
-          <h2 id="titulo-em-breve" className="text-xl font-bold">
+          <h2 id="titulo-em-breve" className="font-display text-display">
             Em breve
           </h2>
           <ul className="mt-3 grid grid-cols-1 gap-3">
@@ -314,7 +320,7 @@ export function DirectoryPage() {
 
       {institutional.length > 0 && (
         <section aria-labelledby="titulo-institucional" className="mt-8">
-          <h2 id="titulo-institucional" className="text-xl font-bold">
+          <h2 id="titulo-institucional" className="font-display text-display">
             Órgãos e contatos institucionais
           </h2>
           <p className="mt-1 text-ink-muted">

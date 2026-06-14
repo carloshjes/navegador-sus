@@ -58,6 +58,55 @@ export function isLinkable(unit: HealthUnit): boolean {
   return displayCategory(unit) !== 'hidden'
 }
 
+/**
+ * The seven category families of the visual kit (§3). Each gets one solid
+ * color (a wayfinding signal), kept here — typed config, not scattered ifs —
+ * so the presentation layer (CategoryTag) reads one map. Color values and
+ * PT-BR labels live in src/lib/category-style.ts (presentation); this module
+ * owns the type→family logic, which is data policy.
+ */
+export type CategoryFamily =
+  | 'ubs'
+  | 'urgency'
+  | 'hospital'
+  | 'mental'
+  | 'specialty'
+  | 'pharmacy'
+  | 'admin'
+
+/** Every unit type maps to exactly one family (total record — the compiler
+    enforces coverage; category-style.test.ts enforces a color for each). */
+const UNIT_TYPE_FAMILY: Record<UnitType, CategoryFamily> = {
+  ubs: 'ubs',
+  'health-post': 'ubs',
+  'prison-health-unit': 'ubs',
+  'urgent-care': 'urgency',
+  'mobile-emergency': 'urgency',
+  hospital: 'hospital',
+  caps: 'mental',
+  'specialty-center': 'specialty',
+  'dental-specialty-center': 'specialty',
+  'rehab-center': 'specialty',
+  'public-pharmacy': 'pharmacy',
+  surveillance: 'admin',
+  'health-promotion': 'admin',
+  administration: 'admin',
+}
+
+export function categoryFamilyForType(type: UnitType): CategoryFamily {
+  return UNIT_TYPE_FAMILY[type]
+}
+
+/**
+ * Category family of a unit. Mirrors the institutional override in
+ * displayCategory(): CEREST is typed `specialty-center` but the report
+ * groups it with the management bodies, so it reads as `admin`.
+ */
+export function categoryFamily(unit: HealthUnit): CategoryFamily {
+  if (INSTITUTIONAL_BY_ID.has(unit.id)) return 'admin'
+  return UNIT_TYPE_FAMILY[unit.type]
+}
+
 /** Care-facing categories — the units a citizen might physically visit. */
 const MAPPABLE_CATEGORIES: ReadonlySet<DisplayCategory> = new Set([
   'care',
