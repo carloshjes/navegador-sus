@@ -2,68 +2,113 @@
 
 /*
  * ============================================================================
- * PROVISIONAL DESIGN TOKENS — navegador-sus
+ * DESIGN TOKENS — navegador · sus Erechim  (Kit Visual v1.0, 13/06/2026)
  * ============================================================================
- * The definitive visual direction is still pending (briefing §8). This is a
- * sober, institutional placeholder palette. Swapping the visual identity
- * later should cost ONLY edits to this @theme block: components reference
- * tokens, never raw hex values.
+ * The definitive visual identity lives here. Changing the look = editing this
+ * @theme block: components reference tokens, never raw hex values.
  *
- * Accessibility contract (WCAG 2.2 AA):
- *   - normal text needs contrast >= 4.5:1; large text and graphical
- *     elements (e.g. focus ring) need >= 3:1.
- *   - every pair used below was COMPUTED (not eyeballed); ratios annotated.
- * Fonts: system stack for now — typography decision ships with the visual
- * direction (briefing §8).
+ * Theme: light only (v1). Every color pair was COMPUTED for WCAG 2.2 AA and
+ * the ratio is annotated next to it — living documentation of the AA goal.
+ * Identifiers in English; UI labels in PT-BR (project convention).
  */
 @theme {
-  --font-sans:
-    system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', Ubuntu, Cantarell,
-    'Helvetica Neue', Arial, sans-serif;
+  /* ---- Typography (kit §2) -------------------------------------------- */
+  /* Two open-source (SIL OFL) families, self-hosted via @fontsource
+     (imported in main.tsx) — NOT the Google CDN. This keeps the CSP at
+     font-src 'self' and lets the offline-first PWA (Phase 4) cache the
+     fonts; a CDN font cannot be cached for offline use. */
+  --font-sans: 'Public Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* Surfaces */
-  --color-surface: #ffffff;
-  --color-surface-muted: #eef3f5; /* page sections, list stripes */
-  --color-edge: #c9d6dc; /* decorative borders (no AA text requirement) */
+  /* Type scale, mobile-first. Size + line-height + (titles) letter-spacing
+     and font-weight are baked into each step. Display steps pair with
+     font-display (Figtree); the rest inherit font-sans (Public Sans).
+     12px floor everywhere; smallest step here is 13px. */
+  --text-display-lg: 28px;
+  --text-display-lg--line-height: 1.15;
+  --text-display-lg--letter-spacing: -0.01em;
+  --text-display-lg--font-weight: 700;
+  --text-display: 22px;
+  --text-display--line-height: 1.2;
+  --text-display--letter-spacing: -0.01em;
+  --text-display--font-weight: 700;
+  --text-title: 18px;
+  --text-title--line-height: 1.3;
+  --text-title--letter-spacing: -0.01em;
+  --text-title--font-weight: 600;
+  --text-unit-name: 16px;
+  --text-unit-name--line-height: 1.3;
+  --text-unit-name--font-weight: 600;
+  --text-body: 16px;
+  --text-body--line-height: 1.6;
+  --text-label: 14px;
+  --text-label--line-height: 1.4;
+  --text-label--font-weight: 500;
+  --text-meta: 13px;
+  --text-meta--line-height: 1.45;
+  --text-chip: 13px;
+  --text-chip--line-height: 1;
+  --text-chip--font-weight: 600;
 
-  /* Text */
-  --color-ink: #16242e; /* 15.84:1 on surface, 14.16:1 on surface-muted */
-  --color-ink-muted: #46606c; /* 6.67:1 on surface,  5.96:1 on surface-muted */
+  /* ---- Neutrals & surfaces (kit §3) ----------------------------------- */
+  --color-ink: #16302a; /* main text — 14.1:1 on white (AAA) */
+  --color-ink-muted: #5b6b66; /* kit token "text-secondary" — 5.62:1 on white (AA) */
+  --color-surface: #ffffff; /* cards, bars, header & footer */
+  --color-bg: #fbfaf7; /* page background — warm cream */
+  --color-edge: #eee9df; /* kit token "border" — subtle borders */
+  --color-border-strong: #e0dbd0; /* emphasis borders, inactive filter chips */
 
-  /* Brand (provisional institutional teal-blue) */
-  --color-primary: #0f5e68; /* 7.44:1 on surface; white on it: 7.44:1 */
-  --color-primary-strong: #0a454c; /* hover/active; white on it: 10.67:1 */
-  --color-primary-soft: #e3f0f2; /* tinted bg; primary text on it: 6.38:1 */
+  /* ---- Brand (kit §3) -------------------------------------------------- */
+  --color-primary: #0e5e4c; /* teal — 7.71:1 on white (AAA); white on it 7.71:1 */
+  --color-primary-strong: #0a4a3b; /* hover/active (support token; kit silent) — white on it 10.22:1 */
+  --color-primary-ink: #0f6e56; /* teal text on light teal — 5.46:1 on primary-soft (AA) */
+  --color-primary-soft: #e1f5ee; /* soft teal surface (shares hex with conf-ok-bg) */
+  --color-accent: #d8602f; /* coral — DECORATIVE only (≥24px): 3.73:1, never small text */
+  --color-accent-text: #b5421f; /* coral for TEXT — 5.58:1 on white (AA) */
 
-  /* Emergency bar (SAMU 192 / Bombeiros 193 — briefing §2) */
-  --color-emergency: #a11d12; /* white text on it: 7.78:1 */
+  /* ---- Emergency (kit §3, briefing §2) -------------------------------- */
+  --color-emergency: #a32d2d; /* SAMU bar — white on it 7.07:1 (AAA) */
+
+  /* ---- Data-confidence seals (kit §3/§6) ------------------------------ */
+  /* Two families only. Amber never reaches AA as a solid (kit finding), so
+     caution is always light-amber bg + dark-brown text. */
+  --color-conf-ok-bg: #e1f5ee;
+  --color-conf-ok: #0f6e56; /* 5.46:1 on conf-ok-bg (AA) */
+  --color-conf-ok-dot: #1d9e75;
+  --color-conf-warn-bg: #faeeda;
+  --color-conf-warn: #854f0b; /* 5.87:1 on conf-warn-bg (AA) */
+
+  /* ---- Category colors (kit §3) — solid fill + WHITE text, all AA ----- */
+  --color-cat-ubs: #185fa5; /* 6.52:1 */
+  --color-cat-urgency: #b5421f; /* 5.58:1 */
+  --color-cat-hospital: #9a2d3f; /* 7.44:1 */
+  --color-cat-mental: #534ab7; /* 6.93:1 */
+  --color-cat-specialty: #15667a; /* 6.54:1 */
+  --color-cat-pharmacy: #3b6d11; /* 6.21:1 */
+  --color-cat-admin: #5f5e5a; /* 6.49:1 */
+
+  /* ---- Shape: radii (kit §4) ------------------------------------------ */
+  /* Form rule that organizes the UI: category = rectangle (radius-sm),
+     status = pill (radius-pill). */
+  --radius-sm: 4px; /* chips & category tags — the signage rectangle */
+  --radius-md: 10px; /* inputs, buttons */
+  --radius-lg: 14px; /* cards */
+  --radius-pill: 999px; /* status seals — the welcoming pill */
 
   /* Focus ring — deliberately NOT the brand color so it stays visible on
-     primary-colored controls. 6.70:1 on surface (needs only 3:1). */
+     primary-colored controls. 6.7:1 on white (needs only 3:1). */
   --color-focus: #1d4ed8;
 
-  /* Data-confidence seals (Badge). One pair per Confidence level of the
-     0.2 schema; "verified-local" is already provisioned for the upcoming
-     phone-verification round.
-     text-on-bg ratios: ok 6.87:1 · stale 7.44:1 · unverified 6.92:1 ·
-     local 6.38:1 */
-  --color-conf-recent: #1e5e2e;
-  --color-conf-recent-bg: #e7f4ea;
-  --color-conf-stale: #714508;
-  --color-conf-stale-bg: #fcf3df;
-  --color-conf-unverified: #8a3a0b;
-  --color-conf-unverified-bg: #fdefe3;
-  --color-conf-local: #0f5e68;
-  --color-conf-local-bg: #e3f0f2;
-
-  /* Touch target floor: WCAG 2.2 / mobile-first → 44px minimum (2.75rem).
+  /* Touch-target floor: WCAG 2.2 / mobile-first → 44px (2.75rem).
      Use min-h-touch / min-w-touch on anything tappable. */
   --spacing-touch: 2.75rem;
 }
 
 @layer base {
   body {
-    @apply bg-surface text-ink font-sans;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
     /* Generous typography for the target audience: >= 16px body text. */
     font-size: 1rem;
     line-height: 1.6;

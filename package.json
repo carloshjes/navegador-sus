@@ -1,6 +1,6 @@
 {
   "name": "navegador-sus",
-  "description": "Guia informativo da rede publica de saude de Erechim/RS (codinome de trabalho)",
+  "description": "navegador · sus Erechim — guia informativo da rede publica de saude de Erechim/RS",
   "license": "MIT",
   "private": true,
   "version": "0.1.0",
@@ -16,9 +16,12 @@
     "test:e2e": "playwright test",
     "fetch:coordinates": "node scripts/fetch-coordinates.mjs",
     "verify:coordinates": "node scripts/verify-coordinates.mjs",
+    "generate:icons": "node scripts/generate-icons.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/figtree": "^5.2.10",
+    "@fontsource/public-sans": "^5.2.7",
     "leaflet": "^1.9.4",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
