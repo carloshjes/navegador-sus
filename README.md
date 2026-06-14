@@ -9,8 +9,8 @@ unidade atende cada região, horários, serviços oferecidos e canais de
 emergência — com a **proveniência de cada dado exposta ao usuário**
 (fonte, nível de confiança e data de verificação).
 
-`navegador-sus` é o codinome técnico do projeto; o nome final do produto
-ainda não foi definido.
+O nome do produto é **navegador · sus Erechim**; `navegador-sus` segue como
+codinome técnico (repositório e pastas).
 
 ## O que este app é
 

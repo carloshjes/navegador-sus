@@ -75,12 +75,15 @@ Valem para qualquer código, texto de UI ou conteúdo, em qualquer fase:
 
 ## Estado atual e pendências
 
-- **Design system é provisório** (paleta sóbria institucional em tokens
-  CSS) — a direção visual definitiva está pendente (briefing §8); a troca
-  deve custar só a edição dos tokens.
+- **Identidade visual definitiva aplicada** (Etapa Visual — Kit Visual
+  v1.0, `docs/kit-visual-navegador-sus.md`): tokens no `@theme` de
+  `src/index.css`, fontes auto-hospedadas (Figtree/Public Sans), logotipo
+  e ícone. A troca de aparência continua custando só a edição dos tokens.
+  Regra de forma: **categoria = retângulo, status = pílula**.
 - **Verificação telefônica dos dados: adiada** pelo usuário (planilha
   própria, fora do repo). Quando acontecer, dados confirmados recebem
   `confidence: "verified-local"` + data da ligação.
 - O site fica público mas com **`X-Robots-Tag: noindex`** até os dados
   serem verificados (comentado em `public/_headers`).
-- Nome final do produto pendente — usar o codinome `navegador-sus`.
+- **Nome do produto:** `navegador · sus Erechim` (kit §1). O `navegador-sus`
+  segue só como codinome de repositório/pastas.
