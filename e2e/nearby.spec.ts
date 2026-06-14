@@ -43,6 +43,6 @@ test('denied: falls back to the neighborhood filter, no nagging', async ({ page 
   await page.getByRole('button', { name: 'Ver as mais próximas de mim' }).click()
 
   await expect(page.getByText(/filtrar por bairro/)).toBeVisible()
-  // Graceful: the neighborhood filter is still right there.
-  await expect(page.locator('#filtro-bairro')).toBeVisible()
+  // Graceful: the neighborhood chip group is still right there.
+  await expect(page.getByRole('group', { name: 'Bairro' })).toBeVisible()
 })

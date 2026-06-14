@@ -1,28 +1,44 @@
 /**
- * Wordmark (kit §7): "navegador · sus" in Figtree 700, color `primary`, with
- * the middot `·` in `accent` (coral) and 0.28em of air on each side. The
- * qualifier "Erechim · rede pública de saúde" sits below in Public Sans,
- * `text-secondary`. The coral dot is decorative and large (logo element), so
- * its 3.73:1 is fine here (it is never small body text — kit §3).
+ * Wordmark (kit §7) + icon (kit §8). "navegador · sus" in Figtree 700, color
+ * `primary`, with the coral dot `·` (`accent`) and 0.28em of air on each side.
+ * The icon is the same pin used as the app favicon; rendered alongside the
+ * wordmark in the header (Etapa Visual 2 / B1). The whole mark is read as one
+ * label via aria-label on the wrapper — the inner SVG/text stays aria-hidden.
  *
- * Variants: `full` (mark + qualifier) and `compact` (mark only). The whole
- * thing is read as one label by assistive tech via aria-label on the wrapper.
+ * Variants:
+ *  - `full` (default): icon + wordmark — used in the header.
+ *  - `wordmark`: wordmark only — kept for places where the icon would crowd.
  */
-export function Logo({ variant = 'full' }: { variant?: 'full' | 'compact' }) {
+type LogoVariant = 'full' | 'wordmark'
+
+export function Logo({ variant = 'full' }: { variant?: LogoVariant }) {
   return (
-    <span className="flex flex-col justify-center leading-none">
-      <span className="font-display text-display text-primary">
+    <span className="inline-flex items-center gap-2 leading-none">
+      {variant === 'full' && (
+        <svg
+          aria-hidden="true"
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          className="shrink-0"
+        >
+          <path
+            d="M12 1.6c-4.3 0-7.8 3.4-7.8 7.5 0 5.3 7.8 13.3 7.8 13.3s7.8-8 7.8-13.3c0-4.1-3.5-7.5-7.8-7.5z"
+            fill="currentColor"
+            className="text-primary"
+          />
+          <rect x="10.85" y="5.4" width="2.3" height="7.4" rx="0.5" fill="#fff" />
+          <rect x="8.4" y="7.95" width="7.2" height="2.3" rx="0.5" fill="#fff" />
+        </svg>
+      )}
+      <span className="font-display text-title text-primary">
         navegador
         <span aria-hidden="true" className="text-accent" style={{ margin: '0 0.28em' }}>
           ·
         </span>
         sus
       </span>
-      {variant === 'full' && (
-        <span className="mt-1 text-meta text-ink-muted">
-          Erechim · rede pública de saúde
-        </span>
-      )}
     </span>
   )
 }

@@ -49,6 +49,41 @@ export const SERVICE_LABELS: Record<ServiceSlug, string> = {
 }
 
 /**
+ * Citizen-relevance order for the type filter chips (Etapa Visual 2 / B5).
+ * The everyday doors come first; institutional/rare types (vigilância,
+ * gestão, promoção, ponto de atend., saúde prisional, SAMU) sit under a
+ * "Mais tipos ▾" disclosure on the directory. Coverage of the UnitType
+ * union is enforced by labels.test.ts.
+ */
+export const TYPE_FILTER_PRIORITY: readonly UnitType[] = [
+  'ubs',
+  'urgent-care',
+  'hospital',
+  'caps',
+  'specialty-center',
+  'dental-specialty-center',
+  'public-pharmacy',
+  'rehab-center',
+]
+
+/**
+ * Most-searched services shown as chips upfront (Etapa Visual 2 / B5). The
+ * full list is reachable through "Mais serviços ▾"; the textual search box
+ * already covers any service, so this set is a triage of the everyday ones.
+ */
+export const SERVICE_FILTER_PRIORITY: readonly ServiceSlug[] = [
+  'vaccination',
+  'primary-care',
+  'dentistry',
+  'womens-health',
+  'pediatrics',
+  'mental-health',
+  'medication-dispensing',
+  'urgent-care',
+  'lab-tests',
+]
+
+/**
  * Short unit-type labels for the filter chips (kit §5). Chips are compact, so
  * the first-mention gloss of UNIT_TYPE_LABELS is dropped here; the full label
  * still appears on every card and detail page.
@@ -68,6 +103,32 @@ export const UNIT_TYPE_SHORT_LABELS: Record<UnitType, string> = {
   surveillance: 'Vigilância',
   'health-promotion': 'Promoção',
   administration: 'Gestão',
+}
+
+/** Short service labels for chips; same shortening logic as the type ones. */
+export const SERVICE_SHORT_LABELS: Partial<Record<ServiceSlug, string>> = {
+  'primary-care': 'Consultas',
+  'womens-health': 'Saúde da mulher',
+  dentistry: 'Dentista',
+  'urgent-care': 'Urgência leve',
+  'medication-dispensing': 'Medicamentos',
+  'mental-health': 'Saúde mental',
+  'lab-tests': 'Laboratório',
+  'rapid-testing': 'Testes rápidos',
+  'sti-hiv-care': 'IST/HIV/Aids',
+  'cancer-screening': 'Preventivo',
+  'hospital-emergency': 'Pronto-socorro',
+  'hospital-admission': 'Internação',
+  'physiotherapy-rehab': 'Fisioterapia',
+  'epidemiological-surveillance': 'Vig. epidemiológica',
+  'health-surveillance': 'Vig. sanitária',
+  'regulation-administration': 'Gestão/regulação',
+  'mobile-emergency': 'SAMU',
+}
+
+/** Return the short label if one exists, else fall back to the full one. */
+export function serviceChipLabel(slug: ServiceSlug): string {
+  return SERVICE_SHORT_LABELS[slug] ?? SERVICE_LABELS[slug]
 }
 
 /**

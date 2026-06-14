@@ -22,26 +22,51 @@ export function WhereToGoPage() {
       </p>
 
       <div className="mt-6 grid grid-cols-1 gap-4">
-        <Card className="border-l-4 border-l-emergency">
-          <h2 className="font-display text-title">Emergência com risco de vida</h2>
-          <p className="mt-1">
-            Ligue{' '}
-            <a
-              href="tel:192"
-              className="font-bold text-primary underline underline-offset-4"
+        {/* Emergency card (Etapa Visual 2 / B4): clean block, no left ribbon.
+            Subtle full border, phone icon in `emergency`, and the two numbers
+            as big dial-pill links — the "ti-phone-call" affordance is the
+            shape, not a framework callout. */}
+        <Card className="bg-[#FCEBEB]">
+          <div className="flex items-start gap-3">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="mt-1 size-6 shrink-0 text-emergency"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              192 (SAMU)
-            </a>{' '}
-            imediatamente — o atendimento vai até você. O resgate do Corpo de Bombeiros
-            atende pelo{' '}
-            <a
-              href="tel:193"
-              className="font-bold text-primary underline underline-offset-4"
-            >
-              193
-            </a>
-            .
-          </p>
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.97.36 1.92.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.89.34 1.84.57 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+            <div>
+              <h2 className="font-display text-title text-emergency">
+                Emergência com risco de vida
+              </h2>
+              <p className="mt-1">
+                Ligue imediatamente — o atendimento vai até você. O 192 é o SAMU (Serviço
+                de Atendimento Móvel de Urgência); o 193 é o resgate do Corpo de
+                Bombeiros.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <a
+                  href="tel:192"
+                  className="inline-flex min-h-touch items-center rounded-pill bg-emergency px-4 font-bold text-white underline-offset-4 hover:underline"
+                >
+                  <span className="sr-only">Ligar para o SAMU, telefone </span>
+                  SAMU 192
+                </a>
+                <a
+                  href="tel:193"
+                  className="inline-flex min-h-touch items-center rounded-pill bg-emergency px-4 font-bold text-white underline-offset-4 hover:underline"
+                >
+                  <span className="sr-only">Ligar para os Bombeiros, telefone </span>
+                  Bombeiros 193
+                </a>
+              </div>
+            </div>
+          </div>
         </Card>
 
         <Card>

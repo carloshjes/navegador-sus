@@ -16,21 +16,29 @@ test('home page renders with the real dataset', async ({ page }) => {
   await expect(page.getByText(/\d+ unidades ativas/)).toBeVisible()
 })
 
-test('emergency numbers are visible and one tap away', async ({ page }) => {
+test('SAMU is visible and one tap away on the emergency bar', async ({ page }) => {
   await page.goto('/')
 
   const emergencyNav = page.getByRole('navigation', {
     name: 'Telefones de emergência',
   })
   await expect(emergencyNav).toBeVisible()
-  await expect(emergencyNav.getByText('192')).toBeVisible()
-  await expect(emergencyNav.getByText('193')).toBeVisible()
+  // The bar now carries SAMU 192 only (Etapa Visual 2 / B3); the 193 lives
+  // inside "Onde ir?" — covered by the next test.
+  await expect(emergencyNav.getByText('SAMU 192')).toBeVisible()
 
-  // "One tap away": the numbers are direct tel: links, not buried in menus.
+  // "One tap away": the number is a direct tel: link, not buried in menus.
   await expect(emergencyNav.getByRole('link', { name: /SAMU/i })).toHaveAttribute(
     'href',
     'tel:192',
   )
+})
+
+test('Bombeiros 193 is reachable from the "Onde ir?" page', async ({ page }) => {
+  await page.goto('/onde-ir')
+  const link = page.getByRole('link', { name: /Bombeiros/i })
+  await expect(link).toBeVisible()
+  await expect(link).toHaveAttribute('href', 'tel:193')
 })
 
 test('skip-link is the first tab stop and targets the main content', async ({ page }) => {
