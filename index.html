@@ -2,13 +2,22 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- App mark (kit §8). SVG for modern browsers; PNG fallbacks for the rest;
+         apple-touch-icon for iOS home screen. All same-origin (img-src 'self'). -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#0E5E4C" />
+
     <meta
       name="description"
       content="Guia informativo da rede pública de saúde de Erechim/RS: unidades, horários, serviços e canais de emergência. Versão em desenvolvimento."
     />
-    <title>navegador-sus — rede pública de saúde de Erechim/RS</title>
+    <title>navegador · sus Erechim — rede pública de saúde de Erechim/RS</title>
   </head>
   <body>
     <div id="root"></div>
