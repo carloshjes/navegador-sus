@@ -35,6 +35,28 @@ test('SAMU is visible and one tap away on the emergency bar', async ({ page }) =
   )
 })
 
+test('SAMU 192 has no text-decoration underline on hover (Etapa Visual 4 / A2)', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const link = page
+    .getByRole('navigation', { name: 'Telefones de emergência' })
+    .getByRole('link', { name: /SAMU/i })
+  await link.hover()
+  // Both the parent <a> and the inner pill <span> must NOT have a default
+  // underline in any state — the entire bar reads as a stable surface.
+  const decorations = await page.evaluate(() => {
+    const a = document.querySelector('nav[aria-label="Telefones de emergência"] a')!
+    const pill = a.querySelector('span:last-child')!
+    return {
+      a: getComputedStyle(a).textDecorationLine,
+      pill: getComputedStyle(pill).textDecorationLine,
+    }
+  })
+  expect(decorations.a).toBe('none')
+  expect(decorations.pill).toBe('none')
+})
+
 test('Bombeiros 193 is reachable from the "Onde ir?" page', async ({ page }) => {
   await page.goto('/onde-ir')
   const link = page.getByRole('link', { name: /Bombeiros/i })

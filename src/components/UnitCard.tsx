@@ -34,7 +34,7 @@ export function UnitCard({
   const hours = unit.openingHours
 
   return (
-    <Card className="transition-card flex h-full flex-col hover:border-border-strong">
+    <Card className="transition-card flex h-full w-full flex-col hover:border-border-strong">
       {/* Category tag on top (kit §5): rectangle + family color. */}
       <CategoryTag unit={unit} />
       <h3 className="mt-2 font-display text-base font-bold leading-tight tracking-tight">

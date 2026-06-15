@@ -16,8 +16,11 @@ import { withDistances } from '../lib/nearby'
 import { useGeolocation } from '../lib/useGeolocation'
 import { usePageTitle } from '../lib/route-focus'
 import { Button } from '../components/Button'
+import { EmptyState } from '../components/EmptyState'
 import { Eyebrow } from '../components/Eyebrow'
 import { FilterChipGroup } from '../components/FilterChipGroup'
+import { FiltersBar } from '../components/FiltersBar'
+import { LocateButton } from '../components/LocateButton'
 import { UnitCard } from '../components/UnitCard'
 
 /** Filter state lives in the URL so any view is a shareable link. */
@@ -159,11 +162,19 @@ export function DirectoryPage() {
 
   const totalResults = care.length + comingSoon.length + institutional.length
   const nothingFound = totalResults === 0
+  // Active state includes geolocation: "perto de mim" mutates the order,
+  // so the citizen should be able to reset it from the same "Limpar filtros"
+  // affordance (Etapa Visual 4 / B1). clearEverything resets filters AND geo.
   const filtering =
     filters.q !== '' ||
     filters.servico !== '' ||
     filters.tipo !== '' ||
     filters.bairro !== ''
+  const hasActiveFilters = filtering || geo.state.status === 'granted'
+  const clearEverything = () => {
+    clearFilters()
+    if (geo.state.status === 'granted') geo.reset()
+  }
 
   return (
     <>
@@ -209,10 +220,11 @@ export function DirectoryPage() {
           <search> is already a search landmark — no role attribute needed.
           All three filters are chip groups (Etapa Visual 2 / B5); the
           textual search already covers service and neighborhood, so these
-          chips are complements with a "Mais …" disclosure for long lists. */}
+          chips are complements with a "Mais …" disclosure for long lists.
+          Vertical rhythm (Etapa Visual 4 / B5): mt-6 between main sections. */}
       <search aria-label="Buscar e filtrar unidades">
         <form
-          className="mt-6 flex flex-col gap-4"
+          className="mt-6 flex flex-col gap-6"
           onSubmit={(event) => event.preventDefault()}
         >
           <div>
@@ -267,15 +279,12 @@ export function DirectoryPage() {
         </form>
       </search>
 
-      {/* "Perto de mim" (Etapa Visual 3 / B3): primary-action block. Title +
-          privacy caveat on the left; a sólido primary button with the
-          crosshair icon on the right. On mobile the row stacks (button
-          becomes full-width). Same handler — no behavior change.
-          The button keeps the long accessible name ("Ver as mais próximas
-          de mim") so existing e2e/screen-reader contracts hold; the visible
-          short label "Localizar" sits inside it, with the long label kept
-          for assistive tech via `aria-label`. */}
-      <section aria-label="Ordenar pelas mais próximas" className="mt-8">
+      {/* "Perto de mim" (Etapa Visual 3 / B3 + Etapa Visual 4 / A3): the
+          action block — title + privacy caveat left, LocateButton right.
+          Stacks vertically on mobile (button becomes full-width). The
+          handler/contract is unchanged; `aria-label="Ver as mais próximas
+          de mim"` preserves the screen-reader and e2e name. */}
+      <section aria-label="Ordenar pelas mais próximas" className="mt-6">
         {geo.state.status !== 'granted' && (
           <div className="rounded-lg border border-edge bg-surface p-4">
             <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
@@ -285,32 +294,14 @@ export function DirectoryPage() {
                   Localização usada só neste aparelho, nunca enviada a um servidor.
                 </p>
               </div>
-              <Button
+              <LocateButton
                 onClick={geo.request}
-                variant="primary"
                 aria-label="Ver as mais próximas de mim"
                 disabled={geo.state.status === 'prompting'}
-                className="shrink-0"
+                fullWidthMobile
               >
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  className="size-4 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  {/* ti-crosshair: circle + four cardinal ticks. */}
-                  <circle cx="12" cy="12" r="7" />
-                  <path d="M12 2v3" />
-                  <path d="M12 19v3" />
-                  <path d="M2 12h3" />
-                  <path d="M19 12h3" />
-                </svg>
                 {geo.state.status === 'prompting' ? 'Obtendo localização…' : 'Localizar'}
-              </Button>
+              </LocateButton>
             </div>
             {geo.state.status === 'denied' && (
               <p className="mt-3 text-ink-muted">
@@ -345,75 +336,69 @@ export function DirectoryPage() {
         )}
       </section>
 
-      {/* Result count announced to screen readers on every change. PT-BR
-          plural: "1 resultado" vs. "N resultados" (Etapa Visual 2 / A3). */}
-      <p aria-live="polite" className="mt-4 text-ink-muted">
-        {nothingFound
-          ? 'Nenhuma unidade encontrada.'
-          : `${totalResults} ${totalResults === 1 ? 'resultado' : 'resultados'}.`}
-      </p>
+      {/* Results region. `aria-live="polite"` on the count announces the
+          number to screen readers whenever filters change (Etapa Visual 4 /
+          D3). The FiltersBar shows "Limpar filtros" only when something is
+          actually being filtered or sorted. */}
+      <section aria-label="Resultados" aria-live="polite" className="mt-6">
+        {!nothingFound && (
+          <FiltersBar
+            count={totalResults}
+            hasActiveFilters={hasActiveFilters}
+            onClearFilters={clearEverything}
+          />
+        )}
 
-      {nothingFound && (
-        <div className="mt-4 rounded-lg border border-edge bg-surface p-6 text-center">
-          <p className="font-semibold">Nada por aqui com esses critérios.</p>
-          <p className="mt-1 text-ink-muted">
-            Tente outro termo (a busca aceita escrever sem acento) ou limpe os filtros.
-          </p>
-          {filtering && (
-            <Button onClick={clearFilters} variant="secondary" className="mt-4">
-              Limpar busca e filtros
-            </Button>
-          )}
-        </div>
-      )}
+        {nothingFound && <EmptyState onClearFilters={clearEverything} />}
 
-      {care.length > 0 && (
-        <section aria-labelledby="titulo-atendimento" className="mt-8">
-          <h2 id="titulo-atendimento" className="sr-only">
-            Unidades de atendimento
-          </h2>
-          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {careWithDistance.map(({ unit, distance }) => (
-              <li key={unit.id}>
-                <UnitCard unit={unit} distanceMeters={distance} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        {care.length > 0 && (
+          <section aria-labelledby="titulo-atendimento" className="mt-4">
+            <h2 id="titulo-atendimento" className="sr-only">
+              Unidades de atendimento
+            </h2>
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+              {careWithDistance.map(({ unit, distance }) => (
+                <li key={unit.id} className="flex">
+                  <UnitCard unit={unit} distanceMeters={distance} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
-      {comingSoon.length > 0 && (
-        <section aria-labelledby="titulo-em-breve" className="mt-10">
-          <h2 id="titulo-em-breve" className="font-display text-display">
-            Em breve
-          </h2>
-          <ul className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {comingSoon.map((unit) => (
-              <li key={unit.id}>
-                <UnitCard unit={unit} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        {comingSoon.length > 0 && (
+          <section aria-labelledby="titulo-em-breve" className="mt-6">
+            <h2 id="titulo-em-breve" className="font-display text-display">
+              Em breve
+            </h2>
+            <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+              {comingSoon.map((unit) => (
+                <li key={unit.id} className="flex">
+                  <UnitCard unit={unit} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
-      {institutional.length > 0 && (
-        <section aria-labelledby="titulo-institucional" className="mt-10">
-          <h2 id="titulo-institucional" className="font-display text-display">
-            Órgãos e contatos institucionais
-          </h2>
-          <p className="mt-1 text-ink-muted">
-            Gestão e vigilância em saúde — não são locais de atendimento de rotina.
-          </p>
-          <ul className="mt-3 grid grid-cols-1 gap-3">
-            {institutional.map((unit) => (
-              <li key={unit.id}>
-                <UnitCard unit={unit} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        {institutional.length > 0 && (
+          <section aria-labelledby="titulo-institucional" className="mt-6">
+            <h2 id="titulo-institucional" className="font-display text-display">
+              Órgãos e contatos institucionais
+            </h2>
+            <p className="mt-1 text-ink-muted">
+              Gestão e vigilância em saúde — não são locais de atendimento de rotina.
+            </p>
+            <ul className="mt-4 grid grid-cols-1 gap-3 sm:gap-4">
+              {institutional.map((unit) => (
+                <li key={unit.id} className="flex">
+                  <UnitCard unit={unit} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </section>
     </>
   )
 }
