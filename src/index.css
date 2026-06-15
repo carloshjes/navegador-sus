@@ -110,6 +110,11 @@
      The bar uses h-bar; layout pages reserve pb-bar + safe-area so content
      never hides behind it (Etapa Visual 2 / A2). */
   --spacing-bar: 3.5rem; /* 56px — comfortably above the 44px touch floor */
+
+  /* Visual height of the top header (py-2 + a min-h-touch Link + 1px border).
+     The map page uses this to size its container so the Leaflet frame never
+     slides under the fixed bar on mobile (Etapa Visual 3 / A1). */
+  --spacing-header: 3.75rem; /* 60px */
 }
 
 @layer base {
@@ -125,10 +130,13 @@
 
   /* Strong, always-visible keyboard focus (WCAG 2.2 focus-visible). The
      2px ring + 2px offset around the control's own border-radius reads
-     clearly without covering rounded corners (kit §4: pills, cards). */
+     clearly without covering rounded corners (kit §4: pills, cards). The
+     120ms transition (Etapa Visual 3 / C4) softens the ring's appearance
+     when focus arrives by keyboard — never animates the layout. */
   :focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
+    transition: outline-color 120ms ease-out;
   }
 
   /* On the emergency bar (red), the primary ring would have ~1:1 contrast,
@@ -167,6 +175,67 @@
   .h-bar {
     height: var(--spacing-bar);
   }
+
+  /* Map page wrapper (Etapa Visual 3 / A1): fixes the whole page to the
+     visible viewport minus the chrome (header + emergency bar + iOS safe
+     area). With the inner map element flex-1, it fills the leftover space
+     and never extends under the fixed bar. `dvh` (dynamic viewport height)
+     shrinks/grows with the mobile browser URL bar — `vh` would lock to the
+     initial size and clip when the URL bar reappears. */
+  .h-mappage {
+    height: calc(
+      100dvh - var(--spacing-header) - var(--spacing-bar) - env(safe-area-inset-bottom)
+    );
+  }
+
+  /* Smooth-appear transitions (Etapa Visual 3 / C4). Sober, short, and
+     limited to color/opacity/transform — never scale or shadow. The
+     reduce-motion media query above zeroes them all out. */
+  .transition-card {
+    transition: border-color 180ms ease-out;
+  }
+  .transition-chip {
+    transition:
+      background-color 150ms ease-out,
+      color 150ms ease-out,
+      border-color 150ms ease-out;
+  }
+}
+
+/* Eyebrow (kit-derived motif, Etapa Visual 3 / C1): an UPPERCASE Public Sans
+   label tracked open, preceded by a short horizontal rule. Used over the
+   home hero; available for other pages without further classes. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  background-color: currentColor;
+}
+
+/* Coral middot motif (Etapa Visual 3 / C2). The product's color motif gets
+   ONLY three uses, always as a separator at weight 700:
+   1. card subtitle "bairro · sublocal"
+   2. count phrase "35 unidades."  ← the final dot
+   3. eyebrow "TERMO · TERMO"      ← never on the home, available for others
+   Anywhere else, a · stays in `currentColor`. Don't sprinkle this class
+   ornamentally — it's the discipline behind a brand motif. */
+.dot-accent {
+  color: var(--color-accent);
+  font-weight: 700;
+  margin: 0 0.35em;
 }
 
 /* Leaflet zoom controls default to ~30px; raise them to the 44px touch

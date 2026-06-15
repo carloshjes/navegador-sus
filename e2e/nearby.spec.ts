@@ -19,11 +19,19 @@ test('granted: sorts care units by distance with the honesty caveat', async ({
 
   await page.getByRole('button', { name: 'Ver as mais próximas de mim' }).click()
 
-  // The fixed honesty caveat must appear; the label "sua unidade" must not.
+  // The fixed honesty caveat must appear; the "this IS your unit" claim
+  // must not surface in the granted-geolocation panel. The hero copy
+  // "Encontre a sua unidade da rede pública" is a discovery framing
+  // outside that panel — the rule (CLAUDE.md, briefing §3) bites here,
+  // where a result is being shown to the user.
+  const grantedPanel = page.locator('section[aria-label="Ordenar pelas mais próximas"]')
   await expect(
-    page.getByText(/pode .*não ser.* a que atende o seu endereço/),
+    grantedPanel.getByText(/pode .*não ser.* a que atende o seu endereço/),
   ).toBeVisible()
-  await expect(page.locator('body')).not.toContainText('sua unidade')
+  await expect(grantedPanel).not.toContainText('sua unidade')
+  // Cards must never tag any unit as "sua unidade" / "sua UBS".
+  const cardsList = page.locator('section[aria-labelledby="titulo-atendimento"] > ul')
+  await expect(cardsList).not.toContainText(/sua\s+(unidade|UBS)/i)
 
   // Nearest-first: the first care card is Presidente Vargas, with a distance.
   const firstCard = page

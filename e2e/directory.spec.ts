@@ -63,6 +63,24 @@ test('hub cross-links: same address, different services', async ({ page }) => {
   await expect(page.locator('main')).not.toContainText(/24\s*h/i)
 })
 
+test('directory cards in a row reach equal heights (no grid holes)', async ({ page }) => {
+  // Etapa Visual 3 / A2: cards are flex columns with mt-auto on the status
+  // block; the grid stretches them so heights match. Use a desktop-sized
+  // viewport so the sm:grid-cols-2 rule kicks in.
+  await page.setViewportSize({ width: 1024, height: 800 })
+  await page.goto('/')
+  const cards = page.locator('section[aria-labelledby="titulo-atendimento"] > ul > li')
+  const heights = await cards.evaluateAll((els) =>
+    els
+      .slice(0, 4)
+      .map((el) => Math.round((el as HTMLElement).getBoundingClientRect().height)),
+  )
+  // Pair (0,1) and (2,3) sit on the same row — heights inside each pair
+  // must match (allow 1px sub-pixel slack).
+  expect(Math.abs(heights[0] - heights[1])).toBeLessThanOrEqual(1)
+  expect(Math.abs(heights[2] - heights[3])).toBeLessThanOrEqual(1)
+})
+
 test('hidden units are not reachable by deep link', async ({ page }) => {
   for (const slug of ['sami-erechim', 'ambulatorio-covid-19']) {
     await page.goto(`/unidade/${slug}`)

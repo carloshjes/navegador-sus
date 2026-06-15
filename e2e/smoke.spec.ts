@@ -8,8 +8,9 @@ import { expect, test } from '@playwright/test'
 test('home page renders with the real dataset', async ({ page }) => {
   await page.goto('/')
 
+  // Etapa Visual 3 / C1: hero is "Encontre a sua unidade da rede pública."
   await expect(
-    page.getByRole('heading', { name: /rede pública de saúde de erechim/i }),
+    page.getByRole('heading', { name: /encontre a sua unidade da rede pública/i }),
   ).toBeVisible()
 
   // The unit count comes from the JSON: any number proves the pipeline.
@@ -41,7 +42,16 @@ test('Bombeiros 193 is reachable from the "Onde ir?" page', async ({ page }) => 
   await expect(link).toHaveAttribute('href', 'tel:193')
 })
 
-test('skip-link is the first tab stop and targets the main content', async ({ page }) => {
+test('skip-link is the first tab stop and targets the main content', async ({
+  page,
+  browserName,
+}) => {
+  // WebKit excludes links from the default Tab order (Safari's "Full
+  // Keyboard Access" is off by default); Chromium includes them. The
+  // skip-link itself reaches the content equally on both — we assert the
+  // keyboard-only contract on Chromium, since on iPhone 13 the very first
+  // Tab does nothing for a link target.
+  test.skip(browserName === 'webkit', 'Safari excludes links from default Tab order')
   await page.goto('/')
 
   await page.keyboard.press('Tab')
