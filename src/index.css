@@ -200,6 +200,48 @@
       color 150ms ease-out,
       border-color 150ms ease-out;
   }
+
+  /* Touch-target sized square (44 × 44px). Used for the bottom-sheet close
+     button and any other "icon-only" tap target. */
+  .size-touch {
+    width: var(--spacing-touch);
+    height: var(--spacing-touch);
+  }
+}
+
+/* Bottom-sheet (Etapa Visual 4 / B4): native <dialog> as a slide-up panel
+   on mobile. Below the `sm` breakpoint, the JS opens it; above it, the
+   FilterChipGroup never calls showModal() and falls back to inline expand.
+   The native ::backdrop is the semi-opaque overlay; the panel slides up
+   via a 200ms transform. The global prefers-reduced-motion rule strips
+   the animation automatically. */
+.bottom-sheet {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  margin-top: auto;
+  padding: 0;
+  background-color: var(--color-surface);
+  border: none;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: 0 -8px 24px rgba(22, 48, 42, 0.18);
+}
+.bottom-sheet::backdrop {
+  background-color: rgba(22, 48, 42, 0.5);
+}
+.bottom-sheet[open] {
+  animation: bottom-sheet-up 200ms ease-out;
+}
+@keyframes bottom-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 /* Eyebrow (kit-derived motif, Etapa Visual 3 / C1): an UPPERCASE Public Sans

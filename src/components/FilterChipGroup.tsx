@@ -1,17 +1,19 @@
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { FilterChip } from './FilterChip'
 
 /**
- * Family of chips with a "Mais ▾" disclosure for long lists (Etapa Visual 2 /
- * B5). The first `prioritySlots` chips are always visible; the rest hide
- * behind a button until the user opens them — keeps the directory from
- * becoming a wall of chips when neighborhoods or services are dozens. The
- * disclosure is a real `<button aria-expanded aria-controls>` so screen
- * readers narrate the state.
+ * Family of chips with a "Mais ▾" disclosure for long lists.
  *
- * `options` already arrives in display order (priority chips first); the
- * caller decides which slugs are "priority" by ordering them upfront. The
- * "Todos" chip is always rendered first when `allowAll` is true.
+ * Etapa Visual 4 / B3+B4: the "Mais" affordance changed identity:
+ * - **B3**: it's a teal-text button with a rotating chevron — no longer
+ *   styled like a chip, so it doesn't blend with inactive chips.
+ * - **B4**: on small screens (< 640px) clicking "Mais" opens a native
+ *   `<dialog>` bottom-sheet (focus trap, Esc to close, backdrop click,
+ *   return-focus all free); on `≥ 640px` it expands inline (as before).
+ *
+ * The disclosure announces itself via `aria-expanded` + `aria-controls`.
+ * If the active value sits past the priority cut, the inline panel opens
+ * automatically so the selected chip is always visible to mouse users.
  */
 interface Option<V extends string> {
   value: V
@@ -29,6 +31,39 @@ interface FilterChipGroupProps<V extends string> {
   moreLabel?: string
 }
 
+/** ⌵ chevron used by the disclosure button and the bottom-sheet close. */
+function ChevronDown({ className = '' }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className={`size-[14px] shrink-0 ${className}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  )
+}
+
+/** Tailwind `sm` breakpoint: matchMedia stays in sync if the user rotates. */
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.matchMedia('(max-width: 639px)').matches
+  })
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)')
+    const onChange = (event: MediaQueryListEvent) => setIsMobile(event.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return isMobile
+}
+
 export function FilterChipGroup<V extends string>({
   legend,
   options,
@@ -39,24 +74,60 @@ export function FilterChipGroup<V extends string>({
 }: FilterChipGroupProps<V>) {
   const reactId = useId()
   const moreId = `${reactId}-more`
+  const sheetTitleId = `${reactId}-sheet-title`
+  const isMobile = useIsMobile()
+  const dialogRef = useRef<HTMLDialogElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
 
-  // If the active value sits past the priority cut, keep the panel open so the
-  // selected chip is always visible.
+  // If the active value sits past the priority cut, the inline panel opens
+  // so the selected chip is always visible. Mobile uses the sheet instead
+  // — no "auto-open" there, the user opens it deliberately.
   const activeOptionIndex = options.findIndex((o) => o.value === value)
   const activeBeyondCut =
     prioritySlots > 0 && activeOptionIndex >= prioritySlots && value !== ''
-  const [expanded, setExpanded] = useState(activeBeyondCut)
-  const isOpen = expanded || activeBeyondCut
+  const [inlineOpen, setInlineOpen] = useState(activeBeyondCut)
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const isOpen = isMobile ? sheetOpen : inlineOpen || activeBeyondCut
 
   const cutoff = prioritySlots > 0 ? prioritySlots : options.length
   const visible = options.slice(0, cutoff)
   const hidden = options.slice(cutoff)
   const hasMore = hidden.length > 0
 
+  const openMore = () => {
+    if (isMobile) {
+      setSheetOpen(true)
+      dialogRef.current?.showModal()
+    } else {
+      setInlineOpen(true)
+    }
+  }
+
+  const closeMore = () => {
+    if (isMobile) {
+      setSheetOpen(false)
+      dialogRef.current?.close()
+      // Return focus to the trigger (`<dialog>` doesn't do it for us
+      // when we close programmatically).
+      triggerRef.current?.focus()
+    } else {
+      setInlineOpen(false)
+    }
+  }
+
+  // `<dialog>` fires "close" on Esc and backdrop click — keep state in sync.
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+    const onClose = () => setSheetOpen(false)
+    dialog.addEventListener('close', onClose)
+    return () => dialog.removeEventListener('close', onClose)
+  }, [])
+
   return (
     <fieldset>
       <legend className="mb-1 block font-semibold">{legend}</legend>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <FilterChip active={value === ''} onClick={() => onChange('')}>
           Todos
         </FilterChip>
@@ -69,44 +140,111 @@ export function FilterChipGroup<V extends string>({
             {opt.label}
           </FilterChip>
         ))}
-        {hasMore && !isOpen && (
+
+        {hasMore && (
           <button
             type="button"
-            aria-expanded={false}
+            ref={triggerRef}
+            aria-expanded={isOpen}
             aria-controls={moreId}
-            onClick={() => setExpanded(true)}
-            className="transition-chip inline-flex min-h-touch items-center rounded-sm border border-border-strong bg-surface px-3 text-label text-ink-muted hover:bg-bg hover:border-primary hover:text-primary"
+            onClick={isOpen ? closeMore : openMore}
+            className="transition-chip inline-flex min-h-touch items-center gap-1 rounded-[3px] px-2 py-[7px] text-[13px] font-semibold text-primary no-underline hover:bg-[#f2eee5]"
           >
-            {moreLabel} ▾
+            {isOpen && !isMobile ? 'Menos' : moreLabel}
+            <ChevronDown
+              className={`transition-transform duration-200 ${isOpen && !isMobile ? 'rotate-180' : ''}`}
+            />
           </button>
         )}
-        {hasMore && isOpen && (
-          <>
-            <div id={moreId} className="contents">
-              {hidden.map((opt) => (
+
+        {/* Desktop: chips revealed inline. Mobile: the sheet below holds
+            them instead — keeping the page short. */}
+        {hasMore && !isMobile && isOpen && (
+          <div id={moreId} className="contents">
+            {hidden.map((opt) => (
+              <FilterChip
+                key={opt.value}
+                active={value === opt.value}
+                onClick={() => onChange(opt.value)}
+              >
+                {opt.label}
+              </FilterChip>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Bottom sheet (mobile only). Native <dialog> gives us focus trap,
+          Esc-to-close and a backdrop ::backdrop pseudo-element for free. */}
+      {hasMore && (
+        <dialog
+          id={moreId}
+          ref={dialogRef}
+          aria-labelledby={sheetTitleId}
+          className="bottom-sheet"
+        >
+          <div className="flex h-full max-h-[80dvh] flex-col">
+            <div className="flex items-center justify-between border-b border-edge px-4 py-3">
+              <h2
+                id={sheetTitleId}
+                className="font-display text-title font-semibold text-ink"
+              >
+                {moreLabel}
+              </h2>
+              <button
+                type="button"
+                onClick={closeMore}
+                aria-label="Fechar"
+                className="inline-flex size-touch items-center justify-center rounded-md text-ink-muted hover:bg-bg"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 overflow-y-auto px-4 py-4">
+              <FilterChip
+                active={value === ''}
+                onClick={() => {
+                  onChange('')
+                }}
+                className="justify-center"
+              >
+                Todos
+              </FilterChip>
+              {options.map((opt) => (
                 <FilterChip
                   key={opt.value}
                   active={value === opt.value}
                   onClick={() => onChange(opt.value)}
+                  className="justify-center"
                 >
                   {opt.label}
                 </FilterChip>
               ))}
             </div>
-            {!activeBeyondCut && (
+            <div className="border-t border-edge px-4 py-3">
               <button
                 type="button"
-                aria-expanded={true}
-                aria-controls={moreId}
-                onClick={() => setExpanded(false)}
-                className="transition-chip inline-flex min-h-touch items-center rounded-sm border border-border-strong bg-surface px-3 text-label text-ink-muted hover:bg-bg hover:border-primary hover:text-primary"
+                onClick={closeMore}
+                className="inline-flex min-h-touch w-full items-center justify-center rounded-[4px] bg-primary px-4 text-[13px] font-semibold text-white no-underline transition-colors duration-[180ms] ease-out hover:bg-primary-strong"
               >
-                Menos ▴
+                Aplicar
               </button>
-            )}
-          </>
-        )}
-      </div>
+            </div>
+          </div>
+        </dialog>
+      )}
     </fieldset>
   )
 }

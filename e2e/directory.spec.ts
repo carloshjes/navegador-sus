@@ -41,11 +41,67 @@ test('EmergencyBar is one tap away on every route', async ({ page }) => {
   }
 })
 
-test('empty search result offers a one-tap reset', async ({ page }) => {
+test('empty state appears when filters zero results, clears one tap (V4 / B2)', async ({
+  page,
+}) => {
   await page.goto('/?q=xyzzy')
-  await expect(page.getByText('Nenhuma unidade encontrada.')).toBeVisible()
-  await page.getByRole('button', { name: 'Limpar busca e filtros' }).click()
-  await expect(page.getByText(/\d+ resultado/)).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Nenhuma unidade combina com os filtros' }),
+  ).toBeVisible()
+  // The clear-filters button on the empty state resets to the full list.
+  await page.getByRole('button', { name: 'Limpar filtros' }).click()
+  await expect(page.getByText(/\d+ unidades/)).toBeVisible()
+})
+
+test('filters bar shows count + Limpar filtros only when active (V4 / B1)', async ({
+  page,
+}) => {
+  // With no filters, the count row exists but no clear-filters button.
+  await page.goto('/')
+  await expect(page.getByText(/\d+ unidades/).first()).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Limpar filtros' })).toHaveCount(0)
+
+  // Click any chip — "Limpar filtros" appears.
+  await page.getByRole('button', { name: 'UBS', exact: true }).click()
+  await expect(page).toHaveURL(/tipo=ubs/)
+  await expect(page.getByRole('button', { name: 'Limpar filtros' })).toBeVisible()
+
+  // Clearing returns to the bare directory and removes the button.
+  await page.getByRole('button', { name: 'Limpar filtros' }).click()
+  await expect(page).not.toHaveURL(/tipo=/)
+  await expect(page.getByRole('button', { name: 'Limpar filtros' })).toHaveCount(0)
+})
+
+test('CategoryTag is its content width, not full card width (V4 / A1)', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.locator('[data-testid="category-tag"]').first().waitFor()
+  const result = await page.evaluate(() => {
+    const tag = document.querySelector<HTMLElement>('[data-testid="category-tag"]')!
+    const tagRect = tag.getBoundingClientRect()
+    // The flex column ancestor (the Card) is the width benchmark.
+    const card = tag.closest<HTMLElement>('div.flex.flex-col')!
+    const cardRect = card.getBoundingClientRect()
+    const cs = getComputedStyle(tag)
+    return {
+      tagWidth: tagRect.width,
+      cardWidth: cardRect.width,
+      alignSelf: cs.alignSelf,
+      classList: [...tag.classList],
+    }
+  })
+  // The author class set must include `inline-flex` and `self-start`. Both
+  // are required (defense in depth — see docs/kit §9.1). Note: computed
+  // `display` is `flex`, not `inline-flex`, because CSS blockifies any
+  // `inline-*` flex/grid item to its block equivalent. The CLASS is what
+  // protects future refactors, so that's what we assert here.
+  expect(result.classList).toContain('inline-flex')
+  expect(result.classList).toContain('self-start')
+  expect(result.alignSelf).toBe('flex-start')
+  // The rendered width stays close to content; the card width is at least
+  // 3× the tag width even on a 375px mobile column.
+  expect(result.tagWidth * 3).toBeLessThan(result.cardWidth)
 })
 
 test('hub cross-links: same address, different services', async ({ page }) => {
@@ -79,6 +135,28 @@ test('directory cards in a row reach equal heights (no grid holes)', async ({ pa
   // must match (allow 1px sub-pixel slack).
   expect(Math.abs(heights[0] - heights[1])).toBeLessThanOrEqual(1)
   expect(Math.abs(heights[2] - heights[3])).toBeLessThanOrEqual(1)
+})
+
+test('mobile: Mais opens a bottom-sheet; desktop: inline (V4 / B4)', async ({ page }) => {
+  // ---- Mobile: bottom sheet opens via <dialog open> ----
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  // The Tipo group has 8 priority chips + the rest behind "Mais tipos".
+  await page.getByRole('button', { name: 'Mais tipos' }).first().click()
+  const sheet = page.locator('dialog.bottom-sheet[open]').first()
+  await expect(sheet).toBeVisible()
+  // Close button restores focus to the trigger.
+  await sheet.getByRole('button', { name: 'Fechar' }).click()
+  await expect(page.locator('dialog.bottom-sheet[open]')).toHaveCount(0)
+
+  // ---- Desktop: inline expand, no <dialog open> ever ----
+  await page.setViewportSize({ width: 1024, height: 800 })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Mais tipos' }).first().click()
+  // On desktop, the chevron rotates and the rest of the chips appear in line.
+  await expect(page.locator('dialog.bottom-sheet[open]')).toHaveCount(0)
+  // The collapse button now reads "Menos".
+  await expect(page.getByRole('button', { name: /^Menos/ })).toBeVisible()
 })
 
 test('hidden units are not reachable by deep link', async ({ page }) => {

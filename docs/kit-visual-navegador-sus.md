@@ -156,7 +156,44 @@ SVG-fonte (24×24, escalável):
 - `favicon` 16/32px e mark no header: pin sobre **fundo transparente**.
 - Ícones de PWA (192/512px), `apple-touch-icon` (180px) e versão **maskable**: pin centralizado com *safe-zone*, sobre **fundo branco** `#FFFFFF` (não o tile teal — respeita "sem bloco colorido"). O recorte do Android vira um círculo branco com o pin, limpo.
 
-## 9. Acessibilidade (herda das metas do projeto)
+## 9. Componentes — especificação visual
+
+### 9.1 Tag de categoria (`CategoryTag`) — Etapa Visual 4 / A1
+
+Retângulo sólido pequeno, na cor da família, com texto branco.
+**Largura definida pelo conteúdo** — nunca estica.
+
+- `display: inline-flex; align-items: center; align-self: flex-start`
+- `padding: 4px 9px`
+- `border-radius: 3px`
+- texto: Public Sans 700 / 11px / `line-height: 1` /
+  `text-transform: uppercase` / `letter-spacing: 0.05em` / `color: white`
+- background: token `cat-{family}` do §3
+- **Sem foco visível** (a tag não é clicável; a regra
+  `:focus-visible` global só fala de interativos)
+
+**Famílias:** `ubs`, `urgency`, `hospital`, `mental`, `specialty`,
+`pharmacy`, `admin` (§3 — *Cores de categoria*).
+
+**Proibido (causa raiz dos bugs já vistos):**
+- `width: 100%`, `display: block`, `flex` *sem* `align-self: flex-start`
+- envelopar em wrapper sem `display: flex`
+- `text-decoration: underline` no hover (a tag não é link)
+
+Em flex-column (UnitCard é `flex flex-col h-full`), filhos ocupam 100%
+da largura por default. **Tanto `inline-flex` quanto `self-start` são
+obrigatórios** — defesa em profundidade caso o pai vire `block` no
+futuro.
+
+> **Curiosidade que assusta no DevTools:** o filho de um flex container
+> tem o `display` *blockificado* — `inline-flex` aparece como `flex` no
+> computed style, `inline-block` aparece como `block`. **A largura
+> permanece correta** (o `inline-` foi escrito para o caso de o pai
+> virar block); o `display` só dá a impressão de ter mudado. O teste em
+> `e2e/directory.spec.ts` valida o contrato pela **classe CSS escrita**,
+> não pelo computed value — é a classe que protege refatorações.
+
+## 10. Acessibilidade (herda das metas do projeto)
 
 - Contraste AA garantido por construção (tabelas acima).
 - Cor **nunca** é o único sinal: categoria sempre tem rótulo textual; status tem ícone + texto.
