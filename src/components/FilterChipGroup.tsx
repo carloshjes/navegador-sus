@@ -75,7 +75,7 @@ export function FilterChipGroup<V extends string>({
             aria-expanded={false}
             aria-controls={moreId}
             onClick={() => setExpanded(true)}
-            className="inline-flex min-h-touch items-center rounded-sm border border-border-strong bg-surface px-3 text-label text-ink-muted hover:border-primary hover:text-primary"
+            className="transition-chip inline-flex min-h-touch items-center rounded-sm border border-border-strong bg-surface px-3 text-label text-ink-muted hover:bg-bg hover:border-primary hover:text-primary"
           >
             {moreLabel} ▾
           </button>
@@ -99,7 +99,7 @@ export function FilterChipGroup<V extends string>({
                 aria-expanded={true}
                 aria-controls={moreId}
                 onClick={() => setExpanded(false)}
-                className="inline-flex min-h-touch items-center rounded-sm border border-border-strong bg-surface px-3 text-label text-ink-muted hover:border-primary hover:text-primary"
+                className="transition-chip inline-flex min-h-touch items-center rounded-sm border border-border-strong bg-surface px-3 text-label text-ink-muted hover:bg-bg hover:border-primary hover:text-primary"
               >
                 Menos ▴
               </button>

@@ -11,14 +11,16 @@ interface FilterChipProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function FilterChip({ active, className = '', ...props }: FilterChipProps) {
+  // transition-chip animates bg/color/border in 150ms — the reduce-motion
+  // global rule in index.css zeros it out automatically (Etapa Visual 3 / C4).
   const tone = active
     ? 'bg-primary text-white'
-    : 'border border-border-strong bg-surface text-ink-muted hover:border-primary hover:text-primary'
+    : 'border border-border-strong bg-surface text-ink-muted hover:bg-bg hover:border-primary hover:text-primary'
   return (
     <button
       type="button"
       aria-pressed={active}
-      className={`inline-flex min-h-touch items-center rounded-sm px-3 text-label ${tone} ${className}`}
+      className={`transition-chip inline-flex min-h-touch items-center rounded-sm px-3 text-label ${tone} ${className}`}
       {...props}
     />
   )
