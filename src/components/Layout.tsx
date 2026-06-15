@@ -5,9 +5,13 @@ import { useRouteFocus } from '../lib/route-focus'
 import { formatDateBR } from '../lib/provenance-ui'
 import { dataset } from '../data/units'
 
+/* Nav items repeat the coral motif on the active state (Etapa Visual 3 /
+   B1): a 2px coral border-bottom (the brand's coral dot stretched into a
+   line). Inactive items keep a transparent border of equal weight so the
+   active/inactive heights match — no layout jitter on selection. */
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `flex min-h-touch items-center rounded-md px-3 text-label text-primary underline-offset-4 hover:underline ${
-    isActive ? 'underline' : ''
+  `flex min-h-touch items-center border-b-2 px-2 pt-0.5 text-label text-primary transition-card ${
+    isActive ? 'border-accent font-semibold' : 'border-transparent hover:border-edge'
   }`
 
 /** App chrome shared by every route; pages render into <Outlet />. */
@@ -39,6 +43,12 @@ export function Layout() {
             <Logo />
           </Link>
           <nav aria-label="Seções do guia" className="ms-auto flex gap-1">
+            {/* `end` is required on the index route — without it, NavLink
+                would treat any path as a child of "/" and render Início as
+                always-active. */}
+            <NavLink to="/" end className={navLinkClass}>
+              Início
+            </NavLink>
             <NavLink to="/mapa" className={navLinkClass}>
               Mapa
             </NavLink>

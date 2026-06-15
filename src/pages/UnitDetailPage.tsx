@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
 import { dataset } from '../data/units'
 import type { HealthUnit, ProvenancedField } from '../data/types'
@@ -13,7 +13,6 @@ import { hubMates } from '../lib/hubs'
 import { formatDateBR, HOURS_BADGE_LABELS, telHref } from '../lib/provenance-ui'
 import { usePageTitle } from '../lib/route-focus'
 import { Badge } from '../components/Badge'
-import { Button } from '../components/Button'
 import { Card } from '../components/Card'
 import { NotFoundPage } from './NotFoundPage'
 
@@ -61,7 +60,6 @@ function ProvenancedRow({
 }
 
 function AddressBlock({ unit }: { unit: HealthUnit }) {
-  const [copied, setCopied] = useState(false)
   const { street, neighborhood, city, state, zipCode } = unit.address
   if (!street) return null
 
@@ -74,31 +72,12 @@ function AddressBlock({ unit }: { unit: HealthUnit }) {
     .filter(Boolean)
     .join(', ')
 
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(fullAddress)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2500)
-    } catch {
-      // Clipboard can be unavailable (permissions/old browser): no crash,
-      // the address remains selectable text.
-    }
-  }
-
+  // The browser's native select-and-copy already covers this gesture; users
+  // who want to GO to the unit click "Ver no mapa" below (Etapa Visual 3 / B2).
   return (
     <div className="border-edge border-t py-3">
       <dt className="font-semibold">Endereço</dt>
-      <dd className="mt-1">
-        <div>{fullAddress}</div>
-        <div className="mt-2 flex items-center gap-3">
-          <Button variant="secondary" onClick={copy}>
-            Copiar endereço
-          </Button>
-          <span aria-live="polite" className="text-meta text-ink-muted">
-            {copied ? 'Endereço copiado!' : ''}
-          </span>
-        </div>
-      </dd>
+      <dd className="mt-1">{fullAddress}</dd>
     </div>
   )
 }

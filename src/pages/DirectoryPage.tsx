@@ -16,6 +16,7 @@ import { withDistances } from '../lib/nearby'
 import { useGeolocation } from '../lib/useGeolocation'
 import { usePageTitle } from '../lib/route-focus'
 import { Button } from '../components/Button'
+import { Eyebrow } from '../components/Eyebrow'
 import { FilterChipGroup } from '../components/FilterChipGroup'
 import { UnitCard } from '../components/UnitCard'
 
@@ -166,15 +167,39 @@ export function DirectoryPage() {
 
   return (
     <>
-      <h1 id="page-title" tabIndex={-1} className="font-display text-display-lg">
-        Rede pública de saúde de Erechim/RS
+      <Eyebrow>Erechim — RS</Eyebrow>
+      {/* Hero (Etapa Visual 3 / C1): Figtree 700, tightened metrics; the
+          phrase "rede pública" takes the brand teal, ending with the coral
+          dot — the kit motif applied at title scale. The page title is the
+          same a11y target (id="page-title", tabIndex={-1}) so route-focus
+          keeps working. */}
+      <h1
+        id="page-title"
+        tabIndex={-1}
+        className="mt-2 font-display font-bold leading-[1.08] tracking-[-0.015em] text-[32px] sm:text-[38px]"
+      >
+        Encontre a sua unidade da{' '}
+        <span className="text-primary">
+          rede pública
+          <span aria-hidden="true" className="text-accent">
+            .
+          </span>
+        </span>
       </h1>
-      <p className="mt-2 text-ink-muted">
-        O guia conhece hoje <strong>{activeUnits.length} unidades ativas</strong> da rede
-        pública do município. Os dados ainda estão em verificação — confirme por telefone
-        antes de ir.{' '}
-        {/* "versão em desenvolvimento" moved out of the header (B2): a
-            discreet inline marker, never a flashy ribbon. */}
+      <p className="mt-3 text-ink-muted">
+        O guia conhece hoje{' '}
+        {/* Count phrase (C2): Figtree 700 with the sentence-final dot in
+            coral — the brand motif applied to a number that matters.
+            "ativas" stays in to distinguish from planned/deactivated units
+            (data-honesty word from briefing §5). */}
+        <strong className="font-display text-ink">
+          {activeUnits.length} unidades ativas
+          <span aria-hidden="true" className="text-accent">
+            .
+          </span>
+        </strong>{' '}
+        Dados ainda em verificação — confirme por telefone antes de ir.{' '}
+        {/* Discreet "v. desenvolvimento" marker, never a flashy ribbon. */}
         <span className="ms-1 inline-block align-middle text-meta text-ink-muted">
           (versão em desenvolvimento)
         </span>
@@ -242,26 +267,51 @@ export function DirectoryPage() {
         </form>
       </search>
 
-      {/* "Perto de mim": the explanation comes BEFORE the permission prompt
-          (briefing §2 — location stays on the device, never sent). */}
+      {/* "Perto de mim" (Etapa Visual 3 / B3): primary-action block. Title +
+          privacy caveat on the left; a sólido primary button with the
+          crosshair icon on the right. On mobile the row stacks (button
+          becomes full-width). Same handler — no behavior change.
+          The button keeps the long accessible name ("Ver as mais próximas
+          de mim") so existing e2e/screen-reader contracts hold; the visible
+          short label "Localizar" sits inside it, with the long label kept
+          for assistive tech via `aria-label`. */}
       <section aria-label="Ordenar pelas mais próximas" className="mt-8">
         {geo.state.status !== 'granted' && (
           <div className="rounded-lg border border-edge bg-surface p-4">
-            <p className="text-ink-muted">
-              Podemos ordenar as unidades pelas mais próximas de você. Sua localização é
-              usada <strong>só neste aparelho</strong> e nunca é enviada a nenhum
-              servidor.
-            </p>
-            <Button
-              onClick={geo.request}
-              variant="secondary"
-              className="mt-3"
-              disabled={geo.state.status === 'prompting'}
-            >
-              {geo.state.status === 'prompting'
-                ? 'Obtendo localização…'
-                : 'Ver as mais próximas de mim'}
-            </Button>
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+              <div>
+                <p className="font-semibold text-ink">Ver as unidades mais próximas</p>
+                <p className="text-meta text-ink-muted">
+                  Localização usada só neste aparelho, nunca enviada a um servidor.
+                </p>
+              </div>
+              <Button
+                onClick={geo.request}
+                variant="primary"
+                aria-label="Ver as mais próximas de mim"
+                disabled={geo.state.status === 'prompting'}
+                className="shrink-0"
+              >
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  className="size-4 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  {/* ti-crosshair: circle + four cardinal ticks. */}
+                  <circle cx="12" cy="12" r="7" />
+                  <path d="M12 2v3" />
+                  <path d="M12 19v3" />
+                  <path d="M2 12h3" />
+                  <path d="M19 12h3" />
+                </svg>
+                {geo.state.status === 'prompting' ? 'Obtendo localização…' : 'Localizar'}
+              </Button>
+            </div>
             {geo.state.status === 'denied' && (
               <p className="mt-3 text-ink-muted">
                 Tudo bem — sem a localização, você pode{' '}
