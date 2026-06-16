@@ -19,7 +19,7 @@ import { Button } from '../components/Button'
 import { EmptyState } from '../components/EmptyState'
 import { Eyebrow } from '../components/Eyebrow'
 import { FilterChipGroup } from '../components/FilterChipGroup'
-import { FiltersBar } from '../components/FiltersBar'
+import { FiltersBar, type ActiveFilter } from '../components/FiltersBar'
 import { LocateButton } from '../components/LocateButton'
 import { UnitCard } from '../components/UnitCard'
 
@@ -41,6 +41,46 @@ function matchesFilters(unit: HealthUnit, filters: Filters): boolean {
   // areas are still unmapped (critical gap #3) — no "your unit" guesses.
   if (filters.bairro && unit.address.neighborhood !== filters.bairro) return false
   return true
+}
+
+/* Inline glyphs (kept here because they're only used in the search input).
+   Tabler-shaped, currentColor — same approach as Badge / LocateButton. */
+function SearchGlyph() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="10" cy="10" r="6" />
+      <path d="m20 20-5.2-5.2" />
+    </svg>
+  )
+}
+
+function XGlyph() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
+  )
 }
 
 export function DirectoryPage() {
@@ -165,16 +205,259 @@ export function DirectoryPage() {
   // Active state includes geolocation: "perto de mim" mutates the order,
   // so the citizen should be able to reset it from the same "Limpar filtros"
   // affordance (Etapa Visual 4 / B1). clearEverything resets filters AND geo.
-  const filtering =
-    filters.q !== '' ||
-    filters.servico !== '' ||
-    filters.tipo !== '' ||
-    filters.bairro !== ''
-  const hasActiveFilters = filtering || geo.state.status === 'granted'
   const clearEverything = () => {
     clearFilters()
     if (geo.state.status === 'granted') geo.reset()
   }
+
+  /* Etapa Visual 5 / B: build the list of removable active filters from each
+     URL param + geolocation. Each chip carries its own `onRemove`, so the
+     FiltersBar stays unaware of the data model. */
+  const activeFilters: ActiveFilter[] = []
+  if (filters.q !== '') {
+    activeFilters.push({
+      key: 'q',
+      label: `Busca: "${filters.q}"`,
+      onRemove: () => setFilter('q', ''),
+    })
+  }
+  if (filters.tipo !== '') {
+    activeFilters.push({
+      key: 'tipo',
+      label: `Tipo: ${UNIT_TYPE_SHORT_LABELS[filters.tipo as UnitType]}`,
+      onRemove: () => setFilter('tipo', ''),
+    })
+  }
+  if (filters.servico !== '') {
+    activeFilters.push({
+      key: 'servico',
+      label: `Serviço: ${serviceChipLabel(filters.servico as ServiceSlug)}`,
+      onRemove: () => setFilter('servico', ''),
+    })
+  }
+  if (filters.bairro !== '') {
+    activeFilters.push({
+      key: 'bairro',
+      label: `Bairro: ${filters.bairro}`,
+      onRemove: () => setFilter('bairro', ''),
+    })
+  }
+  if (geo.state.status === 'granted') {
+    activeFilters.push({
+      key: 'geo',
+      label: 'Perto de mim',
+      onRemove: () => geo.reset(),
+    })
+  }
+
+  /* Search input + chip groups — extracted because they render twice in
+     spirit: on lg+ they live in the sidebar; below lg they stack ahead of
+     the results column. The same JSX produces both layouts by living inside
+     the sidebar <aside>, which the parent grid only rearranges at lg:. */
+  const searchAndFilters = (
+    /* <search> is already a search landmark — no role attribute needed. */
+    <search aria-label="Buscar e filtrar unidades">
+      <form
+        className="flex flex-col gap-6"
+        onSubmit={(event) => event.preventDefault()}
+      >
+        <div>
+          <label htmlFor="busca" className="mb-1 block font-semibold">
+            Buscar por nome, bairro ou serviço
+          </label>
+          {/* Etapa Visual 5 / C: search input ergonomics. The wrapper is
+              `relative` so the icon + clear button can sit on top of the
+              field. ps-10 reserves space for the leading magnifier; the
+              trailing × is 44×44 (touch floor) and only renders when the
+              field has text. The clear button calls setFilter('q', ''). */}
+          <div className="relative">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted"
+            >
+              <SearchGlyph />
+            </span>
+            <input
+              id="busca"
+              type="search"
+              value={filters.q}
+              onChange={(event) => setFilter('q', event.target.value)}
+              placeholder="Ex.: vacina, Capoerê, dentista…"
+              className="min-h-touch w-full rounded-md border border-edge bg-surface ps-10 pe-12 text-ink"
+            />
+            {filters.q !== '' && (
+              <button
+                type="button"
+                onClick={() => setFilter('q', '')}
+                aria-label="Limpar busca"
+                className="absolute right-1 top-1/2 inline-flex size-touch -translate-y-1/2 items-center justify-center rounded-md text-ink-muted hover:bg-bg"
+              >
+                <XGlyph />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <FilterChipGroup
+          legend="Tipo de unidade"
+          options={options.types.map((type) => ({
+            value: type,
+            label: UNIT_TYPE_SHORT_LABELS[type],
+          }))}
+          value={filters.tipo}
+          onChange={(v) => setFilter('tipo', v)}
+          prioritySlots={TYPE_VISIBLE}
+          moreLabel="Mais tipos"
+        />
+
+        <FilterChipGroup
+          legend="Serviço"
+          options={options.services.map((slug) => ({
+            value: slug,
+            label: serviceChipLabel(slug),
+          }))}
+          value={filters.servico}
+          onChange={(v) => setFilter('servico', v)}
+          prioritySlots={SERVICE_VISIBLE}
+          moreLabel="Mais serviços"
+        />
+
+        <FilterChipGroup
+          legend="Bairro"
+          options={options.neighborhoods.map((name) => ({
+            value: name,
+            label: name,
+          }))}
+          value={filters.bairro}
+          onChange={(v) => setFilter('bairro', v)}
+          prioritySlots={NEIGHBORHOOD_VISIBLE}
+          moreLabel="Mais bairros"
+        />
+      </form>
+    </search>
+  )
+
+  /* "Perto de mim" block. Two visual states: not-granted shows the trigger
+     card; granted shows the confirmation card with the unwind action. The
+     handler/contract is unchanged from V4. */
+  const locateBlock = (
+    <section aria-label="Ordenar pelas mais próximas">
+      {geo.state.status !== 'granted' && (
+        <div className="rounded-lg border border-edge bg-surface p-4">
+          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 lg:flex-col lg:items-stretch lg:gap-3">
+            <div>
+              <p className="font-semibold text-ink">Ver as unidades mais próximas</p>
+              <p className="text-meta text-ink-muted">
+                Localização usada só neste aparelho, nunca enviada a um servidor.
+              </p>
+            </div>
+            <LocateButton
+              onClick={geo.request}
+              aria-label="Ver as mais próximas de mim"
+              disabled={geo.state.status === 'prompting'}
+              fullWidthMobile
+            >
+              {geo.state.status === 'prompting' ? 'Obtendo localização…' : 'Localizar'}
+            </LocateButton>
+          </div>
+          {geo.state.status === 'denied' && (
+            <p className="mt-3 text-ink-muted">
+              Tudo bem — sem a localização, você pode{' '}
+              <strong>filtrar por bairro</strong> acima para encontrar unidades perto
+              de você.
+            </p>
+          )}
+          {geo.state.status === 'unavailable' && (
+            <p className="mt-3 text-ink-muted">
+              Não foi possível obter a localização neste dispositivo. Use o{' '}
+              <strong>filtro por bairro</strong> acima.
+            </p>
+          )}
+        </div>
+      )}
+      {geo.state.status === 'granted' && (
+        <div className="rounded-lg bg-primary-soft p-4">
+          <p className="font-semibold text-primary">
+            Unidades ordenadas pelas mais próximas de você.
+          </p>
+          {/* Fixed honesty caveat — never the label "sua unidade". */}
+          <p className="mt-1 text-ink">
+            A unidade mais próxima pode <strong>não ser</strong> a que atende o seu
+            endereço — isso é definido por território (equipes de Saúde da Família).
+            Confirme na unidade ou na Secretaria de Saúde.
+          </p>
+          <Button onClick={geo.reset} variant="ghost" className="mt-2 px-0">
+            Desfazer ordenação por distância
+          </Button>
+        </div>
+      )}
+    </section>
+  )
+
+  /* Results column. `aria-live="polite"` on the count announces the number
+     to screen readers whenever filters change (V4 / D3). The FiltersBar
+     shows individual removable chips + a "Limpar filtros" link (V5 / B). */
+  const resultsColumn = (
+    <section aria-label="Resultados" aria-live="polite">
+      {!nothingFound && (
+        <FiltersBar
+          count={totalResults}
+          activeFilters={activeFilters}
+          onClearAll={clearEverything}
+        />
+      )}
+
+      {nothingFound && <EmptyState onClearFilters={clearEverything} />}
+
+      {care.length > 0 && (
+        <section aria-labelledby="titulo-atendimento">
+          <h2 id="titulo-atendimento" className="sr-only">
+            Unidades de atendimento
+          </h2>
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            {careWithDistance.map(({ unit, distance }) => (
+              <li key={unit.id} className="flex">
+                <UnitCard unit={unit} distanceMeters={distance} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {comingSoon.length > 0 && (
+        <section aria-labelledby="titulo-em-breve" className="mt-6">
+          <h2 id="titulo-em-breve" className="font-display text-display">
+            Em breve
+          </h2>
+          <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            {comingSoon.map((unit) => (
+              <li key={unit.id} className="flex">
+                <UnitCard unit={unit} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {institutional.length > 0 && (
+        <section aria-labelledby="titulo-institucional" className="mt-6">
+          <h2 id="titulo-institucional" className="font-display text-display">
+            Órgãos e contatos institucionais
+          </h2>
+          <p className="mt-1 text-ink-muted">
+            Gestão e vigilância em saúde — não são locais de atendimento de rotina.
+          </p>
+          <ul className="mt-4 grid grid-cols-1 gap-3 sm:gap-4">
+            {institutional.map((unit) => (
+              <li key={unit.id} className="flex">
+                <UnitCard unit={unit} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </section>
+  )
 
   return (
     <>
@@ -216,189 +499,32 @@ export function DirectoryPage() {
         </span>
       </p>
 
-      {/* Search + filters; state mirrored in the URL (shareable links).
-          <search> is already a search landmark — no role attribute needed.
-          All three filters are chip groups (Etapa Visual 2 / B5); the
-          textual search already covers service and neighborhood, so these
-          chips are complements with a "Mais …" disclosure for long lists.
-          Vertical rhythm (Etapa Visual 4 / B5): mt-6 between main sections. */}
-      <search aria-label="Buscar e filtrar unidades">
-        <form
-          className="mt-6 flex flex-col gap-6"
-          onSubmit={(event) => event.preventDefault()}
+      {/* Etapa Visual 5 / A: 2-column directory at lg: (≥ 1024px). Sidebar
+          (260px) holds search + chip groups + the locate block; the right
+          column carries the FiltersBar + results. Below lg the layout falls
+          back to the V4 stack — children render sequentially in DOM order,
+          which already matches the mobile flow we want.
+
+          Why `minmax(0, 1fr)` and not `1fr`: in CSS grid, a track's min-width
+          defaults to `auto`, which is the **intrinsic** content min-width.
+          Long card text would push the column wider than the container and
+          create horizontal overflow. `minmax(0, 1fr)` overrides that floor
+          so the column can actually shrink to fit. */}
+      <div
+        className="mt-6 lg:grid lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-6"
+        data-testid="directory-grid"
+      >
+        <aside
+          data-testid="filters-sidebar"
+          className="flex flex-col gap-6 lg:sticky lg:top-6 lg:self-start"
         >
-          <div>
-            <label htmlFor="busca" className="mb-1 block font-semibold">
-              Buscar por nome, bairro ou serviço
-            </label>
-            <input
-              id="busca"
-              type="search"
-              value={filters.q}
-              onChange={(event) => setFilter('q', event.target.value)}
-              placeholder="Ex.: vacina, Capoerê, dentista…"
-              className="min-h-touch w-full rounded-md border border-edge bg-surface px-3 text-ink"
-            />
-          </div>
-
-          <FilterChipGroup
-            legend="Tipo de unidade"
-            options={options.types.map((type) => ({
-              value: type,
-              label: UNIT_TYPE_SHORT_LABELS[type],
-            }))}
-            value={filters.tipo}
-            onChange={(v) => setFilter('tipo', v)}
-            prioritySlots={TYPE_VISIBLE}
-            moreLabel="Mais tipos"
-          />
-
-          <FilterChipGroup
-            legend="Serviço"
-            options={options.services.map((slug) => ({
-              value: slug,
-              label: serviceChipLabel(slug),
-            }))}
-            value={filters.servico}
-            onChange={(v) => setFilter('servico', v)}
-            prioritySlots={SERVICE_VISIBLE}
-            moreLabel="Mais serviços"
-          />
-
-          <FilterChipGroup
-            legend="Bairro"
-            options={options.neighborhoods.map((name) => ({
-              value: name,
-              label: name,
-            }))}
-            value={filters.bairro}
-            onChange={(v) => setFilter('bairro', v)}
-            prioritySlots={NEIGHBORHOOD_VISIBLE}
-            moreLabel="Mais bairros"
-          />
-        </form>
-      </search>
-
-      {/* "Perto de mim" (Etapa Visual 3 / B3 + Etapa Visual 4 / A3): the
-          action block — title + privacy caveat left, LocateButton right.
-          Stacks vertically on mobile (button becomes full-width). The
-          handler/contract is unchanged; `aria-label="Ver as mais próximas
-          de mim"` preserves the screen-reader and e2e name. */}
-      <section aria-label="Ordenar pelas mais próximas" className="mt-6">
-        {geo.state.status !== 'granted' && (
-          <div className="rounded-lg border border-edge bg-surface p-4">
-            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-              <div>
-                <p className="font-semibold text-ink">Ver as unidades mais próximas</p>
-                <p className="text-meta text-ink-muted">
-                  Localização usada só neste aparelho, nunca enviada a um servidor.
-                </p>
-              </div>
-              <LocateButton
-                onClick={geo.request}
-                aria-label="Ver as mais próximas de mim"
-                disabled={geo.state.status === 'prompting'}
-                fullWidthMobile
-              >
-                {geo.state.status === 'prompting' ? 'Obtendo localização…' : 'Localizar'}
-              </LocateButton>
-            </div>
-            {geo.state.status === 'denied' && (
-              <p className="mt-3 text-ink-muted">
-                Tudo bem — sem a localização, você pode{' '}
-                <strong>filtrar por bairro</strong> acima para encontrar unidades perto de
-                você.
-              </p>
-            )}
-            {geo.state.status === 'unavailable' && (
-              <p className="mt-3 text-ink-muted">
-                Não foi possível obter a localização neste dispositivo. Use o{' '}
-                <strong>filtro por bairro</strong> acima.
-              </p>
-            )}
-          </div>
-        )}
-        {geo.state.status === 'granted' && (
-          <div className="rounded-lg bg-primary-soft p-4">
-            <p className="font-semibold text-primary">
-              Unidades ordenadas pelas mais próximas de você.
-            </p>
-            {/* Fixed honesty caveat — never the label "sua unidade". */}
-            <p className="mt-1 text-ink">
-              A unidade mais próxima pode <strong>não ser</strong> a que atende o seu
-              endereço — isso é definido por território (equipes de Saúde da Família).
-              Confirme na unidade ou na Secretaria de Saúde.
-            </p>
-            <Button onClick={geo.reset} variant="ghost" className="mt-2 px-0">
-              Desfazer ordenação por distância
-            </Button>
-          </div>
-        )}
-      </section>
-
-      {/* Results region. `aria-live="polite"` on the count announces the
-          number to screen readers whenever filters change (Etapa Visual 4 /
-          D3). The FiltersBar shows "Limpar filtros" only when something is
-          actually being filtered or sorted. */}
-      <section aria-label="Resultados" aria-live="polite" className="mt-6">
-        {!nothingFound && (
-          <FiltersBar
-            count={totalResults}
-            hasActiveFilters={hasActiveFilters}
-            onClearFilters={clearEverything}
-          />
-        )}
-
-        {nothingFound && <EmptyState onClearFilters={clearEverything} />}
-
-        {care.length > 0 && (
-          <section aria-labelledby="titulo-atendimento" className="mt-4">
-            <h2 id="titulo-atendimento" className="sr-only">
-              Unidades de atendimento
-            </h2>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-              {careWithDistance.map(({ unit, distance }) => (
-                <li key={unit.id} className="flex">
-                  <UnitCard unit={unit} distanceMeters={distance} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {comingSoon.length > 0 && (
-          <section aria-labelledby="titulo-em-breve" className="mt-6">
-            <h2 id="titulo-em-breve" className="font-display text-display">
-              Em breve
-            </h2>
-            <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-              {comingSoon.map((unit) => (
-                <li key={unit.id} className="flex">
-                  <UnitCard unit={unit} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {institutional.length > 0 && (
-          <section aria-labelledby="titulo-institucional" className="mt-6">
-            <h2 id="titulo-institucional" className="font-display text-display">
-              Órgãos e contatos institucionais
-            </h2>
-            <p className="mt-1 text-ink-muted">
-              Gestão e vigilância em saúde — não são locais de atendimento de rotina.
-            </p>
-            <ul className="mt-4 grid grid-cols-1 gap-3 sm:gap-4">
-              {institutional.map((unit) => (
-                <li key={unit.id} className="flex">
-                  <UnitCard unit={unit} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-      </section>
+          {searchAndFilters}
+          <div className="border-t border-edge pt-6">{locateBlock}</div>
+        </aside>
+        {/* mt-6 only below lg — on the desktop grid, the gap-6 already spaces
+            this column from the sidebar (and the column starts at row 1). */}
+        <div className="mt-6 lg:mt-0">{resultsColumn}</div>
+      </div>
     </>
   )
 }
