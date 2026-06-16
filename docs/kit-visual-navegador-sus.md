@@ -193,6 +193,63 @@ futuro.
 > `e2e/directory.spec.ts` valida o contrato pela **classe CSS escrita**,
 > não pelo computed value — é a classe que protege refatorações.
 
+### 9.2 Selo de confiança como texto (`Badge`) — Etapa Visual 5 / D
+
+A regra do §4 ("status = pílula") é **parcialmente quebrada** aqui — e a
+quebra é o sistema visual ficando mais honesto, não menos.
+
+O selo de status é agora **texto puro**, sem fundo, sem borda, sem raio.
+A pílula colorida competia com a tag de categoria (também colorida) pela
+atenção do olho; o texto colorido + ícone opcional é mais sóbrio e
+deixa o card respirar.
+
+- `display: inline-flex; align-items: center; gap: 5px`
+- texto: Public Sans 600 / 13px (`text-meta font-semibold`)
+- cor por família (tokens `text-conf-ok` / `text-conf-warn` do §3)
+- ícone opcional 13×13, `aria-hidden`, herda `currentColor`
+
+**A pílula passa a ser o vocabulário dos chips de filtros ativos**
+(`FiltersBar` v5/B) — a forma "acolhedora" agora marca **as escolhas que
+o cidadão fez**, não o estado do dado. A separação é coerente: o dado
+informa em sóbrio; o usuário interage em acolhedor.
+
+**Quando entra ícone (e qual):**
+
+| Call-site (`UnitCard` / `UnitDetailPage`) | Confidence | Label | Ícone |
+|---|---|---|---|
+| Horário, `verified-local` / `official-recent` | mesma | "horário confirmado por telefone" / "horário de fonte oficial" | — |
+| Horário, `unverified` | `unverified` | "horário não confirmado — ligue antes" | `alert-triangle` |
+| Coming-soon (card no diretório) | `unverified` | "em construção — ainda não atende" | `tools` |
+| Care-restricted | `unverified` | "acesso restrito" | `alert-triangle` |
+| Care-cautious | `unverified` | "informações em verificação" | `alert-triangle` |
+| `ProvenancedRow`, `unverified` | (mesmo) | (mesmo) | `alert-triangle` |
+| `ProvenancedRow`, demais | (mesmo) | (mesmo) | — |
+
+**Por que dois ícones diferentes (e não só um):** o triângulo é o signo
+cívico universal de cautela ("verifique antes"); o `tools` indica
+obra/estado ("ainda não opera"). A cor âmbar diz **atenção**; o ícone
+diz **qual sub-tipo** de atenção. Sem o ícone, o âmbar virava ambíguo.
+
+**Acessibilidade (WCAG 1.4.1 — cor não é o único sinal):** o rótulo
+PT-BR carrega a semântica completa ("horário não confirmado — ligue
+antes" / "em construção — ainda não atende"). Ícone e cor são reforços
+visuais; o leitor de tela recebe a mesma informação via texto. Por isso
+os SVGs ficam `aria-hidden`.
+
+**Por que SVG inline e não webfont (`@tabler/icons-webfont`):** a fonte
+de ícones precisaria de uma dependência inteira para carregar 2 glyphs,
+custaria FOUT (texto sem ícone até a fonte chegar) e, no PWA offline da
+Fase 4, mais um arquivo para o cache. Os SVGs inline herdam
+`currentColor` — a cor do ícone segue a cor do texto **sem código de
+sincronização** — e somam ~400 bytes ao bundle final.
+
+> `currentColor` (parada técnica): palavra-chave do CSS que resolve para
+> o valor da propriedade `color` do próprio elemento. Quando o `stroke`
+> ou `fill` de um SVG é `currentColor`, o ícone passa a herdar
+> automaticamente a cor do texto vizinho. Defina a cor uma vez no
+> `<span>` da Badge; o ícone vai junto. É o equivalente CSS de "faz o
+> que o texto faz".
+
 ## 10. Acessibilidade (herda das metas do projeto)
 
 - Contraste AA garantido por construção (tabelas acima).
