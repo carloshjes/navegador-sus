@@ -39,8 +39,12 @@ function ProvenancedRow({
         {field.value !== null ? (
           <>
             <div>{children ?? field.value}</div>
-            <div className="mt-1 flex flex-wrap items-center gap-2">
-              <Badge confidence={field.confidence} label={badgeLabel} />
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <Badge
+                confidence={field.confidence}
+                label={badgeLabel}
+                icon={field.confidence === 'unverified' ? 'alert-triangle' : undefined}
+              />
               <span className="text-meta text-ink-muted">
                 conferido em {formatDateBR(field.checkedAt)}
               </span>
@@ -51,6 +55,7 @@ function ProvenancedRow({
             <Badge
               confidence="unverified"
               label={badgeLabel ?? 'não confirmado — ligue antes'}
+              icon="alert-triangle"
             />
           </div>
         )}

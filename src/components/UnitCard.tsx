@@ -63,21 +63,37 @@ export function UnitCard({
         </p>
       )}
 
-      {/* Status block pushed to the bottom — equal-height cards in 2-col. */}
-      <div className="mt-auto flex flex-wrap gap-2 pt-3">
+      {/* Status block pushed to the bottom — equal-height cards in 2-col.
+          Etapa Visual 5 / D: seals are now sober text; the optional icon
+          differentiates the sub-type of caution (alert-triangle = "verify
+          first", tools = "doesn't operate yet"). See kit §9.2. */}
+      <div className="mt-auto flex flex-wrap gap-x-4 gap-y-1 pt-3">
         {category === 'coming-soon' ? (
-          <Badge confidence="unverified" label="em construção — ainda não atende" />
+          <Badge
+            confidence="unverified"
+            label="em construção — ainda não atende"
+            icon="tools"
+          />
         ) : (
           <Badge
             confidence={hours.confidence}
             label={HOURS_BADGE_LABELS[hours.confidence]}
+            icon={hours.confidence === 'unverified' ? 'alert-triangle' : undefined}
           />
         )}
         {category === 'care-restricted' && (
-          <Badge confidence="unverified" label="acesso restrito" />
+          <Badge
+            confidence="unverified"
+            label="acesso restrito"
+            icon="alert-triangle"
+          />
         )}
         {category === 'care-cautious' && (
-          <Badge confidence="unverified" label="informações em verificação" />
+          <Badge
+            confidence="unverified"
+            label="informações em verificação"
+            icon="alert-triangle"
+          />
         )}
       </div>
     </Card>

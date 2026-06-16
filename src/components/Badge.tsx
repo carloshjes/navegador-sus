@@ -1,15 +1,24 @@
 import type { Confidence } from '../data/types'
 
 /**
- * Data-confidence seal. This is the app's honesty mechanism (briefing §5 /
- * mapping report §10): unverified data is shown with an explicit warning
- * instead of being hidden or softened. Never omit it to "look better".
+ * Data-confidence seal — Etapa Visual 5 / D. The app's honesty mechanism
+ * (briefing §5 / mapping report §10): unverified data shows an explicit
+ * warning instead of being hidden or softened. Never omit it to "look better".
  *
- * Shape rule (kit §4): the seal is a PILL (radius-pill) — the welcoming
- * counterpart to the rectangular category tag. Two color families (kit §6):
- * success (OK) and warning (caution); amber never reaches AA as a solid, so
- * caution is light-amber bg + dark-brown text.
+ * Shape change (kit §9.2): the seal is now **plain text**, not a pill. The
+ * weight bumps to semibold to make up for the lost outline, the color carries
+ * the family (success/warning), and an optional icon (alert-triangle / tools)
+ * names the sub-type of caution. The pill shape is now reserved for the
+ * active-filter chips in the FiltersBar — the form-language was clarified
+ * (status = sober text; choices the citizen made = pill).
+ *
+ * WCAG 1.4.1 (color is not the only sign): meaning lives in the PT-BR label,
+ * never in color or icon alone. The icon is `aria-hidden` because the label
+ * already says "ainda não atende" / "ligue antes" — assistive tech gets the
+ * same message either way.
  */
+type IconName = 'alert-triangle' | 'tools'
+
 interface BadgeProps {
   confidence: Confidence
   /**
@@ -17,6 +26,13 @@ interface BadgeProps {
    * Falls back to the generic PT-BR label for the level.
    */
   label?: string
+  /**
+   * Optional leading icon. Pair with caution-bearing labels so the visual
+   * difference between "verify before going" (alert-triangle) and "doesn't
+   * operate yet" (tools) is clear at a glance — see the call-site table in
+   * docs/kit-visual-navegador-sus.md §9.2.
+   */
+  icon?: IconName
 }
 
 /* UI labels in PT-BR (code in English — project convention). */
@@ -39,58 +55,65 @@ const LEVEL_FAMILY: Record<Confidence, Family> = {
 }
 
 const FAMILY_CLASS: Record<Family, string> = {
-  success: 'bg-conf-ok-bg text-conf-ok',
-  warning: 'bg-conf-warn-bg text-conf-warn',
+  success: 'text-conf-ok',
+  warning: 'text-conf-warn',
 }
 
-/* Leading mark (kit §6): a check for locally verified data, a dot for other
-   OK data, an alert icon for caution. Decorative — the label carries meaning. */
-function StatusMark({ confidence }: { confidence: Confidence }) {
-  if (confidence === 'verified-local') {
+/* Inline SVG instead of an icon webfont: keeps the bundle small, lets the
+   icon inherit `currentColor` from the text, and avoids the FOUT a webfont
+   would cause. Shapes mirror Tabler's `alert-triangle` / `tools`. The
+   `data-icon` attribute is a stable anchor for e2e tests. */
+function StatusIcon({ name }: { name: IconName }) {
+  if (name === 'alert-triangle') {
     return (
       <svg
         aria-hidden="true"
-        viewBox="0 0 16 16"
-        className="size-3.5 shrink-0"
+        data-icon="alert-triangle"
+        viewBox="0 0 24 24"
+        width="13"
+        height="13"
+        className="shrink-0"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.25"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M3 8.5 6.5 12 13 4" />
+        <path d="M12 9v4" />
+        <path d="M12 16h.01" />
+        <path d="M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 0 0-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3" />
       </svg>
     )
   }
-  if (confidence === 'official-recent') {
-    return (
-      <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-conf-ok-dot" />
-    )
-  }
+  /* tools: a wrench + screwdriver, signalling "under construction". */
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 16 16"
-      className="size-3.5 shrink-0"
+      data-icon="tools"
+      viewBox="0 0 24 24"
+      width="13"
+      height="13"
+      className="shrink-0"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <circle cx="8" cy="8" r="6.25" />
-      <path d="M8 5v3.5" />
-      <path d="M8 11h.01" />
+      <path d="M3 21h4l13-13a1.5 1.5 0 0 0-4-4L3 17v4" />
+      <path d="m14.5 5.5 4 4" />
+      <path d="m12 8 7 7" />
+      <path d="m5 19 4-4" />
     </svg>
   )
 }
 
-export function Badge({ confidence, label }: BadgeProps) {
+export function Badge({ confidence, label, icon }: BadgeProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-pill px-3 py-1 text-chip ${FAMILY_CLASS[LEVEL_FAMILY[confidence]]}`}
+      className={`inline-flex items-center gap-[5px] text-meta font-semibold ${FAMILY_CLASS[LEVEL_FAMILY[confidence]]}`}
     >
-      <StatusMark confidence={confidence} />
+      {icon && <StatusIcon name={icon} />}
       {label ?? DEFAULT_LABELS[confidence]}
     </span>
   )
