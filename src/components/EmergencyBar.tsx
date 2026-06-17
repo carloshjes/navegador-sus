@@ -37,7 +37,7 @@ export function EmergencyBar() {
           <span>Emergência</span>
           {/* Pill: white bg with subtle pink hover via group-hover. Only
               transition-colors — no scale, no shadow. */}
-          <span className="inline-flex items-center rounded-pill bg-white px-3 py-1 text-label font-bold text-emergency transition-colors duration-[180ms] ease-out group-hover:bg-[#FBE5E5]">
+          <span className="inline-flex items-center rounded-pill bg-white px-3 py-1 text-label font-bold text-emergency transition-colors duration-[180ms] ease-out group-hover:bg-emergency-soft">
             <span className="sr-only">Ligar para o SAMU, telefone </span>
             SAMU 192
           </span>

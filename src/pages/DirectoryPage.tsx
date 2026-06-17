@@ -257,10 +257,7 @@ export function DirectoryPage() {
   const searchAndFilters = (
     /* <search> is already a search landmark — no role attribute needed. */
     <search aria-label="Buscar e filtrar unidades">
-      <form
-        className="flex flex-col gap-6"
-        onSubmit={(event) => event.preventDefault()}
-      >
+      <form className="flex flex-col gap-6" onSubmit={(event) => event.preventDefault()}>
         <div>
           <label htmlFor="busca" className="mb-1 block font-semibold">
             Buscar por nome, bairro ou serviço
@@ -362,9 +359,8 @@ export function DirectoryPage() {
           </div>
           {geo.state.status === 'denied' && (
             <p className="mt-3 text-ink-muted">
-              Tudo bem — sem a localização, você pode{' '}
-              <strong>filtrar por bairro</strong> acima para encontrar unidades perto
-              de você.
+              Tudo bem — sem a localização, você pode <strong>filtrar por bairro</strong>{' '}
+              acima para encontrar unidades perto de você.
             </p>
           )}
           {geo.state.status === 'unavailable' && (
@@ -470,7 +466,7 @@ export function DirectoryPage() {
       <h1
         id="page-title"
         tabIndex={-1}
-        className="mt-2 font-display font-bold leading-[1.08] tracking-[-0.015em] text-[32px] sm:text-[38px]"
+        className="mt-2 font-display text-display-xl sm:text-[38px]"
       >
         Encontre a sua unidade da{' '}
         <span className="text-primary">

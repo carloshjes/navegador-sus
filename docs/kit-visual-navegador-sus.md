@@ -31,7 +31,8 @@ cadeia de segurança do projeto; (c) privacidade (sem request ao Google);
 
 | Token | Tamanho / line-height | Fonte · peso | Uso |
 |---|---|---|---|
-| `display-lg` | 28px / 1.15 | Figtree 700 | título de página ("Encontre sua unidade de saúde") |
+| `display-xl` | 32px (→38px ≥640px) / 1.08 | Figtree 700 | hero da home ("Encontre a sua unidade…") — único passo responsivo da escala |
+| `display-lg` | 28px / 1.15 | Figtree 700 | títulos de páginas internas (detalhe, "Onde ir?", 404) |
 | `display` | 22px / 1.2 | Figtree 700 | títulos de seção grandes |
 | `title` | 18px / 1.3 | Figtree 600 | subtítulos |
 | `unit-name` | 16px / 1.3 | Public Sans 600 | nome da unidade no card |

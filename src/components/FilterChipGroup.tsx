@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { Button } from './Button'
 import { FilterChip } from './FilterChip'
 
 /**
@@ -148,7 +149,7 @@ export function FilterChipGroup<V extends string>({
             aria-expanded={isOpen}
             aria-controls={moreId}
             onClick={isOpen ? closeMore : openMore}
-            className="transition-chip inline-flex min-h-touch items-center gap-1 rounded-[3px] px-2 py-[7px] text-[13px] font-semibold text-primary no-underline hover:bg-[#f2eee5]"
+            className="transition-chip inline-flex min-h-touch items-center gap-1 rounded-sm px-2 py-2 text-meta font-semibold text-primary no-underline hover:bg-surface-hover"
           >
             {isOpen && !isMobile ? 'Menos' : moreLabel}
             <ChevronDown
@@ -234,13 +235,9 @@ export function FilterChipGroup<V extends string>({
               ))}
             </div>
             <div className="border-t border-edge px-4 py-3">
-              <button
-                type="button"
-                onClick={closeMore}
-                className="inline-flex min-h-touch w-full items-center justify-center rounded-[4px] bg-primary px-4 text-[13px] font-semibold text-white no-underline transition-colors duration-[180ms] ease-out hover:bg-primary-strong"
-              >
+              <Button type="button" onClick={closeMore} className="w-full">
                 Aplicar
-              </button>
+              </Button>
             </div>
           </div>
         </dialog>

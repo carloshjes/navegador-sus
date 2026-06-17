@@ -24,6 +24,12 @@
      and font-weight are baked into each step. Display steps pair with
      font-display (Figtree); the rest inherit font-sans (Public Sans).
      12px floor everywhere; smallest step here is 13px. */
+  /* Home hero only (kit §2). Bumps to 38px at >=640px via `sm:text-[38px]`
+     on the element — the one responsive step in the scale. */
+  --text-display-xl: 32px;
+  --text-display-xl--line-height: 1.08;
+  --text-display-xl--letter-spacing: -0.015em;
+  --text-display-xl--font-weight: 700;
   --text-display-lg: 28px;
   --text-display-lg--line-height: 1.15;
   --text-display-lg--letter-spacing: -0.01em;
@@ -57,6 +63,7 @@
   --color-bg: #fbfaf7; /* page background — warm cream */
   --color-edge: #eee9df; /* kit token "border" — subtle borders */
   --color-border-strong: #e0dbd0; /* emphasis borders, inactive filter chips */
+  --color-surface-hover: #f2eee5; /* warm hover wash on light/transparent surfaces (text buttons) */
 
   /* ---- Brand (kit §3) -------------------------------------------------- */
   --color-primary: #0e5e4c; /* teal — 7.71:1 on white (AAA); white on it 7.71:1 */
@@ -68,6 +75,10 @@
 
   /* ---- Emergency (kit §3, briefing §2) -------------------------------- */
   --color-emergency: #a32d2d; /* SAMU bar — white on it 7.07:1 (AAA) */
+  /* Soft red wash used as a large surface (emergency card on "Onde ir?") and
+     as the subtle hover on the white SAMU pill. One token, not two ad-hoc
+     pinks. emergency text (#a32d2d) on it = 6.2:1 (AA); ink on it is AAA. */
+  --color-emergency-soft: #fcebeb;
 
   /* ---- Data-confidence seals (kit §3/§6) ------------------------------ */
   /* Two families only. Amber never reaches AA as a solid (kit finding), so

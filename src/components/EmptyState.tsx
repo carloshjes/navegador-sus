@@ -5,6 +5,8 @@
  * clear the filters. No mascot, no colored illustration — the visual identity
  * keeps its discipline even when there's nothing to show.
  */
+import { Button } from './Button'
+
 export function EmptyState({ onClearFilters }: { onClearFilters: () => void }) {
   return (
     <div className="flex flex-col items-center px-4 py-12 text-center">
@@ -23,19 +25,15 @@ export function EmptyState({ onClearFilters }: { onClearFilters: () => void }) {
           fill="currentColor"
         />
       </svg>
-      <h2 className="mb-1 font-display text-[16px] font-bold text-ink">
+      <h2 className="mb-1 font-display text-base font-bold text-ink">
         Nenhuma unidade combina com os filtros
       </h2>
-      <p className="mb-5 max-w-[280px] text-[13px] text-ink-muted">
+      <p className="mb-5 max-w-[280px] text-meta text-ink-muted">
         Tente remover algum filtro ou usar termos mais amplos na busca.
       </p>
-      <button
-        type="button"
-        onClick={onClearFilters}
-        className="inline-flex min-h-touch items-center justify-center gap-2 rounded-[4px] border border-primary bg-surface px-4 py-[10px] text-[13px] font-semibold text-primary no-underline transition-colors duration-[180ms] ease-out hover:bg-primary-soft"
-      >
+      <Button variant="secondary" onClick={onClearFilters}>
         Limpar filtros
-      </button>
+      </Button>
     </div>
   )
 }

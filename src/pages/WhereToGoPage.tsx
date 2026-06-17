@@ -26,7 +26,7 @@ export function WhereToGoPage() {
             Subtle full border, phone icon in `emergency`, and the two numbers
             as big dial-pill links — the "ti-phone-call" affordance is the
             shape, not a framework callout. */}
-        <Card className="bg-[#FCEBEB]">
+        <Card className="bg-emergency-soft">
           <div className="flex items-start gap-3">
             <svg
               aria-hidden="true"

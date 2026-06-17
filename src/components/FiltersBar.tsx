@@ -54,24 +54,28 @@ export function FiltersBar({ count, activeFilters, onClearAll }: FiltersBarProps
        horizontal padding so the bg-bg "seal" is visually flush. lg:* reverts
        to a static, transparent strip inside the desktop grid column. */
     <div className="sticky top-0 z-10 -mx-4 mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-edge bg-bg px-4 py-2 lg:static lg:z-auto lg:mx-0 lg:bg-transparent lg:px-0 lg:py-0 lg:pb-3">
-      <div className="font-display text-[15px] font-bold text-ink">
-        {count} {count === 1 ? 'unidade' : 'unidades'}
+      <div className="font-display text-label font-bold text-ink">
+        {count} {count === 1 ? 'resultado' : 'resultados'}
         <span aria-hidden="true" className="text-accent">
           .
         </span>
       </div>
 
       {activeFilters.map((filter) => (
+        /* Brand-interaction tokens (primary-soft/primary-ink), NOT the
+           confidence tokens — the teal pill marks a choice the citizen made,
+           not the state of the data (kit §9.2). Same hue as the confidence
+           seal by design, but read semantically as interaction. */
         <span
           key={filter.key}
-          className="inline-flex items-center gap-1 rounded-pill bg-conf-ok-bg py-1 pe-1 ps-3 text-meta font-medium text-conf-ok"
+          className="inline-flex items-center gap-1 rounded-pill bg-primary-soft py-1 pe-1 ps-3 text-meta font-medium text-primary-ink"
         >
           {filter.label}
           <button
             type="button"
             onClick={filter.onRemove}
             aria-label={`Remover filtro: ${filter.label}`}
-            className="inline-flex size-7 items-center justify-center rounded-full hover:bg-primary-soft"
+            className="inline-flex size-7 items-center justify-center rounded-full hover:bg-primary/10"
           >
             <XGlyph />
           </button>

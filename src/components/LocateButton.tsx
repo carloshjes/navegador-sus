@@ -1,12 +1,13 @@
 import type { ButtonHTMLAttributes } from 'react'
+import { Button } from './Button'
 
 /**
  * "Localizar" button (Etapa Visual 4 / A3): the geolocation trigger in the
- * "Ver as unidades mais próximas" block. Solid primary, **radius 4px** (the
- * kit's signage rectangle — chips and tags are 4px; this is consistent), with
- * a crosshair icon. Hover is only a `bg-color` darken to `primary-strong` —
- * no scale, no shadow. On mobile the block stacks and the button takes the
- * full width (`w-full sm:w-auto`).
+ * "Ver as unidades mais próximas" block. It is the primary `Button` with a
+ * crosshair icon — sharing the component's radius (kit radius-md) and label
+ * size so every primary CTA in the app matches (audit P2). Hover is only the
+ * `bg` darken Button already does — no scale, no shadow. On mobile the block
+ * stacks and the button takes the full width (`w-full sm:w-auto`).
  */
 interface LocateButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
@@ -21,9 +22,9 @@ export function LocateButton({
 }: LocateButtonProps) {
   const width = fullWidthMobile ? 'w-full sm:w-auto' : ''
   return (
-    <button
+    <Button
       type="button"
-      className={`inline-flex min-h-touch items-center justify-center gap-2 rounded-[4px] bg-primary px-4 py-[10px] text-[13px] font-semibold tracking-[0.02em] text-white no-underline transition-colors duration-[180ms] ease-out hover:bg-primary-strong disabled:cursor-not-allowed disabled:opacity-50 ${width} ${className}`}
+      className={`disabled:cursor-not-allowed disabled:opacity-50 ${width} ${className}`}
       {...props}
     >
       <svg
@@ -44,6 +45,6 @@ export function LocateButton({
         <path d="M19 12h3" />
       </svg>
       {children}
-    </button>
+    </Button>
   )
 }
