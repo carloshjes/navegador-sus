@@ -142,6 +142,23 @@ export function FilterChipGroup<V extends string>({
           </FilterChip>
         ))}
 
+        {/* Desktop: chips revealed inline BEFORE the toggle, so when expanded
+            the "Menos" button sits at the END of the set (not stranded mid-row).
+            Mobile: the sheet below holds them instead — keeping the page short. */}
+        {hasMore && !isMobile && isOpen && (
+          <div id={moreId} className="contents">
+            {hidden.map((opt) => (
+              <FilterChip
+                key={opt.value}
+                active={value === opt.value}
+                onClick={() => onChange(opt.value)}
+              >
+                {opt.label}
+              </FilterChip>
+            ))}
+          </div>
+        )}
+
         {hasMore && (
           <button
             type="button"
@@ -156,22 +173,6 @@ export function FilterChipGroup<V extends string>({
               className={`transition-transform duration-200 ${isOpen && !isMobile ? 'rotate-180' : ''}`}
             />
           </button>
-        )}
-
-        {/* Desktop: chips revealed inline. Mobile: the sheet below holds
-            them instead — keeping the page short. */}
-        {hasMore && !isMobile && isOpen && (
-          <div id={moreId} className="contents">
-            {hidden.map((opt) => (
-              <FilterChip
-                key={opt.value}
-                active={value === opt.value}
-                onClick={() => onChange(opt.value)}
-              >
-                {opt.label}
-              </FilterChip>
-            ))}
-          </div>
         )}
       </div>
 

@@ -52,14 +52,14 @@ export function WhereToGoPage() {
               <div className="mt-3 flex flex-wrap gap-2">
                 <a
                   href="tel:192"
-                  className="inline-flex min-h-touch items-center rounded-pill bg-emergency px-4 font-bold text-white underline-offset-4 hover:underline"
+                  className="inline-flex min-h-touch items-center rounded-pill bg-emergency px-4 font-bold text-white transition-colors hover:bg-emergency-strong"
                 >
                   <span className="sr-only">Ligar para o SAMU, telefone </span>
                   SAMU 192
                 </a>
                 <a
                   href="tel:193"
-                  className="inline-flex min-h-touch items-center rounded-pill bg-emergency px-4 font-bold text-white underline-offset-4 hover:underline"
+                  className="inline-flex min-h-touch items-center rounded-pill bg-emergency px-4 font-bold text-white transition-colors hover:bg-emergency-strong"
                 >
                   <span className="sr-only">Ligar para os Bombeiros, telefone </span>
                   Bombeiros 193

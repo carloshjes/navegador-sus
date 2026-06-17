@@ -75,6 +75,7 @@
 
   /* ---- Emergency (kit §3, briefing §2) -------------------------------- */
   --color-emergency: #a32d2d; /* SAMU bar — white on it 7.07:1 (AAA) */
+  --color-emergency-strong: #8a2626; /* hover for emergency pills — white on it 8.8:1 (AAA) */
   /* Soft red wash used as a large surface (emergency card on "Onde ir?") and
      as the subtle hover on the white SAMU pill. One token, not two ad-hoc
      pinks. emergency text (#a32d2d) on it = 6.2:1 (AA); ink on it is AAA. */
@@ -223,14 +224,28 @@
 /* Bottom-sheet (Etapa Visual 4 / B4): native <dialog> as a slide-up panel
    on mobile. Below the `sm` breakpoint, the JS opens it; above it, the
    FilterChipGroup never calls showModal() and falls back to inline expand.
-   The native ::backdrop is the semi-opaque overlay; the panel slides up
-   via a 200ms transform. The global prefers-reduced-motion rule strips
-   the animation automatically. */
+   The native ::backdrop is the semi-opaque overlay.
+
+   The panel is PINNED to the bottom edge (inset: auto 0 0 0) so its resting
+   position is always fully on screen, independent of any animation. The
+   entry slide+fade is done with @starting-style (the modern, spec-blessed
+   way to animate an element appearing from display:none) on the `translate`
+   and `opacity` properties.
+
+   Why not @keyframes: a keyframe animation declared on the dialog ran on the
+   display:none→shown flip and FROZE at its first frame (translateY(100%)),
+   leaving the panel entirely below the viewport — only the dark ::backdrop
+   showed (the "green screen" bug). @starting-style transitions don't have
+   that failure mode, and on engines that lack it the panel simply appears
+   already in place. The global prefers-reduced-motion rule zeroes the
+   transition automatically. */
 .bottom-sheet {
+  position: fixed;
+  inset: auto 0 0 0; /* top auto → grows upward from the bottom edge */
   width: 100%;
   max-width: 100%;
+  max-height: 85dvh;
   margin: 0;
-  margin-top: auto;
   padding: 0;
   background-color: var(--color-surface);
   border: none;
@@ -239,20 +254,21 @@
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   box-shadow: 0 -8px 24px rgba(22, 48, 42, 0.18);
+  /* Resting (open) state — fully visible. */
+  translate: 0 0;
+  opacity: 1;
+  transition:
+    translate 200ms ease-out,
+    opacity 200ms ease-out;
+}
+@starting-style {
+  .bottom-sheet[open] {
+    translate: 0 100%;
+    opacity: 0;
+  }
 }
 .bottom-sheet::backdrop {
   background-color: rgba(22, 48, 42, 0.5);
-}
-.bottom-sheet[open] {
-  animation: bottom-sheet-up 200ms ease-out;
-}
-@keyframes bottom-sheet-up {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
 }
 
 /* Eyebrow (kit-derived motif, Etapa Visual 3 / C1): an UPPERCASE Public Sans

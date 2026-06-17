@@ -140,11 +140,26 @@ test('directory cards in a row reach equal heights (no grid holes)', async ({ pa
 test('mobile: Mais opens a bottom-sheet; desktop: inline (V4 / B4)', async ({ page }) => {
   // ---- Mobile: bottom sheet opens via <dialog open> ----
   await page.setViewportSize({ width: 390, height: 844 })
+  // Reduced motion makes the entry instant (our CSS zeroes the transition),
+  // so we measure the RESTING position deterministically — no flakiness from
+  // sampling mid-slide. The resting invariant ("ends on screen") holds for the
+  // animated path too, since both settle at the same place.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   // The Tipo group has 8 priority chips + the rest behind "Mais tipos".
   await page.getByRole('button', { name: 'Mais tipos' }).first().click()
   const sheet = page.locator('dialog.bottom-sheet[open]').first()
   await expect(sheet).toBeVisible()
+  // Regression guard (audit #3): the panel must be ON SCREEN, not merely
+  // present. The old @keyframes entry froze at translateY(100%) and pushed
+  // the sheet entirely below the viewport (only the dark ::backdrop showed —
+  // the "green screen"); toBeVisible() did not catch it. Assert the panel is
+  // anchored to the bottom edge and its body sits within the 844px viewport.
+  const box = await sheet.boundingBox()
+  expect(box).not.toBeNull()
+  expect(box!.y).toBeGreaterThanOrEqual(0)
+  expect(box!.y + box!.height / 2).toBeLessThan(844) // center is on screen
+  expect(box!.y + box!.height).toBeGreaterThan(844 - 4) // bottom pinned to edge
   // Close button restores focus to the trigger.
   await sheet.getByRole('button', { name: 'Fechar' }).click()
   await expect(page.locator('dialog.bottom-sheet[open]')).toHaveCount(0)

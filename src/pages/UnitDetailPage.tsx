@@ -79,8 +79,11 @@ function AddressBlock({ unit }: { unit: HealthUnit }) {
 
   // The browser's native select-and-copy already covers this gesture; users
   // who want to GO to the unit click "Ver no mapa" below (Etapa Visual 3 / B2).
+  // `last:pb-0` matches ProvenancedRow: as the final <dl> row, it drops its
+  // trailing padding so the "Ver no mapa" action below sits close to the
+  // address it refers to, instead of floating ~40px away (Etapa Visual 3 / B2).
   return (
-    <div className="border-edge border-t py-3">
+    <div className="border-edge border-t py-3 last:pb-0">
       <dt className="font-semibold">Endereço</dt>
       <dd className="mt-1">{fullAddress}</dd>
     </div>
@@ -186,7 +189,7 @@ function UnitDetail({ unit }: { unit: HealthUnit }) {
         {isMappable(unit) && (
           <Link
             to={`/mapa?focus=${unit.id}`}
-            className="mt-4 inline-flex min-h-touch items-center font-semibold text-primary underline underline-offset-4"
+            className="mt-2 inline-flex min-h-touch items-center font-semibold text-primary underline underline-offset-4"
           >
             Ver no mapa →
           </Link>

@@ -1,10 +1,9 @@
 import { Link } from 'react-router'
 import type { HealthUnit } from '../data/types'
-import { categoryFamily, displayCategory } from '../data/display-policy'
+import { displayCategory } from '../data/display-policy'
 import { UNIT_TYPE_LABELS } from '../data/labels'
 import { HOURS_BADGE_LABELS } from '../lib/provenance-ui'
 import { formatStraightLineDistance } from '../lib/geo'
-import { CATEGORY_STYLE } from '../lib/category-style'
 import { Badge } from './Badge'
 import { Card } from './Card'
 import { CategoryTag } from './CategoryTag'
@@ -33,19 +32,11 @@ export function UnitCard({
 }) {
   const category = displayCategory(unit)
   const hours = unit.openingHours
-  // Category keyline (audit P3): a thin spine in the family color reinforces
-  // the wayfinding signal of the tag without adding a second colored block.
-  // Absolute + pointer-events-none so it never touches the border, the hover
-  // state, or the inner link's focus ring. Same `bg-cat-*` class as the tag.
-  const keylineClass = CATEGORY_STYLE[categoryFamily(unit)].className
 
   return (
-    <Card className="transition-card relative flex h-full w-full flex-col hover:border-border-strong">
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none absolute inset-y-0 left-0 w-1 rounded-l-lg ${keylineClass}`}
-      />
-      {/* Category tag on top (kit §5): rectangle + family color. */}
+    <Card className="transition-card flex h-full w-full flex-col hover:border-border-strong">
+      {/* Category tag on top (kit §5): rectangle + family color. It is the
+          single category signal on the card — no redundant colored spine. */}
       <CategoryTag unit={unit} />
       <h3 className="mt-2 font-display text-base font-bold leading-tight tracking-tight">
         <Link
