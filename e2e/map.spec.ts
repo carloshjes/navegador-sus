@@ -34,6 +34,51 @@ test('"ver no mapa" focuses the unit and opens its popup', async ({ page }) => {
   )
 })
 
+test('shared coordinates render one counted hub with every unit in its popup', async ({
+  page,
+}) => {
+  await page.goto('/mapa')
+
+  const hubMarker = page.locator('.nav-hub-marker')
+  await expect(hubMarker).toHaveCount(1)
+  await expect(hubMarker).toHaveAttribute('aria-label', '5 unidades neste endereço')
+  await expect(hubMarker.locator('.nav-hub-marker__badge')).toHaveText('5')
+
+  await hubMarker.click()
+  const popup = page.locator('.leaflet-popup-content')
+  await expect(popup.getByText('No mesmo endereço funcionam:')).toBeVisible()
+
+  const units = [
+    ['UBS Centro', '/unidade/ubs-centro-umrs'],
+    ['Pronto Atendimento Municipal', '/unidade/pronto-atendimento-umrs'],
+    ['Ambulatório de Saúde Mental', '/unidade/ambulatorio-saude-mental'],
+    ['Centro de Referência da Mulher', '/unidade/centro-referencia-mulher'],
+    ['Ambulatório de Feridas Crônicas', '/unidade/ambulatorio-feridas-cronicas'],
+  ] as const
+  for (const [name, href] of units) {
+    await expect(popup.getByRole('link', { name: new RegExp(name) })).toHaveAttribute(
+      'href',
+      href,
+    )
+  }
+})
+
+test('?focus opens the containing hub and highlights that unit in the list', async ({
+  page,
+}) => {
+  await page.goto('/mapa?focus=ambulatorio-feridas-cronicas')
+
+  const popup = page.locator('.leaflet-popup-content')
+  await expect(popup).toBeVisible()
+  const focusedUnit = popup.getByRole('link', { name: /Ambulatório de Feridas Crônicas/ })
+  await expect(focusedUnit).toHaveAttribute(
+    'href',
+    '/unidade/ambulatorio-feridas-cronicas',
+  )
+  await expect(focusedUnit).toHaveAttribute('aria-current', 'location')
+  await expect(focusedUnit.getByText('Em foco no mapa')).toBeVisible()
+})
+
 test('EmergencyBar is one tap away on the map route', async ({ page }) => {
   await page.goto('/mapa')
   const nav = page.getByRole('navigation', { name: 'Telefones de emergência' })

@@ -31,6 +31,7 @@ const teardropSvg = (color: string): string =>
   </svg>`
 
 const iconCache = new Map<MarkerVariant, L.DivIcon>()
+const hubIconCache = new Map<number, L.DivIcon>()
 
 /** Cached teardrop icon per variant (divIcon avoids the Leaflet/bundler
     marker-image pitfall entirely — no PNG assets to resolve). */
@@ -45,5 +46,20 @@ export function markerIcon(variant: MarkerVariant): L.DivIcon {
     popupAnchor: [0, -34],
   })
   iconCache.set(variant, icon)
+  return icon
+}
+
+/** Primary multi-unit pin with a visible count badge. */
+export function hubMarkerIcon(count: number): L.DivIcon {
+  const cached = hubIconCache.get(count)
+  if (cached) return cached
+  const icon = L.divIcon({
+    className: 'nav-marker nav-hub-marker',
+    html: `${teardropSvg('var(--color-primary)')}<span aria-hidden="true" class="nav-hub-marker__badge">${count}</span>`,
+    iconSize: [44, 44],
+    iconAnchor: [14, 44],
+    popupAnchor: [0, -42],
+  })
+  hubIconCache.set(count, icon)
   return icon
 }

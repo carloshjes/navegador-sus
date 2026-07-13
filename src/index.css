@@ -317,3 +317,33 @@
   line-height: 2.75rem;
   font-size: 1.375rem;
 }
+
+/* A coordinate hub keeps Leaflet's pin language and turns overlap into a
+   count. Only the established primary + pill tokens define its identity. */
+.nav-hub-marker {
+  background: transparent;
+  border: 0;
+}
+
+.nav-hub-marker > svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.nav-hub-marker__badge {
+  position: absolute;
+  top: 0;
+  left: 1.25rem;
+  display: inline-flex;
+  width: 1.375rem;
+  height: 1.375rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}

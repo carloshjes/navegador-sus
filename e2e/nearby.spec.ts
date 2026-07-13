@@ -1,11 +1,34 @@
 import { expect, test } from '@playwright/test'
 
 /*
- * "Perto de mim" — geolocation mocked at the browser API level
- * (addInitScript runs before the app boots), exercising both outcomes.
+ * Etapa Visual 7 — QuickLocateBand states. Playwright runs every case in
+ * both configured mobile projects: Pixel 7 and iPhone 13.
  */
 
-test('granted: sorts care units by distance with the honesty caveat', async ({
+test('idle: full-width action stays compact and keeps search in view', async ({
+  page,
+}) => {
+  await page.goto('/')
+
+  const band = page.getByTestId('quick-locate-band')
+  await expect(band.getByText('Ver as unidades mais próximas')).toBeVisible()
+  await expect(
+    band.getByText('Localização usada só neste aparelho, nunca enviada a um servidor.'),
+  ).toBeVisible()
+  await expect(
+    band.getByRole('button', { name: 'Ver as mais próximas de mim' }),
+  ).toBeVisible()
+  await expect(band.getByTestId('quick-locate-preview')).toHaveCount(0)
+
+  // The promoted action is outside the sidebar and compact enough that the
+  // search field remains visible in the initial mobile viewport.
+  await expect(
+    page.getByTestId('filters-sidebar').getByTestId('quick-locate-band'),
+  ).toHaveCount(0)
+  await expect(page.locator('#busca')).toBeInViewport()
+})
+
+test('granted: previews the nearest real card and links to the sorted grid', async ({
   page,
 }) => {
   // A point next to UBS Presidente Vargas.
@@ -18,6 +41,12 @@ test('granted: sorts care units by distance with the honesty caveat', async ({
   await page.goto('/')
 
   await page.getByRole('button', { name: 'Ver as mais próximas de mim' }).click()
+
+  const band = page.getByTestId('quick-locate-band')
+  const preview = band.getByTestId('quick-locate-preview')
+  await expect(preview).toHaveAttribute('aria-live', 'polite')
+  await expect(preview.getByRole('heading')).toContainText('Presidente Vargas')
+  await expect(preview.getByText(/em linha reta/)).toBeVisible()
 
   // The fixed honesty caveat must appear; the "this IS your unit" claim
   // must not surface in the granted-geolocation panel. The hero copy
@@ -39,6 +68,10 @@ test('granted: sorts care units by distance with the honesty caveat', async ({
     .first()
   await expect(firstCard.getByRole('heading')).toContainText('Presidente Vargas')
   await expect(firstCard.getByText(/em linha reta/)).toBeVisible()
+
+  await band.getByRole('link', { name: 'Ver todas ordenadas por distância' }).click()
+  await expect(page).toHaveURL(/#directory-results-grid$/)
+  await expect(page.locator('#directory-results-grid')).toBeInViewport()
 })
 
 test('denied: falls back to the neighborhood filter, no nagging', async ({ page }) => {
@@ -50,7 +83,11 @@ test('denied: falls back to the neighborhood filter, no nagging', async ({ page 
 
   await page.getByRole('button', { name: 'Ver as mais próximas de mim' }).click()
 
-  await expect(page.getByText(/filtrar por bairro/)).toBeVisible()
+  const band = page.getByTestId('quick-locate-band')
+  await expect(band.getByText(/filtrar por bairro/)).toBeVisible()
+  await expect(
+    band.getByRole('button', { name: 'Ver as mais próximas de mim' }),
+  ).toBeVisible()
   // Graceful: the neighborhood chip group is still right there.
   await expect(page.getByRole('group', { name: 'Bairro' })).toBeVisible()
 })

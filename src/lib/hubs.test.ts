@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { dataset } from '../data/units'
-import { hubKey, hubMates } from './hubs'
+import { groupMappableUnitsByCoordinate, hubKey, hubMates } from './hubs'
 
 const byId = (id: string) => {
   const unit = dataset.units.find((candidate) => candidate.id === id)
@@ -53,5 +53,32 @@ describe('hubMates', () => {
 
   it('units without street have no hub mates', () => {
     expect(hubMates(byId('ubs-prisional'), dataset.units)).toEqual([])
+  })
+})
+
+describe('groupMappableUnitsByCoordinate', () => {
+  it('turns the five plot-safe UMRS services into one coordinate group', () => {
+    const groups = groupMappableUnitsByCoordinate(dataset.units)
+    const umrs = groups.find((group) =>
+      group.units.some((unit) => unit.id === 'ubs-centro-umrs'),
+    )
+
+    expect(umrs?.position).toEqual([-27.635, -52.285])
+    expect(umrs?.units.map((unit) => unit.id).sort()).toEqual([
+      'ambulatorio-feridas-cronicas',
+      'ambulatorio-saude-mental',
+      'centro-referencia-mulher',
+      'pronto-atendimento-umrs',
+      'ubs-centro-umrs',
+    ])
+  })
+
+  it('keeps a unit with unique coordinates in a one-item group', () => {
+    const groups = groupMappableUnitsByCoordinate(dataset.units)
+    const hospital = groups.find((group) =>
+      group.units.some((unit) => unit.id === 'hospital-de-caridade'),
+    )
+
+    expect(hospital?.units.map((unit) => unit.id)).toEqual(['hospital-de-caridade'])
   })
 })

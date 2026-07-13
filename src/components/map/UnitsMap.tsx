@@ -4,23 +4,32 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import type { Marker as LeafletMarker } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { dataset } from '../../data/units'
-import { isMappable } from '../../data/display-policy'
 import { UNIT_TYPE_LABELS } from '../../data/labels'
-import { markerIcon, markerVariant } from './markerIcons'
+import { groupMappableUnitsByCoordinate } from '../../lib/hubs'
+import { HubUnitList } from '../HubUnitList'
+import { hubMarkerIcon, markerIcon, markerVariant } from './markerIcons'
 
 /** Roughly the center of Erechim's urban area. */
 const ERECHIM_CENTER: [number, number] = [-27.636, -52.27]
 const DEFAULT_ZOOM = 13
 const FOCUS_ZOOM = 16
 
-const mappableUnits = dataset.units.filter(isMappable)
+const mappableGroups = groupMappableUnitsByCoordinate(dataset.units)
+
+function findMappableUnit(focusId: string | null) {
+  if (!focusId) return undefined
+  for (const group of mappableGroups) {
+    const unit = group.units.find((candidate) => candidate.id === focusId)
+    if (unit) return unit
+  }
+  return undefined
+}
 
 /** Flies the map to the focused unit when the `focus` query param changes. */
 function FocusController({ focusId }: { focusId: string | null }) {
   const map = useMap()
   useEffect(() => {
-    if (!focusId) return
-    const unit = mappableUnits.find((u) => u.id === focusId)
+    const unit = findMappableUnit(focusId)
     if (unit && unit.coordinates.lat !== null) {
       map.flyTo([unit.coordinates.lat, unit.coordinates.lng], FOCUS_ZOOM)
     }
@@ -41,7 +50,7 @@ export function UnitsMap({ focusId }: { focusId: string | null }) {
   }, [focusId])
 
   const center = useMemo<[number, number]>(() => {
-    const focused = focusId ? mappableUnits.find((u) => u.id === focusId) : undefined
+    const focused = findMappableUnit(focusId)
     if (focused && focused.coordinates.lat !== null) {
       return [focused.coordinates.lat, focused.coordinates.lng]
     }
@@ -63,37 +72,72 @@ export function UnitsMap({ focusId }: { focusId: string | null }) {
       />
       <FocusController focusId={focusId} />
 
-      {mappableUnits.map((unit) => {
-        const { lat, lng } = unit.coordinates
-        if (lat === null) return null
-        const isFocused = unit.id === focusId
+      {mappableGroups.map((group) => {
+        const firstUnit = group.units[0]
+        if (!firstUnit) return null
+
+        if (group.units.length === 1) {
+          const unit = firstUnit
+          const { lat, lng } = unit.coordinates
+          if (lat === null) return null
+          const isFocused = unit.id === focusId
+          return (
+            <Marker
+              key={unit.id}
+              position={[lat, lng]}
+              icon={markerIcon(markerVariant(unit))}
+              ref={isFocused ? focusedMarker : undefined}
+              keyboard
+              title={unit.name}
+            >
+              <Popup>
+                <strong>{unit.name}</strong>
+                <br />
+                <span>{UNIT_TYPE_LABELS[unit.type]}</span>
+                {markerVariant(unit) === 'planned' && (
+                  <>
+                    <br />
+                    <span>Em construção — ainda não atende.</span>
+                  </>
+                )}
+                {markerVariant(unit) === 'cautious' && (
+                  <>
+                    <br />
+                    <span>Informações em verificação — ligue antes.</span>
+                  </>
+                )}
+                <br />
+                <Link to={`/unidade/${unit.id}`}>Ver detalhes →</Link>
+              </Popup>
+            </Marker>
+          )
+        }
+
+        const label = `${group.units.length} unidades neste endereço`
+        const containsFocus = group.units.some((unit) => unit.id === focusId)
         return (
           <Marker
-            key={unit.id}
-            position={[lat, lng]}
-            icon={markerIcon(markerVariant(unit))}
-            ref={isFocused ? focusedMarker : undefined}
+            key={`hub-${group.key}`}
+            position={group.position}
+            icon={hubMarkerIcon(group.units.length)}
+            ref={containsFocus ? focusedMarker : undefined}
+            eventHandlers={{
+              add: (event) => {
+                const marker = event.target as LeafletMarker
+                marker.getElement()?.setAttribute('aria-label', label)
+              },
+            }}
             keyboard
-            title={unit.name}
+            title={label}
+            zIndexOffset={1000}
           >
-            <Popup>
-              <strong>{unit.name}</strong>
-              <br />
-              <span>{UNIT_TYPE_LABELS[unit.type]}</span>
-              {markerVariant(unit) === 'planned' && (
-                <>
-                  <br />
-                  <span>Em construção — ainda não atende.</span>
-                </>
-              )}
-              {markerVariant(unit) === 'cautious' && (
-                <>
-                  <br />
-                  <span>Informações em verificação — ligue antes.</span>
-                </>
-              )}
-              <br />
-              <Link to={`/unidade/${unit.id}`}>Ver detalhes →</Link>
+            <Popup minWidth={260} maxWidth={320} maxHeight={280}>
+              <section aria-label={label}>
+                <strong className="font-display text-title">
+                  No mesmo endereço funcionam:
+                </strong>
+                <HubUnitList units={group.units} compact focusedId={focusId} showTypes />
+              </section>
             </Popup>
           </Marker>
         )

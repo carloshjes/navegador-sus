@@ -15,12 +15,11 @@ import { matchesQuery } from '../lib/search'
 import { withDistances } from '../lib/nearby'
 import { useGeolocation } from '../lib/useGeolocation'
 import { usePageTitle } from '../lib/route-focus'
-import { Button } from '../components/Button'
 import { EmptyState } from '../components/EmptyState'
 import { Eyebrow } from '../components/Eyebrow'
 import { FilterChipGroup } from '../components/FilterChipGroup'
 import { FiltersBar, type ActiveFilter } from '../components/FiltersBar'
-import { LocateButton } from '../components/LocateButton'
+import { QuickLocateBand } from '../components/QuickLocateBand'
 import { UnitCard } from '../components/UnitCard'
 
 /** Filter state lives in the URL so any view is a shareable link. */
@@ -334,62 +333,6 @@ export function DirectoryPage() {
     </search>
   )
 
-  /* "Perto de mim" block. Two visual states: not-granted shows the trigger
-     card; granted shows the confirmation card with the unwind action. The
-     handler/contract is unchanged from V4. */
-  const locateBlock = (
-    <section aria-label="Ordenar pelas mais próximas">
-      {geo.state.status !== 'granted' && (
-        <div className="rounded-lg border border-edge bg-surface p-4">
-          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 lg:flex-col lg:items-stretch lg:gap-3">
-            <div>
-              <p className="font-semibold text-ink">Ver as unidades mais próximas</p>
-              <p className="text-meta text-ink-muted">
-                Localização usada só neste aparelho, nunca enviada a um servidor.
-              </p>
-            </div>
-            <LocateButton
-              onClick={geo.request}
-              aria-label="Ver as mais próximas de mim"
-              disabled={geo.state.status === 'prompting'}
-              fullWidthMobile
-            >
-              {geo.state.status === 'prompting' ? 'Obtendo localização…' : 'Localizar'}
-            </LocateButton>
-          </div>
-          {geo.state.status === 'denied' && (
-            <p className="mt-3 text-ink-muted">
-              Tudo bem — sem a localização, você pode <strong>filtrar por bairro</strong>{' '}
-              acima para encontrar unidades perto de você.
-            </p>
-          )}
-          {geo.state.status === 'unavailable' && (
-            <p className="mt-3 text-ink-muted">
-              Não foi possível obter a localização neste dispositivo. Use o{' '}
-              <strong>filtro por bairro</strong> acima.
-            </p>
-          )}
-        </div>
-      )}
-      {geo.state.status === 'granted' && (
-        <div className="rounded-lg bg-primary-soft p-4">
-          <p className="font-semibold text-primary">
-            Unidades ordenadas pelas mais próximas de você.
-          </p>
-          {/* Fixed honesty caveat — never the label "sua unidade". */}
-          <p className="mt-1 text-ink">
-            A unidade mais próxima pode <strong>não ser</strong> a que atende o seu
-            endereço — isso é definido por território (equipes de Saúde da Família).
-            Confirme na unidade ou na Secretaria de Saúde.
-          </p>
-          <Button onClick={geo.reset} variant="ghost" className="mt-2 px-0">
-            Desfazer ordenação por distância
-          </Button>
-        </div>
-      )}
-    </section>
-  )
-
   /* Results column. `aria-live="polite"` on the count announces the number
      to screen readers whenever filters change (V4 / D3). The FiltersBar
      shows individual removable chips + a "Limpar filtros" link (V5 / B). */
@@ -410,7 +353,10 @@ export function DirectoryPage() {
           <h2 id="titulo-atendimento" className="sr-only">
             Unidades de atendimento
           </h2>
-          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+          <ul
+            id="directory-results-grid"
+            className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4"
+          >
             {careWithDistance.map(({ unit, distance }) => (
               <li key={unit.id} className="flex">
                 <UnitCard unit={unit} distanceMeters={distance} />
@@ -495,8 +441,15 @@ export function DirectoryPage() {
         </span>
       </p>
 
+      <QuickLocateBand
+        state={geo.state}
+        nearestUnit={careWithDistance[0]}
+        onLocate={geo.request}
+        onReset={geo.reset}
+      />
+
       {/* Etapa Visual 5 / A: 2-column directory at lg: (≥ 1024px). Sidebar
-          (260px) holds search + chip groups + the locate block; the right
+          (260px) holds search + chip groups; the right
           column carries the FiltersBar + results. Below lg the layout falls
           back to the V4 stack — children render sequentially in DOM order,
           which already matches the mobile flow we want.
@@ -515,7 +468,6 @@ export function DirectoryPage() {
           className="flex flex-col gap-6 lg:sticky lg:top-6 lg:self-start"
         >
           {searchAndFilters}
-          <div className="border-t border-edge pt-6">{locateBlock}</div>
         </aside>
         {/* mt-6 only below lg — on the desktop grid, the gap-6 already spaces
             this column from the sidebar (and the column starts at row 1). */}

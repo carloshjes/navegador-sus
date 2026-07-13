@@ -14,6 +14,7 @@ import { formatDateBR, HOURS_BADGE_LABELS, telHref } from '../lib/provenance-ui'
 import { usePageTitle } from '../lib/route-focus'
 import { Badge } from '../components/Badge'
 import { Card } from '../components/Card'
+import { HubUnitList } from '../components/HubUnitList'
 import { NotFoundPage } from './NotFoundPage'
 
 /**
@@ -227,22 +228,7 @@ function UnitDetail({ unit }: { unit: HealthUnit }) {
           <h2 id="titulo-hub" className="font-display text-display">
             No mesmo endereço funcionam:
           </h2>
-          <p className="mt-1 text-meta text-ink-muted">
-            Endereço igual não significa serviço igual — cada unidade abaixo tem
-            atendimento próprio.
-          </p>
-          <ul className="mt-3 grid grid-cols-1 gap-2">
-            {mates.map((mate) => (
-              <li key={mate.id}>
-                <Link
-                  to={`/unidade/${mate.id}`}
-                  className="flex min-h-touch items-center rounded-md border border-edge px-3 text-primary underline-offset-4 hover:border-primary hover:underline"
-                >
-                  {mate.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <HubUnitList units={mates} />
         </section>
       )}
     </>
