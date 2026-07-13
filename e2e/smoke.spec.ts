@@ -17,6 +17,45 @@ test('home page renders with the real dataset', async ({ page }) => {
   await expect(page.getByText(/\d+ unidades ativas/)).toBeVisible()
 })
 
+test('tonal header keeps the brand and navigation states legible', async ({ page }) => {
+  await page.goto('/')
+
+  const header = page.locator('header.app-header')
+  const guideNav = page.getByRole('navigation', { name: 'Seções do guia' })
+  const activeLink = guideNav.getByRole('link', { name: 'Início' })
+  const inactiveLink = guideNav.getByRole('link', { name: 'Mapa' })
+
+  const colors = await header.evaluate((element) => {
+    const pin = element.querySelector('svg path')!
+    const wordmark = element.querySelector('.font-display')!
+    const active = element.querySelector('a[aria-current="page"]')!
+    return {
+      backgroundImage: getComputedStyle(element).backgroundImage,
+      pinFill: getComputedStyle(pin).fill,
+      wordmark: getComputedStyle(wordmark).color,
+      activeText: getComputedStyle(active).color,
+      activeBorder: getComputedStyle(active).borderBottomColor,
+    }
+  })
+
+  expect(colors.backgroundImage).toContain('linear-gradient')
+  expect(colors.backgroundImage).toContain('rgb(14, 94, 76)')
+  expect(colors.backgroundImage).toContain('rgb(10, 74, 59)')
+  expect(colors.pinFill).toBe('rgb(216, 96, 47)')
+  expect(colors.wordmark).toBe('rgb(255, 255, 255)')
+  expect(colors.activeText).toBe('rgb(255, 255, 255)')
+  expect(colors.activeBorder).toBe('rgb(216, 96, 47)')
+
+  // Both configured projects emulate touch devices and correctly expose
+  // `hover: none`, so Tailwind does not activate hover variants there. Keep
+  // the desktop hover contract explicit without faking pointer capability.
+  await expect(inactiveLink).toHaveClass(/hover:border-white/)
+
+  await inactiveLink.focus()
+  await expect(inactiveLink).toHaveCSS('outline-color', 'rgb(255, 255, 255)')
+  await expect(activeLink).toHaveAttribute('aria-current', 'page')
+})
+
 test('SAMU is visible and one tap away on the emergency bar', async ({ page }) => {
   await page.goto('/')
 
@@ -79,6 +118,10 @@ test('skip-link is the first tab stop and targets the main content', async ({
   await page.keyboard.press('Tab')
   const skipLink = page.getByRole('link', { name: 'Pular para o conteúdo' })
   await expect(skipLink).toBeFocused()
+  await expect(skipLink).toBeVisible()
+  await expect(skipLink).toHaveCSS('background-color', 'rgb(255, 255, 255)')
+  await expect(skipLink).toHaveCSS('color', 'rgb(14, 94, 76)')
+  await expect(skipLink).toHaveCSS('outline-color', 'rgb(14, 94, 76)')
 
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(/#conteudo$/)

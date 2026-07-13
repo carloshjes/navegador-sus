@@ -9,7 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 /* All variants sit on token colors with documented AA contrast
    (see src/index.css) and meet the 44px touch-target floor. */
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-white hover:bg-primary-strong',
+  primary: 'bg-primary-tonal text-white',
   secondary: 'border border-primary bg-surface text-primary hover:bg-primary-soft',
   ghost: 'text-primary hover:bg-primary-soft',
 }

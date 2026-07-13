@@ -73,6 +73,26 @@
   --color-accent: #d8602f; /* coral — DECORATIVE only (≥24px): 3.73:1, never small text */
   --color-accent-text: #b5421f; /* coral for TEXT — 5.58:1 on white (AA) */
 
+  /* ---- Tonal depth (Visual Stage 9) ----------------------------------- */
+  /* Tonal gradients are reserved for primary actions and other rare,
+     high-emphasis brand surfaces: always primary -> primary-strong, never a
+     new hue. Supporting, semantic, category, and status fills stay solid so
+     color keeps its informational meaning. White is AAA at both gradient
+     endpoints (7.71:1 and 10.22:1), therefore along the whole tonal path. */
+  --background-image-primary-tonal: linear-gradient(
+    to bottom,
+    var(--color-primary),
+    var(--color-primary-strong)
+  );
+
+  /* Elevation uses ink-tinted shadows, matching `.bottom-sheet`. Resting
+     surfaces use the quiet first step; hover/active may rise to the second
+     step only when the element is interactive. State and hierarchy must not
+     be communicated by shadow alone. Shadow changes use transitions so the
+     global reduced-motion rule below remains authoritative. */
+  --shadow-resting: 0 1px 2px rgba(22, 48, 42, 0.06), 0 4px 12px rgba(22, 48, 42, 0.05);
+  --shadow-raised: 0 2px 4px rgba(22, 48, 42, 0.08), 0 10px 24px rgba(22, 48, 42, 0.12);
+
   /* ---- Emergency (kit §3, briefing §2) -------------------------------- */
   --color-emergency: #a32d2d; /* SAMU bar — white on it 7.07:1 (AAA) */
   --color-emergency-strong: #8a2626; /* hover for emergency pills — white on it 8.8:1 (AAA) */
@@ -151,9 +171,11 @@
     transition: outline-color 120ms ease-out;
   }
 
-  /* On the emergency bar (red), the primary ring would have ~1:1 contrast,
-     so swap to white (7.07:1 on emergency). Same idea on dark category tags. */
+  /* On dark brand/semantic surfaces, the primary ring would disappear into
+     the background, so swap it to white. The skip-link is outside the header
+     and keeps its own light surface + primary focus ring. */
   .bg-emergency :focus-visible,
+  .app-header :focus-visible,
   [class*='bg-cat-'] :focus-visible {
     outline-color: #ffffff;
   }
@@ -200,11 +222,11 @@
     );
   }
 
-  /* Smooth-appear transitions (Etapa Visual 3 / C4). Sober, short, and
-     limited to color/opacity/transform — never scale or shadow. The
-     reduce-motion media query above zeroes them all out. */
+  /* Smooth-appear transitions (Etapa Visual 3 / C4; Visual Stage 9).
+     Sober, short, and limited to paint-only properties — never layout or
+     scale. The reduce-motion media query above zeroes them all out. */
   .transition-card {
-    transition: border-color 180ms ease-out;
+    transition: box-shadow 180ms ease-out;
   }
   .transition-chip {
     transition:

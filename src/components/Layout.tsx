@@ -8,10 +8,11 @@ import { dataset } from '../data/units'
 /* Nav items repeat the coral motif on the active state (Etapa Visual 3 /
    B1): a 2px coral border-bottom (the brand's coral dot stretched into a
    line). Inactive items keep a transparent border of equal weight so the
-   active/inactive heights match — no layout jitter on selection. */
+   active/inactive heights match — no layout jitter on selection. Visual
+   Stage 10 inverts the header polarity: labels and hover borders are white. */
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `flex min-h-touch items-center border-b-2 px-2 pt-0.5 text-label text-primary transition-card ${
-    isActive ? 'border-accent font-semibold' : 'border-transparent hover:border-edge'
+  `transition-chip flex min-h-touch items-center border-b-2 px-2 pt-0.5 text-label text-white ${
+    isActive ? 'border-accent font-semibold' : 'border-transparent hover:border-white'
   }`
 
 /** App chrome shared by every route; pages render into <Outlet />. */
@@ -30,7 +31,7 @@ export function Layout() {
         Pular para o conteúdo
       </a>
 
-      <header className="border-b border-edge bg-surface">
+      <header className="app-header border-b border-edge bg-primary-tonal">
         {/* Compact: one row on every viewport; the dev-version badge moved
             to the home intro (Etapa Visual 2 / B2). py-2 + the wordmark's
             own touch target keeps the bar around 56px. */}

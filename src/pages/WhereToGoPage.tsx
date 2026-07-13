@@ -21,12 +21,12 @@ export function WhereToGoPage() {
         seu e o de quem precisa do atendimento.
       </p>
 
-      <div className="mt-6 grid grid-cols-1 gap-4">
+      <div className="mt-6">
         {/* Emergency card (Etapa Visual 2 / B4): clean block, no left ribbon.
             Subtle full border, phone icon in `emergency`, and the two numbers
             as big dial-pill links — the "ti-phone-call" affordance is the
             shape, not a framework callout. */}
-        <Card className="bg-emergency-soft">
+        <Card data-testid="emergency-care-card" className="bg-emergency-soft!">
           <div className="flex items-start gap-3">
             <svg
               aria-hidden="true"
@@ -69,48 +69,73 @@ export function WhereToGoPage() {
           </div>
         </Card>
 
-        <Card>
-          <h2 className="font-display text-title">
-            Urgência que não é emergência com risco de vida
-          </h2>
-          <p className="mt-1">
-            A prefeitura mantém o{' '}
-            <Link
-              to="/unidade/pronto-atendimento-umrs"
-              className="font-semibold text-primary underline underline-offset-4"
-            >
-              Pronto Atendimento municipal (UMRS)
-            </Link>
-            , na Rua Alemanha, 985.{' '}
-            <strong>
-              O horário de funcionamento não está confirmado — ligue antes de ir.
-            </strong>
-          </p>
-        </Card>
+        {/* Visual Stage 11: the three non-emergency layers read as one care
+            path, not three equal cards. A shared frame establishes ownership;
+            alternating light tokens set the reading rhythm without introducing
+            a new color or competing with the elevated emergency block above. */}
+        <div
+          data-testid="care-path-bands"
+          className="mt-4 overflow-hidden rounded-lg border border-edge"
+        >
+          <section
+            aria-labelledby="titulo-urgencia"
+            data-band-tone="surface"
+            className="bg-surface px-4 py-5 sm:px-6"
+          >
+            <h2 id="titulo-urgencia" className="font-display text-title">
+              Urgência que não é emergência com risco de vida
+            </h2>
+            <p className="mt-1">
+              A prefeitura mantém o{' '}
+              <Link
+                to="/unidade/pronto-atendimento-umrs"
+                className="font-semibold text-primary underline underline-offset-4"
+              >
+                Pronto Atendimento municipal (UMRS)
+              </Link>
+              , na Rua Alemanha, 985.{' '}
+              <strong>
+                O horário de funcionamento não está confirmado — ligue antes de ir.
+              </strong>
+            </p>
+          </section>
 
-        <Card>
-          <h2 className="font-display text-title">Rotina e acompanhamento</h2>
-          <p className="mt-1">
-            A porta de entrada do dia a dia é a{' '}
-            <Link
-              to="/?tipo=ubs"
-              className="font-semibold text-primary underline underline-offset-4"
-            >
-              UBS (posto de saúde) do seu bairro
-            </Link>
-            : consultas, vacinas, curativos, exames, retirada de medicamentos e
-            acompanhamento contínuo.
-          </p>
-        </Card>
+          <section
+            aria-labelledby="titulo-rotina"
+            data-band-tone="primary-soft"
+            className="border-t border-edge bg-primary-soft px-4 py-5 sm:px-6"
+          >
+            <h2 id="titulo-rotina" className="font-display text-title">
+              Rotina e acompanhamento
+            </h2>
+            <p className="mt-1">
+              A porta de entrada do dia a dia é a{' '}
+              <Link
+                to="/?tipo=ubs"
+                className="font-semibold text-primary underline underline-offset-4"
+              >
+                UBS (posto de saúde) do seu bairro
+              </Link>
+              : consultas, vacinas, curativos, exames, retirada de medicamentos e
+              acompanhamento contínuo.
+            </p>
+          </section>
 
-        <Card>
-          <h2 className="font-display text-title">Especialidades</h2>
-          <p className="mt-1">
-            O atendimento especializado (CRE, CEO, CAPS e outros) funciona{' '}
-            <strong>por encaminhamento</strong>: o caminho começa na sua UBS, que avalia e
-            encaminha quando necessário.
-          </p>
-        </Card>
+          <section
+            aria-labelledby="titulo-especialidades"
+            data-band-tone="bg"
+            className="border-t border-edge bg-bg px-4 py-5 sm:px-6"
+          >
+            <h2 id="titulo-especialidades" className="font-display text-title">
+              Especialidades
+            </h2>
+            <p className="mt-1">
+              O atendimento especializado (CRE, CEO, CAPS e outros) funciona{' '}
+              <strong>por encaminhamento</strong>: o caminho começa na sua UBS, que avalia
+              e encaminha quando necessário.
+            </p>
+          </section>
+        </div>
       </div>
 
       <p className="mt-6 rounded-lg border border-edge bg-surface p-4 text-ink-muted">

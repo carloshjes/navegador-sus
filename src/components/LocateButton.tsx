@@ -5,9 +5,9 @@ import { Button } from './Button'
  * "Localizar" button (Etapa Visual 4 / A3): the geolocation trigger in the
  * "Ver as unidades mais próximas" block. It is the primary `Button` with a
  * crosshair icon — sharing the component's radius (kit radius-md) and label
- * size so every primary CTA in the app matches (audit P2). Hover is only the
- * `bg` darken Button already does — no scale, no shadow. On mobile the block
- * stacks and the button takes the full width (`w-full sm:w-auto`).
+ * size and tonal primary gradient so every primary CTA in the app matches
+ * (audit P2). It adds no independent fill, scale, or shadow. On mobile the
+ * block stacks and the button takes the full width (`w-full sm:w-auto`).
  */
 interface LocateButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
