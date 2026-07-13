@@ -38,7 +38,6 @@ Valem para qualquer código, texto de UI ou conteúdo, em qualquer fase:
 - Os selos de confiança na UI ("horário não confirmado — ligue antes")
   são o mecanismo de honestidade do app: **não suavizar nem omitir**.
 - Fonte canônica: `src/data/unidades-saude-erechim.json` (schema 0.2).
-  O JSON em `docs/` é snapshot congelado da Etapa 0 — não editar.
 - Unidades `deactivated` e `planned` nunca contam/aparecem como ativas.
 
 ## Convenções de código

@@ -62,9 +62,8 @@ npm run build      # build de produção em dist/
 
 A fonte canônica dos dados do app é `src/data/unidades-saude-erechim.json`
 (schema 0.2, com proveniência campo a campo). A pasta `docs/` guarda os
-entregáveis da Etapa 0 (mapeamento), incluindo um snapshot congelado do
-JSON original — consulte `docs/relatorio-mapeamento.md` para a metodologia
-de pesquisa e os conflitos registrados entre fontes.
+entregáveis da Etapa 0 (mapeamento) — consulte `docs/relatorio-mapeamento.md`
+para a metodologia de pesquisa e os conflitos registrados entre fontes.
 
 Regra do projeto: **nenhum dado é inventado**. Divergência entre fontes é
 registrada (campo `conflicts`), não resolvida por palpite; conteúdo só
