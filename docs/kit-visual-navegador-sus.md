@@ -2,7 +2,8 @@
 
 > Identidade visual definitiva do projeto. Substitui a paleta **provisória**
 > da Fase 1. Adicionar ao conhecimento do projeto.
-> **Versão 1.0** — 13/06/2026. Tema: **somente claro** na v1.
+> **Versão 1.2** — 15/07/2026 (refinamento Cívico compacto da Etapa
+> Visual 12). Tema: **somente claro** na v1.
 > Todas as cores foram verificadas por contraste (WCAG); as razões estão
 > anotadas em cada token. Identificadores em inglês; rótulos de UI em PT-BR.
 
@@ -39,7 +40,6 @@ cadeia de segurança do projeto; (c) privacidade (sem request ao Google);
 | `body` | 16px / 1.6 | Public Sans 400 | texto base (16px ajuda leitura de idosos) |
 | `label` | 14px / 1.4 | Public Sans 500 | rótulos, botões |
 | `meta` | 13px / 1.45 | Public Sans 400 | metadados (bairro, datas) |
-| `chip` | 13px / 1 | Public Sans 600 | texto de chips e tags |
 
 Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 
@@ -54,13 +54,14 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 | `surface` | `#FFFFFF` | cards, barras | — |
 | `bg` | `#FBFAF7` | fundo da página (creme quente) | — |
 | `border` | `#EEE9DF` | bordas sutis | — |
-| `border-strong` | `#E0DBD0` | bordas de ênfase, chips inativos | — |
+| `border-strong` | `#E0DBD0` | bordas de ênfase | — |
 
 **Marca**
 
 | Token | Hex | Uso | Contraste |
 |---|---|---|---|
 | `primary` | `#0E5E4C` | cor da marca (teal), botões, ícone | 7.71:1 sobre branco (AAA) |
+| `primary-strong` | `#0A4A3B` | hover/active de ações `primary` sólidas | branco 10.22:1 (AAA) |
 | `primary-ink` | `#0F6E56` | texto/realce sobre fundos claros | 5.46:1 sobre `#E1F5EE` (AA) |
 | `accent` | `#D8602F` | coral **decorativo** (ponto do logo, detalhes grandes ≥24px) | 3.73:1 — **não usar em texto pequeno** |
 | `accent-text` | `#B5421F` | coral para **texto** | 5.58:1 sobre branco (AA) |
@@ -82,7 +83,7 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 
 > Achado do cálculo: o âmbar **não** atinge AA como cor sólida (nem com texto branco, nem escuro). Por isso o selo de cautela é sempre **âmbar-claro com texto marrom-escuro**, nunca âmbar sólido.
 
-**Cores de categoria (tags/chips)** — sólidas, com **texto branco** (todas AA):
+**Cores de categoria (tags)** — sólidas, com **texto branco** (todas AA):
 
 | Categoria | Token | Hex | Contraste (branco) |
 |---|---|---|---|
@@ -98,25 +99,29 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 
 | Token | Valor | Uso |
 |---|---|---|
-| `radius-sm` | 4px | **chips e tags** (retangular — o traço de sinalização) |
-| `radius-md` | 10px | inputs, botões |
-| `radius-lg` | 14px | cards |
-| `radius-pill` | 999px | **selos de status** (pílula — o traço acolhedor) |
+| `radius-sm` | 4px | **tags de categoria** (retangular — o traço de sinalização) |
+| `radius-md` | 10px | inputs, ações utilitárias e cards de unidade |
+| `radius-lg` | 14px | agrupamentos grandes legados que ainda exijam contenção |
+| `radius-pill` | 999px | **chamadas telefônicas** compactas |
 
 - Espaçamento na escala 4 / 8 / 12 / 16 / 24 / 32.
-- **Alvo de toque mínimo 44×44px** (botões, chips, links de ação) — regra do projeto.
+- **Alvo de toque mínimo 44×44px** (botões, radios com rótulo e links de ação) — regra do projeto.
 - Sem gradientes, sem sombras decorativas (só anel de foco funcional).
 
-> Regra de forma que organiza a UI: **categoria = retângulo** (`radius-sm`), **status = pílula** (`radius-pill`). A diferença de forma separa "que tipo de unidade é" de "está aberto/confirmado".
+> Regra de forma que organiza a UI: **categoria = retângulo curto**
+> (`radius-sm`), **utilidade e registro = retângulo compacto**
+> (`radius-md`) e **telefonia = cápsula** (`radius-pill`). Estados de
+> confiança permanecem texto semântico, conforme §9.2.
 
 ## 5. Componentes
 
-- **Chip de filtro** (Todas / UBS / Urgência…): retangular `radius-sm`, altura ≥36px (toque ≥44 com área). Ativo: `primary` sólido + texto branco. Inativo: `surface` + `border-strong` + `text-secondary`.
-- **Tag de categoria** (no card): retangular `radius-sm`, cor da categoria sólida + texto branco, `chip` 13px. Letra levemente espaçada (`0.03em`); pode usar caixa alta curta ("UBS", "SAÚDE MENTAL").
-- **Selo de status** (confiança): pílula `radius-pill`, fundo/texto da família (success/warning), com dot ou ícone à esquerda.
-- **Botão primário:** `primary` sólido, texto branco, `radius-md`, altura ≥44px.
-- **Card de unidade:** `surface`, `border` 1px, `radius-lg`, padding 14–16px; tag de categoria no topo, `unit-name`, `meta`, selo de status, chevron de navegação.
-- **Barra de emergência:** `emergency` sólida, texto branco, `ti-phone-call` + "Emergência" + "SAMU 192" — sempre visível (briefing §2).
+- **Lista de filtro** (Todos / UBS / Urgência…): `fieldset` + `legend` e radios nativos em linhas transparentes com altura mínima de 44px. O radio marcado é o indicador persistente e o texto selecionado usa peso 600; não há faixa preenchida, check duplicado, marcador lateral, card, pílula ou borda fechada por item. No desktop, as listas ficam abertas na lateral sticky. Abaixo de `lg`, cada grupo é um disclosure no fluxo normal; listas longas usam “Ver mais/menos” inline, nunca `<dialog>`.
+- **Tag de categoria** (no card): retangular `radius-sm`, cor da categoria sólida + texto branco, Public Sans 700 / 11px. Letra espaçada (`0.05em`); pode usar caixa alta curta ("UBS", "SAÚDE MENTAL").
+- **Selo de status** (confiança): texto sóbrio com cor semântica, rótulo completo e ícone quando necessário; ver §9.2.
+- **Botão primário:** `primary` sólido, texto branco, `radius-md`, altura ≥44px; `primary-strong` somente em hover/active.
+- **Card de unidade:** `surface`, `border`/`edge` 1px, `radius-md`, padding 14–16px; tag de categoria no topo, `unit-name`, `meta` e confiança no rodapé. `box-shadow`, `filter` e `transform` computam como `none` em repouso e hover; a interação permanece no link do título e no foco.
+- **Ação Localizar:** botão `radius-md`, altura mínima de 44px, largura determinada pelo texto e ícone. Fica abaixo e alinhado ao início no mobile; no desktop, à direita da explicação.
+- **Dock de emergência:** `emergency` sólido, rótulo “Emergência” e cápsulas compactas “SAMU 192” e “Bombeiros 193”, ambas `tel:` e sempre visíveis. SAMU usa superfície branca; Bombeiros usa branco translúcido discreto. Sem borda marcada, sombra, pulso, escala ou animação.
 
 ## 6. Estados de confiança → tratamento na UI
 
@@ -131,10 +136,11 @@ A proveniência continua exposta: o selo comunica a confiança do dado, nunca a 
 
 ## 7. Logotipo
 
-- **Marca:** `navegador` + `·` + `sus`, em **Figtree 700**, cor `primary`. O ponto `·` é `accent` (coral) com **margin 0.28em de cada lado** (arejado).
+- **Marca:** `navegador` + `·` + `sus`, em **Figtree 600**, cor `primary`. O ponto `·` é `accent` (coral) com **margin 0.28em de cada lado** (arejado).
 - **Qualificador:** "Erechim · rede pública de saúde", em **Public Sans**, `text-secondary`.
 - **Variações:** completa (marca + qualificador) · compacta (só `navegador · sus`) · ícone isolado.
 - Não inclinar, não recolorir o ponto para fora do coral/`primary`, não usar sobre fundos de baixo contraste.
+- **No cabeçalho:** pin com 34px no mobile e 38px a partir de `sm`; wordmark no passo `display` (22px), **Figtree 600**, branco sobre `primary` sólido. Em 320–390px, marca e navegação ocupam duas linhas; a partir de `sm`, uma linha. O link externo fornece o único nome acessível da marca e o SVG/texto interno fica `aria-hidden`.
 
 ## 8. Ícone do app
 
@@ -196,8 +202,8 @@ futuro.
 
 ### 9.2 Selo de confiança como texto (`Badge`) — Etapa Visual 5 / D
 
-A regra do §4 ("status = pílula") é **parcialmente quebrada** aqui — e a
-quebra é o sistema visual ficando mais honesto, não menos.
+O estado de confiança não adota a cápsula reservada à telefonia: aqui a
+separação semântica vem de texto explícito e ícone de cautela quando necessário.
 
 O selo de status é agora **texto puro**, sem fundo, sem borda, sem raio.
 A pílula colorida competia com a tag de categoria (também colorida) pela
@@ -209,10 +215,10 @@ deixa o card respirar.
 - cor por família (tokens `text-conf-ok` / `text-conf-warn` do §3)
 - ícone opcional 13×13, `aria-hidden`, herda `currentColor`
 
-**A pílula passa a ser o vocabulário dos chips de filtros ativos**
-(`FiltersBar` v5/B) — a forma "acolhedora" agora marca **as escolhas que
-o cidadão fez**, não o estado do dado. A separação é coerente: o dado
-informa em sóbrio; o usuário interage em acolhedor.
+Filtros ativos também não usam pílulas: `FiltersBar` apresenta ações de texto
+removíveis com “×”. A separação é coerente: categoria usa retângulo sólido;
+confiança usa texto semântico; escolhas usam radio na origem e ação textual no
+resumo.
 
 **Quando entra ícone (e qual):**
 
@@ -250,6 +256,28 @@ sincronização** — e somam ~400 bytes ao bundle final.
 > automaticamente a cor do texto vizinho. Defina a cor uma vez no
 > `<span>` da Badge; o ícone vai junto. É o equivalente CSS de "faz o
 > que o texto faz".
+
+### 9.3 Sistema de orientação cívica — Etapa Visual 12
+
+A composição compartilhada funciona como sinalização pública, não como uma
+coleção de objetos elevados:
+
+- cabeçalho em `primary` sólido, sem `background-image`; a hierarquia da marca
+  vem de tamanho, posição e contraste;
+- filtros como listas verticais de consulta, com grupos progressivamente
+  revelados no mobile e lateral sticky no desktop;
+- unidades como registros sólidos em `surface` + `edge` + `radius-md`, sem
+  sombras, filtros ou movimento do container;
+- “Onde ir?” como mapa textual: faixa aberta de emergência primeiro e,
+  abaixo, linhas no fundo natural separadas por divisores, com rótulo de
+  acesso na coluna estreita e explicação na coluna principal;
+- cor reforça marca, categoria, confiança e emergência, mas divisores,
+  tipografia, ordem e alinhamento preservam a leitura em escala de cinza.
+
+Os tokens `--spacing-header` e `--spacing-bar` acompanham a recomposição:
+100px/80px abaixo de `sm` e 68px/60px a partir de `sm`. `h-header`, `h-bar`,
+`pb-bar` e `h-mappage` consomem esses valores; mudar a altura de qualquer
+chrome exige atualizar o conjunto, não um componente isolado.
 
 ## 10. Acessibilidade (herda das metas do projeto)
 

@@ -17,90 +17,209 @@ test('home page renders with the real dataset', async ({ page }) => {
   await expect(page.getByText(/\d+ unidades ativas/)).toBeVisible()
 })
 
-test('tonal header keeps the brand and navigation states legible', async ({ page }) => {
-  await page.goto('/')
+test('solid header enlarges the mark without colliding with navigation', async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 320, height: 568 },
+    { width: 360, height: 800 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
 
-  const header = page.locator('header.app-header')
-  const guideNav = page.getByRole('navigation', { name: 'Seções do guia' })
-  const activeLink = guideNav.getByRole('link', { name: 'Início' })
-  const inactiveLink = guideNav.getByRole('link', { name: 'Mapa' })
+    const header = page.locator('header.app-header')
+    const guideNav = page.getByRole('navigation', { name: 'Seções do guia' })
+    const activeLink = guideNav.getByRole('link', { name: 'Início' })
+    const inactiveLink = guideNav.getByRole('link', { name: 'Mapa' })
 
-  const colors = await header.evaluate((element) => {
-    const pin = element.querySelector('svg path')!
-    const wordmark = element.querySelector('.font-display')!
-    const active = element.querySelector('a[aria-current="page"]')!
-    return {
-      backgroundImage: getComputedStyle(element).backgroundImage,
-      pinFill: getComputedStyle(pin).fill,
-      wordmark: getComputedStyle(wordmark).color,
-      activeText: getComputedStyle(active).color,
-      activeBorder: getComputedStyle(active).borderBottomColor,
-    }
-  })
+    const state = await header.evaluate((element) => {
+      const brandLink = element.querySelector<HTMLAnchorElement>('a[aria-label]')!
+      const pin = element.querySelector<SVGElement>('svg')!
+      const pinPath = pin.querySelector('path')!
+      const wordmark = element.querySelector<HTMLElement>('.font-display')!
+      const nav = element.querySelector<HTMLElement>('nav')!
+      const active = element.querySelector<HTMLElement>('a[aria-current="page"]')!
+      const brandRect = brandLink.getBoundingClientRect()
+      const navRect = nav.getBoundingClientRect()
+      return {
+        backgroundImage: getComputedStyle(element).backgroundImage,
+        backgroundColor: getComputedStyle(element).backgroundColor,
+        pinFill: getComputedStyle(pinPath).fill,
+        pinWidth: pin.getBoundingClientRect().width,
+        wordmark: getComputedStyle(wordmark).color,
+        wordmarkSize: Number.parseFloat(getComputedStyle(wordmark).fontSize),
+        wordmarkWeight: getComputedStyle(wordmark).fontWeight,
+        activeText: getComputedStyle(active).color,
+        activeBorder: getComputedStyle(active).borderBottomColor,
+        noCollision: brandRect.bottom <= navRect.top + 1,
+        navWithinViewport: navRect.left >= 0 && navRect.right <= window.innerWidth,
+        noHorizontalOverflow:
+          document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+      }
+    })
 
-  expect(colors.backgroundImage).toContain('linear-gradient')
-  expect(colors.backgroundImage).toContain('rgb(14, 94, 76)')
-  expect(colors.backgroundImage).toContain('rgb(10, 74, 59)')
-  expect(colors.pinFill).toBe('rgb(216, 96, 47)')
-  expect(colors.wordmark).toBe('rgb(255, 255, 255)')
-  expect(colors.activeText).toBe('rgb(255, 255, 255)')
-  expect(colors.activeBorder).toBe('rgb(216, 96, 47)')
+    expect(state.backgroundImage).toBe('none')
+    expect(state.backgroundColor).toBe('rgb(14, 94, 76)')
+    expect(state.pinFill).toBe('rgb(216, 96, 47)')
+    expect(state.pinWidth).toBeGreaterThanOrEqual(34)
+    expect(state.wordmarkSize).toBeGreaterThanOrEqual(22)
+    expect(state.wordmarkWeight).toBe('600')
+    expect(state.wordmark).toBe('rgb(255, 255, 255)')
+    expect(state.activeText).toBe('rgb(255, 255, 255)')
+    expect(state.activeBorder).toBe('rgb(216, 96, 47)')
+    expect(state.noCollision).toBe(true)
+    expect(state.navWithinViewport).toBe(true)
+    expect(state.noHorizontalOverflow).toBe(true)
 
-  // Both configured projects emulate touch devices and correctly expose
-  // `hover: none`, so Tailwind does not activate hover variants there. Keep
-  // the desktop hover contract explicit without faking pointer capability.
-  await expect(inactiveLink).toHaveClass(/hover:border-white/)
-
-  await inactiveLink.focus()
-  await expect(inactiveLink).toHaveCSS('outline-color', 'rgb(255, 255, 255)')
-  await expect(activeLink).toHaveAttribute('aria-current', 'page')
+    await inactiveLink.focus()
+    await expect(inactiveLink).toHaveCSS('outline-color', 'rgb(255, 255, 255)')
+    await expect(activeLink).toHaveAttribute('aria-current', 'page')
+  }
 })
 
-test('SAMU is visible and one tap away on the emergency bar', async ({ page }) => {
+test('shared civic chrome fits every required responsive viewport', async ({
+  page,
+  browserName,
+}) => {
+  // Chromium owns the complete breakpoint matrix. The preceding header test
+  // still covers three mobile widths in WebKit; resizing six times in this
+  // additional matrix hangs the Windows WebKit runner without adding a
+  // distinct CSS branch.
+  test.skip(browserName === 'webkit', 'Full breakpoint matrix runs in Chromium')
+
+  const viewports = [
+    { width: 320, height: 568 },
+    { width: 360, height: 800 },
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1024, height: 800 },
+    { width: 1440, height: 900 },
+  ]
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+
+    const metrics = await page.evaluate(() => {
+      const header = document.querySelector<HTMLElement>('header.app-header')!
+      const brand = header.querySelector<HTMLAnchorElement>('a[aria-label]')!
+      const guideNav = header.querySelector<HTMLElement>('nav')!
+      const dock = document.querySelector<HTMLElement>(
+        'nav[aria-label="Telefones de emergência"]',
+      )!
+      const actionRects = Array.from(dock.querySelectorAll('a')).map((action) =>
+        action.getBoundingClientRect(),
+      )
+      const actionRadii = Array.from(dock.querySelectorAll('a')).map((action) =>
+        Number.parseFloat(getComputedStyle(action).borderRadius),
+      )
+      const locateButton = document.querySelector<HTMLButtonElement>(
+        '[data-testid="quick-locate-band"] button',
+      )!
+      const locateBand = document.querySelector<HTMLElement>(
+        '[data-testid="quick-locate-band"]',
+      )!
+      const locateRect = locateButton.getBoundingClientRect()
+      const locateBandRect = locateBand.getBoundingClientRect()
+      const brandRect = brand.getBoundingClientRect()
+      const guideRect = guideNav.getBoundingClientRect()
+      return {
+        noHorizontalOverflow:
+          document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+        brandAndNavSeparated:
+          window.innerWidth < 640
+            ? brandRect.bottom <= guideRect.top + 1
+            : brandRect.right <= guideRect.left,
+        navWithinViewport: guideRect.left >= 0 && guideRect.right <= window.innerWidth,
+        actionsWithinViewport: actionRects.every(
+          (rect) => rect.left >= 0 && rect.right <= window.innerWidth,
+        ),
+        actionsMeetTouchFloor: actionRects.every(
+          (rect) => rect.width >= 44 && rect.height >= 44,
+        ),
+        actionsStayCompact: actionRects.every((rect) => rect.width < 150),
+        actionsArePills: actionRadii.every((radius) => radius >= 22),
+        locateIsCompact:
+          locateRect.height >= 44 && locateRect.width < locateBandRect.width * 0.6,
+      }
+    })
+
+    expect(metrics).toEqual({
+      noHorizontalOverflow: true,
+      brandAndNavSeparated: true,
+      navWithinViewport: true,
+      actionsWithinViewport: true,
+      actionsMeetTouchFloor: true,
+      actionsStayCompact: true,
+      actionsArePills: true,
+      locateIsCompact: true,
+    })
+
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+    const footerOverlap = await page.evaluate(() => {
+      const footer = document.querySelector('footer')!
+      const dock = document.querySelector('nav[aria-label="Telefones de emergência"]')!
+      return footer.getBoundingClientRect().bottom - dock.getBoundingClientRect().top
+    })
+    expect(footerOverlap).toBeLessThanOrEqual(1)
+  }
+})
+
+test('emergency dock keeps SAMU and Bombeiros visible and one tap away', async ({
+  page,
+}) => {
   await page.goto('/')
 
   const emergencyNav = page.getByRole('navigation', {
     name: 'Telefones de emergência',
   })
   await expect(emergencyNav).toBeVisible()
-  // The bar now carries SAMU 192 only (Etapa Visual 2 / B3); the 193 lives
-  // inside "Onde ir?" — covered by the next test.
+  await expect(emergencyNav.getByText('Emergência')).toBeVisible()
   await expect(emergencyNav.getByText('SAMU 192')).toBeVisible()
+  await expect(emergencyNav.getByText('Bombeiros 193')).toBeVisible()
+  await expect(emergencyNav).not.toContainText('Ligar para o SAMU')
 
-  // "One tap away": the number is a direct tel: link, not buried in menus.
   await expect(emergencyNav.getByRole('link', { name: /SAMU/i })).toHaveAttribute(
     'href',
     'tel:192',
   )
-})
+  await expect(emergencyNav.getByRole('link', { name: /Bombeiros/i })).toHaveAttribute(
+    'href',
+    'tel:193',
+  )
 
-test('SAMU 192 has no text-decoration underline on hover (Etapa Visual 4 / A2)', async ({
-  page,
-}) => {
-  await page.goto('/')
-  const link = page
-    .getByRole('navigation', { name: 'Telefones de emergência' })
-    .getByRole('link', { name: /SAMU/i })
-  await link.hover()
-  // Both the parent <a> and the inner pill <span> must NOT have a default
-  // underline in any state — the entire bar reads as a stable surface.
-  const decorations = await page.evaluate(() => {
-    const a = document.querySelector('nav[aria-label="Telefones de emergência"] a')!
-    const pill = a.querySelector('span:last-child')!
-    return {
-      a: getComputedStyle(a).textDecorationLine,
-      pill: getComputedStyle(pill).textDecorationLine,
-    }
+  const styles = await emergencyNav.locator('a').evaluateAll((links) =>
+    links.map((link) => {
+      const style = getComputedStyle(link)
+      return {
+        textDecoration: style.textDecorationLine,
+        boxShadow: style.boxShadow,
+        transform: style.transform,
+        animationName: style.animationName,
+        borderRadius: Number.parseFloat(style.borderRadius),
+        width: link.getBoundingClientRect().width,
+        height: link.getBoundingClientRect().height,
+      }
+    }),
+  )
+  for (const style of styles) {
+    expect(style.textDecoration).toBe('none')
+    expect(style.boxShadow).toBe('none')
+    expect(style.transform).toBe('none')
+    expect(style.animationName).toBe('none')
+    expect(style.borderRadius).toBeGreaterThanOrEqual(22)
+    expect(style.width).toBeLessThan(150)
+    expect(style.height).toBeGreaterThanOrEqual(44)
+  }
+
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+  const overlap = await page.evaluate(() => {
+    const footer = document.querySelector('footer')!
+    const dock = document.querySelector('nav[aria-label="Telefones de emergência"]')!
+    return footer.getBoundingClientRect().bottom - dock.getBoundingClientRect().top
   })
-  expect(decorations.a).toBe('none')
-  expect(decorations.pill).toBe('none')
-})
-
-test('Bombeiros 193 is reachable from the "Onde ir?" page', async ({ page }) => {
-  await page.goto('/onde-ir')
-  const link = page.getByRole('link', { name: /Bombeiros/i })
-  await expect(link).toBeVisible()
-  await expect(link).toHaveAttribute('href', 'tel:193')
+  expect(overlap).toBeLessThanOrEqual(1)
 })
 
 test('skip-link is the first tab stop and targets the main content', async ({

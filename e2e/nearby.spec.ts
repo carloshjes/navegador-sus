@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/test'
  * both configured mobile projects: Pixel 7 and iPhone 13.
  */
 
-test('idle: full-width action stays compact and keeps search in view', async ({
+test('idle: compact action follows its label and keeps search in view', async ({
   page,
 }) => {
   await page.goto('/')
@@ -15,10 +15,15 @@ test('idle: full-width action stays compact and keeps search in view', async ({
   await expect(
     band.getByText('Localização usada só neste aparelho, nunca enviada a um servidor.'),
   ).toBeVisible()
-  await expect(
-    band.getByRole('button', { name: 'Ver as mais próximas de mim' }),
-  ).toBeVisible()
+  const locateButton = band.getByRole('button', { name: 'Ver as mais próximas de mim' })
+  await expect(locateButton).toBeVisible()
   await expect(band.getByTestId('quick-locate-preview')).toHaveCount(0)
+
+  const geometry = await Promise.all([locateButton.boundingBox(), band.boundingBox()])
+  expect(geometry[0]).not.toBeNull()
+  expect(geometry[1]).not.toBeNull()
+  expect(geometry[0]!.height).toBeGreaterThanOrEqual(44)
+  expect(geometry[0]!.width).toBeLessThan(geometry[1]!.width * 0.6)
 
   // The promoted action is outside the sidebar and compact enough that the
   // search field remains visible in the initial mobile viewport.
@@ -26,6 +31,30 @@ test('idle: full-width action stays compact and keeps search in view', async ({
     page.getByTestId('filters-sidebar').getByTestId('quick-locate-band'),
   ).toHaveCount(0)
   await expect(page.locator('#busca')).toBeInViewport()
+})
+
+test('prompting: compact action stays disabled while geolocation is pending', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    navigator.geolocation.getCurrentPosition = () => undefined
+  })
+  await page.goto('/')
+
+  const band = page.getByTestId('quick-locate-band')
+  const locateButton = band.getByRole('button', { name: 'Ver as mais próximas de mim' })
+  await locateButton.click()
+  await expect(locateButton).toBeDisabled()
+  await expect(locateButton).toHaveText(/Obtendo localização/)
+
+  const [buttonBox, bandBox] = await Promise.all([
+    locateButton.boundingBox(),
+    band.boundingBox(),
+  ])
+  expect(buttonBox).not.toBeNull()
+  expect(bandBox).not.toBeNull()
+  expect(buttonBox!.height).toBeGreaterThanOrEqual(44)
+  expect(buttonBox!.width).toBeLessThan(bandBox!.width * 0.8)
 })
 
 test('granted: previews the nearest real card and links to the sorted grid', async ({
@@ -88,6 +117,6 @@ test('denied: falls back to the neighborhood filter, no nagging', async ({ page 
   await expect(
     band.getByRole('button', { name: 'Ver as mais próximas de mim' }),
   ).toBeVisible()
-  // Graceful: the neighborhood chip group is still right there.
+  // Graceful: the neighborhood consultation group is still in the flow.
   await expect(page.getByRole('group', { name: 'Bairro' })).toBeVisible()
 })

@@ -5,26 +5,20 @@ import { Button } from './Button'
  * "Localizar" button (Etapa Visual 4 / A3): the geolocation trigger in the
  * "Ver as unidades mais próximas" block. It is the primary `Button` with a
  * crosshair icon — sharing the component's radius (kit radius-md) and label
- * size and tonal primary gradient so every primary CTA in the app matches
- * (audit P2). It adds no independent fill, scale, or shadow. On mobile the
- * block stacks and the button takes the full width (`w-full sm:w-auto`).
+ * size and solid primary treatment so every primary CTA in the app matches.
+ * It adds no independent fill, scale, gradient or shadow. Its width always
+ * follows the label: the surrounding block places it below the copy on
+ * mobile and at the right edge on desktop.
  */
 interface LocateButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
-  fullWidthMobile?: boolean
 }
 
-export function LocateButton({
-  children,
-  fullWidthMobile = false,
-  className = '',
-  ...props
-}: LocateButtonProps) {
-  const width = fullWidthMobile ? 'w-full sm:w-auto' : ''
+export function LocateButton({ children, className = '', ...props }: LocateButtonProps) {
   return (
     <Button
       type="button"
-      className={`disabled:cursor-not-allowed disabled:opacity-50 ${width} ${className}`}
+      className={`w-auto self-start disabled:cursor-not-allowed disabled:opacity-50 lg:self-auto ${className}`}
       {...props}
     >
       <svg

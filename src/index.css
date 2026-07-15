@@ -2,7 +2,7 @@
 
 /*
  * ============================================================================
- * DESIGN TOKENS — navegador · sus Erechim  (Kit Visual v1.0, 13/06/2026)
+ * DESIGN TOKENS — navegador · sus Erechim  (Kit Visual v1.2, 15/07/2026)
  * ============================================================================
  * The definitive visual identity lives here. Changing the look = editing this
  * @theme block: components reference tokens, never raw hex values.
@@ -52,9 +52,6 @@
   --text-label--font-weight: 500;
   --text-meta: 13px;
   --text-meta--line-height: 1.45;
-  --text-chip: 13px;
-  --text-chip--line-height: 1;
-  --text-chip--font-weight: 600;
 
   /* ---- Neutrals & surfaces (kit §3) ----------------------------------- */
   --color-ink: #16302a; /* main text — 14.1:1 on white (AAA) */
@@ -62,8 +59,7 @@
   --color-surface: #ffffff; /* cards, bars, header & footer */
   --color-bg: #fbfaf7; /* page background — warm cream */
   --color-edge: #eee9df; /* kit token "border" — subtle borders */
-  --color-border-strong: #e0dbd0; /* emphasis borders, inactive filter chips */
-  --color-surface-hover: #f2eee5; /* warm hover wash on light/transparent surfaces (text buttons) */
+  --color-border-strong: #e0dbd0; /* emphasis borders */
 
   /* ---- Brand (kit §3) -------------------------------------------------- */
   --color-primary: #0e5e4c; /* teal — 7.71:1 on white (AAA); white on it 7.71:1 */
@@ -73,31 +69,11 @@
   --color-accent: #d8602f; /* coral — DECORATIVE only (≥24px): 3.73:1, never small text */
   --color-accent-text: #b5421f; /* coral for TEXT — 5.58:1 on white (AA) */
 
-  /* ---- Tonal depth (Visual Stage 9) ----------------------------------- */
-  /* Tonal gradients are reserved for primary actions and other rare,
-     high-emphasis brand surfaces: always primary -> primary-strong, never a
-     new hue. Supporting, semantic, category, and status fills stay solid so
-     color keeps its informational meaning. White is AAA at both gradient
-     endpoints (7.71:1 and 10.22:1), therefore along the whole tonal path. */
-  --background-image-primary-tonal: linear-gradient(
-    to bottom,
-    var(--color-primary),
-    var(--color-primary-strong)
-  );
-
-  /* Elevation uses ink-tinted shadows, matching `.bottom-sheet`. Resting
-     surfaces use the quiet first step; hover/active may rise to the second
-     step only when the element is interactive. State and hierarchy must not
-     be communicated by shadow alone. Shadow changes use transitions so the
-     global reduced-motion rule below remains authoritative. */
-  --shadow-resting: 0 1px 2px rgba(22, 48, 42, 0.06), 0 4px 12px rgba(22, 48, 42, 0.05);
-  --shadow-raised: 0 2px 4px rgba(22, 48, 42, 0.08), 0 10px 24px rgba(22, 48, 42, 0.12);
-
   /* ---- Emergency (kit §3, briefing §2) -------------------------------- */
   --color-emergency: #a32d2d; /* SAMU bar — white on it 7.07:1 (AAA) */
-  --color-emergency-strong: #8a2626; /* hover for emergency pills — white on it 8.8:1 (AAA) */
-  /* Soft red wash used as a large surface (emergency card on "Onde ir?") and
-     as the subtle hover on the white SAMU pill. One token, not two ad-hoc
+  --color-emergency-strong: #8a2626; /* hover for emergency actions — white on it 8.8:1 (AAA) */
+  /* Soft red wash used as a large surface (emergency region on "Onde ir?") and
+     as the subtle hover on the white SAMU action. One token, not two ad-hoc
      pinks. emergency text (#a32d2d) on it = 6.2:1 (AA); ink on it is AAA. */
   --color-emergency-soft: #fcebeb;
 
@@ -122,9 +98,9 @@
   /* ---- Shape: radii (kit §4) ------------------------------------------ */
   /* Form rule that organizes the UI: category = rectangle (radius-sm),
      status = pill (radius-pill). */
-  --radius-sm: 4px; /* chips & category tags — the signage rectangle */
+  --radius-sm: 4px; /* category tags — the signage rectangle */
   --radius-md: 10px; /* inputs, buttons */
-  --radius-lg: 14px; /* cards */
+  --radius-lg: 14px; /* legacy large grouping; civic records use radius-md */
   --radius-pill: 999px; /* status seals — the welcoming pill */
 
   /* Focus ring on the brand color (Etapa Visual 2 / A1). Primary against the
@@ -138,18 +114,18 @@
      Use min-h-touch / min-w-touch on anything tappable. */
   --spacing-touch: 2.75rem;
 
-  /* Visual height of the fixed EmergencyBar (without the safe-area inset).
-     The bar uses h-bar; layout pages reserve pb-bar + safe-area so content
-     never hides behind it (Etapa Visual 2 / A2). */
-  --spacing-bar: 3.5rem; /* 56px — comfortably above the 44px touch floor */
-
-  /* Visual height of the top header (py-2 + a min-h-touch Link + 1px border).
-     The map page uses this to size its container so the Leaflet frame never
-     slides under the fixed bar on mobile (Etapa Visual 3 / A1). */
-  --spacing-header: 3.75rem; /* 60px */
+  /* Shared chrome heights. Mobile gives the label and compact phone actions
+     separate rows; sm+ recomposes both into one row.
+     Map and page-reservation utilities consume these exact values. */
+  --spacing-bar: 5rem; /* 80px on narrow phones */
+  --spacing-header: 6.25rem; /* 100px on narrow phones */
 }
 
 @layer base {
+  html {
+    scroll-padding-bottom: calc(var(--spacing-bar) + env(safe-area-inset-bottom) + 1rem);
+  }
+
   body {
     background-color: var(--color-bg);
     color: var(--color-ink);
@@ -177,7 +153,14 @@
   .bg-emergency :focus-visible,
   .app-header :focus-visible,
   [class*='bg-cat-'] :focus-visible {
-    outline-color: #ffffff;
+    outline-color: var(--color-white);
+  }
+
+  @media (min-width: 40rem) {
+    :root {
+      --spacing-bar: 3.75rem; /* 60px: civic label + both actions in one row */
+      --spacing-header: 4.25rem; /* 68px: enlarged mark + navigation in one row */
+    }
   }
 
   /* Respect users who asked the OS for less motion. */
@@ -210,6 +193,16 @@
     height: var(--spacing-bar);
   }
 
+  /* Exact top-chrome height, paired with .h-mappage below. */
+  .h-header {
+    height: var(--spacing-header);
+  }
+
+  /* Focused controls close to the viewport edge stay above the fixed dock. */
+  .scroll-mb-bar {
+    scroll-margin-bottom: calc(var(--spacing-bar) + env(safe-area-inset-bottom) + 1rem);
+  }
+
   /* Map page wrapper (Etapa Visual 3 / A1): fixes the whole page to the
      visible viewport minus the chrome (header + emergency bar + iOS safe
      area). With the inner map element flex-1, it fills the leftover space
@@ -222,75 +215,20 @@
     );
   }
 
-  /* Smooth-appear transitions (Etapa Visual 3 / C4; Visual Stage 9).
-     Sober, short, and limited to paint-only properties — never layout or
-     scale. The reduce-motion media query above zeroes them all out. */
-  .transition-card {
-    transition: box-shadow 180ms ease-out;
-  }
-  .transition-chip {
+  /* Sober paint-only control transitions. The reduce-motion media query
+     above zeroes them out. Stable records and cards do not animate. */
+  .transition-control {
     transition:
       background-color 150ms ease-out,
       color 150ms ease-out,
       border-color 150ms ease-out;
   }
 
-  /* Touch-target sized square (44 × 44px). Used for the bottom-sheet close
-     button and any other "icon-only" tap target. */
+  /* Touch-target sized square (44 × 44px) for icon-only tap targets. */
   .size-touch {
     width: var(--spacing-touch);
     height: var(--spacing-touch);
   }
-}
-
-/* Bottom-sheet (Etapa Visual 4 / B4): native <dialog> as a slide-up panel
-   on mobile. Below the `sm` breakpoint, the JS opens it; above it, the
-   FilterChipGroup never calls showModal() and falls back to inline expand.
-   The native ::backdrop is the semi-opaque overlay.
-
-   The panel is PINNED to the bottom edge (inset: auto 0 0 0) so its resting
-   position is always fully on screen, independent of any animation. The
-   entry slide+fade is done with @starting-style (the modern, spec-blessed
-   way to animate an element appearing from display:none) on the `translate`
-   and `opacity` properties.
-
-   Why not @keyframes: a keyframe animation declared on the dialog ran on the
-   display:none→shown flip and FROZE at its first frame (translateY(100%)),
-   leaving the panel entirely below the viewport — only the dark ::backdrop
-   showed (the "green screen" bug). @starting-style transitions don't have
-   that failure mode, and on engines that lack it the panel simply appears
-   already in place. The global prefers-reduced-motion rule zeroes the
-   transition automatically. */
-.bottom-sheet {
-  position: fixed;
-  inset: auto 0 0 0; /* top auto → grows upward from the bottom edge */
-  width: 100%;
-  max-width: 100%;
-  max-height: 85dvh;
-  margin: 0;
-  padding: 0;
-  background-color: var(--color-surface);
-  border: none;
-  border-top-left-radius: 14px;
-  border-top-right-radius: 14px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  box-shadow: 0 -8px 24px rgba(22, 48, 42, 0.18);
-  /* Resting (open) state — fully visible. */
-  translate: 0 0;
-  opacity: 1;
-  transition:
-    translate 200ms ease-out,
-    opacity 200ms ease-out;
-}
-@starting-style {
-  .bottom-sheet[open] {
-    translate: 0 100%;
-    opacity: 0;
-  }
-}
-.bottom-sheet::backdrop {
-  background-color: rgba(22, 48, 42, 0.5);
 }
 
 /* Eyebrow (kit-derived motif, Etapa Visual 3 / C1): an UPPERCASE Public Sans
@@ -364,7 +302,7 @@
   justify-content: center;
   border-radius: var(--radius-pill);
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   font-size: 0.75rem;
   font-weight: 700;
   line-height: 1;

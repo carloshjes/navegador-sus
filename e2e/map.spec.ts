@@ -83,6 +83,10 @@ test('EmergencyBar is one tap away on the map route', async ({ page }) => {
   await page.goto('/mapa')
   const nav = page.getByRole('navigation', { name: 'Telefones de emergência' })
   await expect(nav.getByRole('link', { name: /SAMU/ })).toHaveAttribute('href', 'tel:192')
+  await expect(nav.getByRole('link', { name: /Bombeiros/ })).toHaveAttribute(
+    'href',
+    'tel:193',
+  )
 })
 
 test('map container never slides under the emergency bar on mobile', async ({ page }) => {

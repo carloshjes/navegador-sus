@@ -1,12 +1,12 @@
 /**
  * Active-filters indicator bar — Etapa Visual 5 / B + E.
  *
- * B: shows each active filter as its OWN removable pill, so the citizen
- *    sees what's narrowing the list and can drop one chip without
- *    scrolling back to the right group. The pill shape (kit-derived,
- *    §9.2) is now reserved for these citizen-made choices.
+ * B: shows each active filter as its own removable text action, so the
+ *    citizen sees what narrows the list and can remove one choice without
+ *    scrolling back to its group. The list treatment avoids rebuilding a
+ *    second wall of pills above the results.
  * E: on mobile (< lg:) the bar sticks to the top while scrolling so the
- *    count and the chip set stay reachable. On lg+ the bar sits naturally
+ *    count and active-choice actions stay reachable. On lg+ the bar sits naturally
  *    above the results column of the 2-column directory grid.
  *
  * The count's full stop is the coral motif (kit §C2): the same brand mark
@@ -15,7 +15,7 @@
 export interface ActiveFilter {
   /** Stable React key. Also the URL-param name in our DirectoryPage. */
   key: string
-  /** PT-BR text shown inside the pill (e.g. "Tipo: UBS"). */
+  /** PT-BR text shown in the removable action (e.g. "Tipo: UBS"). */
   label: string
   onRemove: () => void
 }
@@ -26,8 +26,8 @@ interface FiltersBarProps {
   onClearAll: () => void
 }
 
-/* Small × glyph for the per-chip remove button. Inline SVG mirrors Tabler's
-   `ti-x` and inherits the chip's text color via `currentColor`. */
+/* Small × glyph for each removable filter action. Inline SVG mirrors
+   Tabler's `ti-x` and inherits the action's text color via `currentColor`. */
 function XGlyph() {
   return (
     <svg
@@ -61,32 +61,33 @@ export function FiltersBar({ count, activeFilters, onClearAll }: FiltersBarProps
         </span>
       </div>
 
+      {hasActiveFilters && (
+        <span className="text-meta text-ink-muted">Filtros ativos:</span>
+      )}
+
       {activeFilters.map((filter) => (
-        /* Brand-interaction tokens (primary-soft/primary-ink), NOT the
-           confidence tokens — the teal pill marks a choice the citizen made,
-           not the state of the data (kit §9.2). Same hue as the confidence
-           seal by design, but read semantically as interaction. */
-        <span
+        <button
           key={filter.key}
-          className="inline-flex items-center gap-1 rounded-pill bg-primary-soft py-1 pe-1 ps-3 text-meta font-medium text-primary-ink"
+          type="button"
+          onClick={filter.onRemove}
+          aria-label={`Remover filtro: ${filter.label}`}
+          className="inline-flex min-h-touch items-center gap-1 px-1 text-meta font-semibold text-primary hover:underline"
         >
-          {filter.label}
-          <button
-            type="button"
-            onClick={filter.onRemove}
-            aria-label={`Remover filtro: ${filter.label}`}
-            className="inline-flex size-7 items-center justify-center rounded-full hover:bg-primary/10"
+          <span>{filter.label}</span>
+          <span
+            aria-hidden="true"
+            className="inline-flex size-6 items-center justify-center rounded-full"
           >
             <XGlyph />
-          </button>
-        </span>
+          </span>
+        </button>
       ))}
 
       {hasActiveFilters && (
         <button
           type="button"
           onClick={onClearAll}
-          className="ms-auto text-[12px] font-semibold text-primary hover:underline"
+          className="ms-auto inline-flex min-h-touch items-center text-meta font-semibold text-primary hover:underline"
         >
           Limpar filtros
         </button>

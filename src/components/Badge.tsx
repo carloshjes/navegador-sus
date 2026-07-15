@@ -8,9 +8,9 @@ import type { Confidence } from '../data/types'
  * Shape change (kit §9.2): the seal is now **plain text**, not a pill. The
  * weight bumps to semibold to make up for the lost outline, the color carries
  * the family (success/warning), and an optional icon (alert-triangle / tools)
- * names the sub-type of caution. The pill shape is now reserved for the
- * active-filter chips in the FiltersBar — the form-language was clarified
- * (status = sober text; choices the citizen made = pill).
+ * names the sub-type of caution. Active filters are now removable text
+ * actions, so neither data status nor filter choice competes with category
+ * tags through a second filled shape.
  *
  * WCAG 1.4.1 (color is not the only sign): meaning lives in the PT-BR label,
  * never in color or icon alone. The icon is `aria-hidden` because the label

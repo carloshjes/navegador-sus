@@ -6,16 +6,16 @@ import {
   TYPE_FILTER_PRIORITY,
   UNIT_TYPE_LABELS,
   UNIT_TYPE_SHORT_LABELS,
-  serviceChipLabel,
+  serviceSummaryLabel,
 } from './labels'
 
 /*
- * Etapa Visual 2 / B5 — chip groups need stable label coverage. These guards
+ * Filter lists and active summaries need stable label coverage. These guards
  * also catch any future taxonomy change in src/data/types.ts that forgets to
  * touch the UI layer.
  */
-describe('filter chip labels', () => {
-  it('has short + full + chip labels for every unit type', () => {
+describe('filter and summary labels', () => {
+  it('has full and summary labels for every unit type', () => {
     for (const type of UNIT_TYPES) {
       expect(UNIT_TYPE_LABELS[type], type).toBeDefined()
       expect(UNIT_TYPE_SHORT_LABELS[type], type).toBeDefined()
@@ -25,8 +25,8 @@ describe('filter chip labels', () => {
   it('has a service label for every service slug', () => {
     for (const slug of SERVICE_SLUGS) {
       expect(SERVICE_LABELS[slug], slug).toBeDefined()
-      // serviceChipLabel falls back to SERVICE_LABELS — never empty.
-      expect(serviceChipLabel(slug).length, slug).toBeGreaterThan(0)
+      // The summary falls back to SERVICE_LABELS — never empty.
+      expect(serviceSummaryLabel(slug).length, slug).toBeGreaterThan(0)
     }
   })
 
@@ -35,7 +35,7 @@ describe('filter chip labels', () => {
     for (const type of TYPE_FILTER_PRIORITY) {
       expect(allTypes.has(type), type).toBe(true)
     }
-    // Priority must not repeat a type (would duplicate a chip).
+    // Priority must not repeat a type (would duplicate a list option).
     expect(new Set(TYPE_FILTER_PRIORITY).size).toBe(TYPE_FILTER_PRIORITY.length)
   })
 

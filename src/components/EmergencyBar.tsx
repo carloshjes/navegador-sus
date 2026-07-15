@@ -1,13 +1,8 @@
 /**
- * Permanent emergency bar — briefing §2: SAMU 192 always visible, never more
- * than one tap away. Fixed to the bottom of the viewport (thumb-reachable on
- * mobile); Layout reserves matching space via `.pb-bar` so content is never
- * hidden behind it.
- *
- * Etapa Visual 4 / A2: remove the default `<a>` underline-on-hover (browser
- * default, not design). The pill is the only thing that reacts to hover —
- * a subtle pink wash via `group-hover` on the `<a>`. NEVER scale, pulse,
- * shadow or animate the emergency control. Stability == seriedade.
+ * Permanent civic emergency dock — briefing §2. SAMU 192 and Bombeiros 193
+ * stay visible and directly actionable on every route. Layout reserves the
+ * same tokenized height via `.pb-bar`, including the iOS safe-area inset.
+ * The dock is deliberately solid: no shadow, pulse, scale or animation.
  */
 export function EmergencyBar() {
   return (
@@ -15,33 +10,33 @@ export function EmergencyBar() {
       aria-label="Telefones de emergência"
       className="pb-safe fixed inset-x-0 bottom-0 z-50 bg-emergency text-white"
     >
-      <div className="mx-auto flex max-w-screen-lg justify-center px-4">
-        <a
-          href="tel:192"
-          aria-label="Ligar para o SAMU, número 192"
-          className="group flex h-bar min-h-touch items-center gap-3 px-2 font-semibold no-underline"
-        >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="size-5 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <div className="mx-auto flex h-bar max-w-screen-lg flex-col justify-center gap-1 px-3 py-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-4 sm:py-2">
+        <div className="flex items-baseline gap-3 sm:block">
+          <p className="font-display text-label font-bold uppercase tracking-[0.08em]">
+            Emergência
+          </p>
+          <p className="hidden text-meta text-white sm:mt-0.5 sm:block">
+            Atendimento imediato por telefone
+          </p>
+        </div>
+
+        <div className="flex min-w-0 max-w-full items-center gap-2">
+          <a
+            href="tel:192"
+            aria-label="Ligar para o SAMU, número 192"
+            className="inline-flex min-h-touch items-center justify-center whitespace-nowrap rounded-pill bg-white px-3 text-label font-semibold text-emergency no-underline hover:bg-emergency-soft"
           >
-            {/* Phone-call glyph (compact, no third-party icon font). */}
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.97.36 1.92.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.89.34 1.84.57 2.81.7A2 2 0 0 1 22 16.92z" />
-          </svg>
-          <span>Emergência</span>
-          {/* Pill: white bg with subtle pink hover via group-hover. Only
-              transition-colors — no scale, no shadow. */}
-          <span className="inline-flex items-center rounded-pill bg-white px-3 py-1 text-label font-bold text-emergency transition-colors duration-[180ms] ease-out group-hover:bg-emergency-soft">
-            <span className="sr-only">Ligar para o SAMU, telefone </span>
-            SAMU 192
-          </span>
-        </a>
+            SAMU&nbsp;<strong>192</strong>
+          </a>
+
+          <a
+            href="tel:193"
+            aria-label="Ligar para os Bombeiros, número 193"
+            className="inline-flex min-h-touch items-center justify-center whitespace-nowrap rounded-pill bg-white/15 px-3 text-label font-semibold text-white no-underline hover:bg-white/20"
+          >
+            Bombeiros&nbsp;<strong>193</strong>
+          </a>
+        </div>
       </div>
     </nav>
   )

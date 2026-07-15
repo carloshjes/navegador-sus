@@ -49,10 +49,10 @@ export const SERVICE_LABELS: Record<ServiceSlug, string> = {
 }
 
 /**
- * Citizen-relevance order for the type filter chips (Etapa Visual 2 / B5).
+ * Citizen-relevance order for the type filter list.
  * The everyday doors come first; institutional/rare types (vigilância,
  * gestão, promoção, ponto de atend., saúde prisional, SAMU) sit under a
- * "Mais tipos ▾" disclosure on the directory. Coverage of the UnitType
+ * "Ver mais tipos" disclosure on the directory. Coverage of the UnitType
  * union is enforced by labels.test.ts.
  */
 export const TYPE_FILTER_PRIORITY: readonly UnitType[] = [
@@ -67,9 +67,9 @@ export const TYPE_FILTER_PRIORITY: readonly UnitType[] = [
 ]
 
 /**
- * Most-searched services shown as chips upfront (Etapa Visual 2 / B5). The
- * full list is reachable through "Mais serviços ▾"; the textual search box
- * already covers any service, so this set is a triage of the everyday ones.
+ * Most-searched services shown first in the consultation list. The full list
+ * is reachable through "Ver mais serviços"; the textual search box already
+ * covers any service, so this set is a curation of the everyday ones.
  */
 export const SERVICE_FILTER_PRIORITY: readonly ServiceSlug[] = [
   'vaccination',
@@ -84,9 +84,9 @@ export const SERVICE_FILTER_PRIORITY: readonly ServiceSlug[] = [
 ]
 
 /**
- * Short unit-type labels for the filter chips (kit §5). Chips are compact, so
- * the first-mention gloss of UNIT_TYPE_LABELS is dropped here; the full label
- * still appears on every card and detail page.
+ * Short unit-type labels for active-filter summaries. The radio lists use the
+ * complete UNIT_TYPE_LABELS labels; summaries stay compact after context is
+ * established.
  */
 export const UNIT_TYPE_SHORT_LABELS: Record<UnitType, string> = {
   ubs: 'UBS',
@@ -105,7 +105,7 @@ export const UNIT_TYPE_SHORT_LABELS: Record<UnitType, string> = {
   administration: 'Gestão',
 }
 
-/** Short service labels for chips; same shortening logic as the type ones. */
+/** Short service labels for active-filter summaries. */
 export const SERVICE_SHORT_LABELS: Partial<Record<ServiceSlug, string>> = {
   'primary-care': 'Consultas',
   'womens-health': 'Saúde da mulher',
@@ -127,7 +127,7 @@ export const SERVICE_SHORT_LABELS: Partial<Record<ServiceSlug, string>> = {
 }
 
 /** Return the short label if one exists, else fall back to the full one. */
-export function serviceChipLabel(slug: ServiceSlug): string {
+export function serviceSummaryLabel(slug: ServiceSlug): string {
   return SERVICE_SHORT_LABELS[slug] ?? SERVICE_LABELS[slug]
 }
 

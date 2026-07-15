@@ -10,12 +10,35 @@ test('citizen flow: search → filter → detail → confidence seal', async ({ 
 
   // Accent-insensitive search: "vacinacao" must find vaccination units.
   await page.getByLabel('Buscar por nome, bairro ou serviço').fill('vacinacao')
-  // Type filter is now a chip group (kit §5); clicking sets the same URL param.
-  await page.getByRole('button', { name: 'UBS', exact: true }).click()
+  const typeGroup = page.getByRole('group', { name: 'Tipo de unidade' })
+  await typeGroup.getByRole('button', { name: /Tipo de unidade/ }).click()
+  // A native radio now writes the same shareable URL parameter.
+  const ubsOption = typeGroup.getByRole('radio', {
+    name: 'UBS (posto de saúde)',
+    exact: true,
+  })
+  await ubsOption.click()
 
   // Filter + search state lives in the URL (shareable link).
   await expect(page).toHaveURL(/q=vacinacao/)
   await expect(page).toHaveURL(/tipo=ubs/)
+  await expect(ubsOption).toBeChecked()
+  const selectedStyle = await ubsOption.evaluate((radio) => {
+    const row = radio.closest('label')!
+    const style = getComputedStyle(row)
+    return {
+      backgroundColor: style.backgroundColor,
+      borderLeftWidth: style.borderLeftWidth,
+      boxShadow: style.boxShadow,
+      fontWeight: style.fontWeight,
+    }
+  })
+  expect(selectedStyle).toEqual({
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    borderLeftWidth: '0px',
+    boxShadow: 'none',
+    fontWeight: '600',
+  })
 
   await page.getByRole('link', { name: 'UBS Capoerê' }).click()
 
@@ -34,9 +57,14 @@ test('EmergencyBar is one tap away on every route', async ({ page }) => {
     await page.goto(path)
     const nav = page.getByRole('navigation', { name: 'Telefones de emergência' })
     await expect(nav.getByRole('link', { name: /SAMU/ })).toBeVisible()
+    await expect(nav.getByRole('link', { name: /Bombeiros/ })).toBeVisible()
     await expect(nav.getByRole('link', { name: /SAMU/ })).toHaveAttribute(
       'href',
       'tel:192',
+    )
+    await expect(nav.getByRole('link', { name: /Bombeiros/ })).toHaveAttribute(
+      'href',
+      'tel:193',
     )
   }
 })
@@ -61,9 +89,16 @@ test('filters bar shows count + Limpar filtros only when active (V4 / B1)', asyn
   await expect(page.getByText(/\d+ unidades/).first()).toBeVisible()
   await expect(page.getByRole('button', { name: 'Limpar filtros' })).toHaveCount(0)
 
-  // Click any chip — "Limpar filtros" appears.
-  await page.getByRole('button', { name: 'UBS', exact: true }).click()
+  // Choose a radio — "Limpar filtros" appears.
+  const typeGroup = page.getByRole('group', { name: 'Tipo de unidade' })
+  await typeGroup.getByRole('button', { name: /Tipo de unidade/ }).click()
+  const ubsOption = typeGroup.getByRole('radio', {
+    name: 'UBS (posto de saúde)',
+    exact: true,
+  })
+  await ubsOption.click()
   await expect(page).toHaveURL(/tipo=ubs/)
+  await expect(ubsOption).toBeChecked()
   await expect(page.getByRole('button', { name: 'Limpar filtros' })).toBeVisible()
 
   // Clearing returns to the bare directory and removes the button.
@@ -137,41 +172,112 @@ test('directory cards in a row reach equal heights (no grid holes)', async ({ pa
   expect(Math.abs(heights[2] - heights[3])).toBeLessThanOrEqual(1)
 })
 
-test('mobile: Mais opens a bottom-sheet; desktop: inline (V4 / B4)', async ({ page }) => {
-  // ---- Mobile: bottom sheet opens via <dialog open> ----
-  await page.setViewportSize({ width: 390, height: 844 })
-  // Reduced motion makes the entry instant (our CSS zeroes the transition),
-  // so we measure the RESTING position deterministically — no flakiness from
-  // sampling mid-slide. The resting invariant ("ends on screen") holds for the
-  // animated path too, since both settle at the same place.
-  await page.emulateMedia({ reducedMotion: 'reduce' })
+test('unit records stay flat at rest and hover without losing content', async ({
+  page,
+}) => {
   await page.goto('/')
-  // The Tipo group has 8 priority chips + the rest behind "Mais tipos".
-  await page.getByRole('button', { name: 'Mais tipos' }).first().click()
-  const sheet = page.locator('dialog.bottom-sheet[open]').first()
-  await expect(sheet).toBeVisible()
-  // Regression guard (audit #3): the panel must be ON SCREEN, not merely
-  // present. The old @keyframes entry froze at translateY(100%) and pushed
-  // the sheet entirely below the viewport (only the dark ::backdrop showed —
-  // the "green screen"); toBeVisible() did not catch it. Assert the panel is
-  // anchored to the bottom edge and its body sits within the 844px viewport.
-  const box = await sheet.boundingBox()
-  expect(box).not.toBeNull()
-  expect(box!.y).toBeGreaterThanOrEqual(0)
-  expect(box!.y + box!.height / 2).toBeLessThan(844) // center is on screen
-  expect(box!.y + box!.height).toBeGreaterThan(844 - 4) // bottom pinned to edge
-  // Close button restores focus to the trigger.
-  await sheet.getByRole('button', { name: 'Fechar' }).click()
-  await expect(page.locator('dialog.bottom-sheet[open]')).toHaveCount(0)
+  const card = page.getByTestId('unit-card').filter({
+    has: page.getByRole('link', { name: 'UBS Capoerê' }),
+  })
+  await expect(card).toHaveCount(1)
+  await expect(card.getByTestId('category-tag')).toBeVisible()
+  await expect(card.getByText('horário não confirmado — ligue antes')).toBeVisible()
 
-  // ---- Desktop: inline expand, no <dialog open> ever ----
+  const readGeometry = () =>
+    card.evaluate((element) => {
+      const rect = element.getBoundingClientRect()
+      const style = getComputedStyle(element)
+      return {
+        x: rect.x,
+        documentY: rect.y + window.scrollY,
+        width: rect.width,
+        height: rect.height,
+        boxShadow: style.boxShadow,
+        backgroundColor: style.backgroundColor,
+        borderColor: style.borderTopColor,
+        borderRadius: style.borderRadius,
+        filter: style.filter,
+        transform: style.transform,
+      }
+    })
+
+  const before = await readGeometry()
+  await card.hover()
+  const after = await readGeometry()
+  expect(before.boxShadow).toBe('none')
+  expect(after.boxShadow).toBe('none')
+  expect(before.backgroundColor).toBe('rgb(255, 255, 255)')
+  expect(after.backgroundColor).toBe('rgb(255, 255, 255)')
+  expect(before.borderColor).toBe('rgb(238, 233, 223)')
+  expect(after.borderColor).toBe('rgb(238, 233, 223)')
+  expect(before.borderRadius).toBe('10px')
+  expect(after.borderRadius).toBe('10px')
+  expect(before.filter).toBe('none')
+  expect(after.filter).toBe('none')
+  expect(before.transform).toBe('none')
+  expect(after.transform).toBe('none')
+  expect(after).toMatchObject({
+    x: before.x,
+    documentY: before.documentY,
+    width: before.width,
+    height: before.height,
+  })
+})
+
+test('mobile filters expand inline with stable focus and no horizontal overflow', async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 320, height: 568 },
+    { width: 360, height: 800 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+
+    const group = page.getByRole('group', { name: 'Tipo de unidade' })
+    const groupToggle = group.getByRole('button', { name: /Tipo de unidade/ })
+    await expect(groupToggle).toHaveAttribute('aria-expanded', 'false')
+    await groupToggle.click()
+    await expect(groupToggle).toHaveAttribute('aria-expanded', 'true')
+
+    const more = group.getByRole('button', { name: 'Ver mais tipos' })
+    await expect(more).toHaveAttribute('aria-expanded', 'false')
+    await more.click()
+    const less = group.getByRole('button', { name: 'Ver menos tipos' })
+    await expect(less).toHaveAttribute('aria-expanded', 'true')
+
+    const selected = group.getByRole('radio', { name: 'Vigilância em saúde' })
+    await selected.click()
+    await expect(selected).toBeChecked()
+    await expect(page).toHaveURL(/tipo=surveillance/)
+
+    await less.click()
+    const moreAgain = group.getByRole('button', { name: 'Ver mais tipos' })
+    await expect(moreAgain).toBeFocused()
+    await expect(selected).toBeVisible()
+    await expect(selected).toBeChecked()
+
+    await groupToggle.click()
+    await expect(groupToggle).toBeFocused()
+    await expect(groupToggle).toHaveAttribute('aria-expanded', 'false')
+    await expect(groupToggle).toContainText('Selecionado: Vigilância em saúde')
+    await expect(page.locator('dialog')).toHaveCount(0)
+
+    const noOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    )
+    expect(noOverflow).toBe(true)
+  }
+
   await page.setViewportSize({ width: 1024, height: 800 })
   await page.goto('/')
-  await page.getByRole('button', { name: 'Mais tipos' }).first().click()
-  // On desktop, the chevron rotates and the rest of the chips appear in line.
-  await expect(page.locator('dialog.bottom-sheet[open]')).toHaveCount(0)
-  // The collapse button now reads "Menos".
-  await expect(page.getByRole('button', { name: /^Menos/ })).toBeVisible()
+  const desktopGroup = page.getByRole('group', { name: 'Tipo de unidade' })
+  await expect(
+    desktopGroup.getByRole('radio', { name: 'UBS (posto de saúde)' }),
+  ).toBeVisible()
+  await expect(desktopGroup.getByRole('button', { name: 'Ver mais tipos' })).toBeVisible()
+  await expect(page.locator('dialog')).toHaveCount(0)
 })
 
 test('hidden units are not reachable by deep link', async ({ page }) => {

@@ -9,7 +9,7 @@ import {
   TYPE_FILTER_PRIORITY,
   UNIT_TYPE_LABELS,
   UNIT_TYPE_SHORT_LABELS,
-  serviceChipLabel,
+  serviceSummaryLabel,
 } from '../data/labels'
 import { matchesQuery } from '../lib/search'
 import { withDistances } from '../lib/nearby'
@@ -125,8 +125,8 @@ export function DirectoryPage() {
   }, [])
 
   /* Filter options reflect what actually exists among displayed units.
-     Each list is ordered priority-first (Etapa Visual 2 / B5): the chips
-     the citizen reaches for live up top; the rest stay behind "Mais …". */
+     Each consultation list is ordered priority-first: the choices citizens
+     reach for stay above the inline "Ver mais" disclosure. */
   const options = useMemo(() => {
     const visible = [...sections.care, ...sections.comingSoon, ...sections.institutional]
     const services = new Set<ServiceSlug>()
@@ -179,9 +179,8 @@ export function DirectoryPage() {
     }
   }, [sections])
 
-  /* Visible chips per group before "Mais …" (the rest open via disclosure).
-     Type priority covers 8 of 11 types in the dataset — the remaining 3
-     fit naturally under "Mais tipos". */
+  /* Visible options per group before the inline disclosure. Type priority
+     covers 8 of 11 types in the dataset. */
   const TYPE_VISIBLE = TYPE_FILTER_PRIORITY.length
   const SERVICE_VISIBLE = SERVICE_FILTER_PRIORITY.length
   const NEIGHBORHOOD_VISIBLE = 6
@@ -209,9 +208,9 @@ export function DirectoryPage() {
     if (geo.state.status === 'granted') geo.reset()
   }
 
-  /* Etapa Visual 5 / B: build the list of removable active filters from each
-     URL param + geolocation. Each chip carries its own `onRemove`, so the
-     FiltersBar stays unaware of the data model. */
+  /* Build the removable active-filter actions from each URL param and
+     geolocation. Each entry carries its own `onRemove`, so FiltersBar stays
+     unaware of the data model. */
   const activeFilters: ActiveFilter[] = []
   if (filters.q !== '') {
     activeFilters.push({
@@ -230,7 +229,7 @@ export function DirectoryPage() {
   if (filters.servico !== '') {
     activeFilters.push({
       key: 'servico',
-      label: `Serviço: ${serviceChipLabel(filters.servico as ServiceSlug)}`,
+      label: `Serviço: ${serviceSummaryLabel(filters.servico as ServiceSlug)}`,
       onRemove: () => setFilter('servico', ''),
     })
   }
@@ -249,15 +248,13 @@ export function DirectoryPage() {
     })
   }
 
-  /* Search input + chip groups — extracted because they render twice in
-     spirit: on lg+ they live in the sidebar; below lg they stack ahead of
-     the results column. The same JSX produces both layouts by living inside
-     the sidebar <aside>, which the parent grid only rearranges at lg:. */
+  /* Search input + accessible radio groups. One DOM composition serves the
+     sticky desktop consultation area and the inline mobile disclosures. */
   const searchAndFilters = (
     /* <search> is already a search landmark — no role attribute needed. */
     <search aria-label="Buscar e filtrar unidades">
-      <form className="flex flex-col gap-6" onSubmit={(event) => event.preventDefault()}>
-        <div>
+      <form className="flex flex-col" onSubmit={(event) => event.preventDefault()}>
+        <div className="pb-4">
           <label htmlFor="busca" className="mb-1 block font-semibold">
             Buscar por nome, bairro ou serviço
           </label>
@@ -298,24 +295,24 @@ export function DirectoryPage() {
           legend="Tipo de unidade"
           options={options.types.map((type) => ({
             value: type,
-            label: UNIT_TYPE_SHORT_LABELS[type],
+            label: UNIT_TYPE_LABELS[type],
           }))}
           value={filters.tipo}
           onChange={(v) => setFilter('tipo', v)}
           prioritySlots={TYPE_VISIBLE}
-          moreLabel="Mais tipos"
+          moreLabel="tipos"
         />
 
         <FilterChipGroup
           legend="Serviço"
           options={options.services.map((slug) => ({
             value: slug,
-            label: serviceChipLabel(slug),
+            label: SERVICE_LABELS[slug],
           }))}
           value={filters.servico}
           onChange={(v) => setFilter('servico', v)}
           prioritySlots={SERVICE_VISIBLE}
-          moreLabel="Mais serviços"
+          moreLabel="serviços"
         />
 
         <FilterChipGroup
@@ -327,15 +324,15 @@ export function DirectoryPage() {
           value={filters.bairro}
           onChange={(v) => setFilter('bairro', v)}
           prioritySlots={NEIGHBORHOOD_VISIBLE}
-          moreLabel="Mais bairros"
+          moreLabel="bairros"
         />
       </form>
     </search>
   )
 
   /* Results column. `aria-live="polite"` on the count announces the number
-     to screen readers whenever filters change (V4 / D3). The FiltersBar
-     shows individual removable chips + a "Limpar filtros" link (V5 / B). */
+     to screen readers whenever filters change. FiltersBar exposes each
+     active choice as a removable text action. */
   const resultsColumn = (
     <section aria-label="Resultados" aria-live="polite">
       {!nothingFound && (
@@ -448,8 +445,8 @@ export function DirectoryPage() {
         onReset={geo.reset}
       />
 
-      {/* Etapa Visual 5 / A: 2-column directory at lg: (≥ 1024px). Sidebar
-          (260px) holds search + chip groups; the right
+      {/* Two-column directory at lg: (≥ 1024px). The 272px consultation rail
+          holds search + radio lists; the right
           column carries the FiltersBar + results. Below lg the layout falls
           back to the V4 stack — children render sequentially in DOM order,
           which already matches the mobile flow we want.
@@ -460,12 +457,12 @@ export function DirectoryPage() {
           create horizontal overflow. `minmax(0, 1fr)` overrides that floor
           so the column can actually shrink to fit. */}
       <div
-        className="mt-6 lg:grid lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-6"
+        className="mt-6 lg:grid lg:grid-cols-[272px_minmax(0,1fr)] lg:gap-6"
         data-testid="directory-grid"
       >
         <aside
           data-testid="filters-sidebar"
-          className="flex flex-col gap-6 lg:sticky lg:top-6 lg:self-start"
+          className="flex flex-col lg:sticky lg:top-4 lg:self-start"
         >
           {searchAndFilters}
         </aside>

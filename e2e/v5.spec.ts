@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test'
  * Etapa Visual 5 e2e: covers the four spec items that exercise the
  * directory's new shape:
  *  - A: 2-column layout on lg: vs mobile stack
- *  - B: removable active-filter pills in the FiltersBar
+ *  - B: removable active-filter actions in the FiltersBar
  *  - E: FiltersBar sticks to the top of the scroll on mobile
  *  - D: confidence seals carry the right inline icon (or none)
  *
@@ -53,15 +53,20 @@ test('directory: lg: sidebar with search; mobile: stacked', async ({ page }) => 
 
 /* ----------------------------------------------------------------- B */
 
-test('FiltersBar: clicking ✕ on a chip removes that filter only (V5 / B)', async ({
-  page,
-}) => {
+test('FiltersBar: clicking ✕ on an action removes that filter only', async ({ page }) => {
   await page.setViewportSize(MOBILE)
   await page.goto('/')
 
   // Apply two filters: Tipo=UBS, Bairro=Centro.
-  await page.getByRole('button', { name: 'UBS', exact: true }).click()
-  await page.getByRole('button', { name: 'Centro', exact: true }).click()
+  const typeGroup = page.getByRole('group', { name: 'Tipo de unidade' })
+  await typeGroup.getByRole('button', { name: /Tipo de unidade/ }).click()
+  await typeGroup
+    .getByRole('radio', { name: 'UBS (posto de saúde)', exact: true })
+    .click()
+
+  const neighborhoodGroup = page.getByRole('group', { name: 'Bairro' })
+  await neighborhoodGroup.getByRole('button', { name: /Bairro/ }).click()
+  await neighborhoodGroup.getByRole('radio', { name: 'Centro', exact: true }).click()
 
   // The FiltersBar now exposes one remove button per active filter.
   const removeTipo = page.getByRole('button', { name: /Remover filtro: Tipo/i })
@@ -69,14 +74,13 @@ test('FiltersBar: clicking ✕ on a chip removes that filter only (V5 / B)', asy
   await expect(removeTipo).toBeVisible()
   await expect(removeBairro).toBeVisible()
 
-  // Removing Tipo drops only the tipo param and the UBS chip's pressed state.
+  // Removing Tipo drops only the tipo param and clears the UBS radio state.
   await removeTipo.click()
   await expect(page).not.toHaveURL(/tipo=ubs/)
   await expect(page).toHaveURL(/bairro=Centro/)
-  await expect(page.getByRole('button', { name: 'UBS', exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'false',
-  )
+  await expect(
+    typeGroup.getByRole('radio', { name: 'UBS (posto de saúde)', exact: true }),
+  ).not.toBeChecked()
   await expect(removeTipo).toHaveCount(0)
   await expect(removeBairro).toBeVisible()
 
@@ -97,8 +101,8 @@ test('search input: clear ✕ appears only when there is text (V5 / C+B)', async
 
   await page.getByLabel('Buscar por nome, bairro ou serviço').fill('vacina')
 
-  // After typing, the per-input clear button appears AND a "Busca:" chip
-  // shows up in the FiltersBar with its own remove button.
+  // After typing, the per-input clear button appears AND a "Busca:" action
+  // shows up in the FiltersBar with its own remove control.
   const clearSearch = page.getByRole('button', { name: 'Limpar busca' })
   await expect(clearSearch).toBeVisible()
   await expect(page.getByRole('button', { name: /Remover filtro: Busca/i })).toBeVisible()
@@ -126,7 +130,9 @@ test('FiltersBar: sticks at top on mobile scroll; not on desktop (V5 / E)', asyn
   // Scroll way past the bar's natural position. evaluate returns the
   // pre-scroll offsetTop of the bar (relative to document); scrolling to
   // that + 500 guarantees we're past it.
-  const offsetTop = await bar.evaluate((el) => el.getBoundingClientRect().top + window.scrollY)
+  const offsetTop = await bar.evaluate(
+    (el) => el.getBoundingClientRect().top + window.scrollY,
+  )
   await page.evaluate((target) => window.scrollTo(0, target), offsetTop + 500)
   const yMobile = await bar.evaluate((el) => el.getBoundingClientRect().y)
   expect(yMobile).toBeGreaterThanOrEqual(0)

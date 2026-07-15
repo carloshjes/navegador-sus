@@ -32,7 +32,7 @@ export function QuickLocateBand({
     >
       {!granted && (
         <>
-          <div className="flex flex-col items-stretch gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          <div className="flex flex-col items-start gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
             <div>
               <p className="font-semibold text-ink">Ver as unidades mais próximas</p>
               <p className="text-meta text-ink-muted">
@@ -43,7 +43,6 @@ export function QuickLocateBand({
               onClick={onLocate}
               aria-label="Ver as mais próximas de mim"
               disabled={state.status === 'prompting'}
-              fullWidthMobile
             >
               {state.status === 'prompting' ? 'Obtendo localização…' : 'Localizar'}
             </LocateButton>

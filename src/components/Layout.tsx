@@ -5,13 +5,12 @@ import { useRouteFocus } from '../lib/route-focus'
 import { formatDateBR } from '../lib/provenance-ui'
 import { dataset } from '../data/units'
 
-/* Nav items repeat the coral motif on the active state (Etapa Visual 3 /
-   B1): a 2px coral border-bottom (the brand's coral dot stretched into a
-   line). Inactive items keep a transparent border of equal weight so the
-   active/inactive heights match — no layout jitter on selection. Visual
-   Stage 10 inverts the header polarity: labels and hover borders are white. */
+/* Nav items repeat the coral motif on the active state: a 2px coral
+   border-bottom (the brand's coral dot stretched into a line). Inactive
+   items keep a transparent border of equal weight so selection never moves
+   the layout. White labels and focus rings sit on the solid primary header. */
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `transition-chip flex min-h-touch items-center border-b-2 px-2 pt-0.5 text-label text-white ${
+  `transition-control flex min-h-touch items-center justify-center border-b-2 px-1 pt-0.5 text-label text-white sm:px-2 ${
     isActive ? 'border-accent font-semibold' : 'border-transparent hover:border-white'
   }`
 
@@ -31,19 +30,22 @@ export function Layout() {
         Pular para o conteúdo
       </a>
 
-      <header className="app-header border-b border-edge bg-primary-tonal">
-        {/* Compact: one row on every viewport; the dev-version badge moved
-            to the home intro (Etapa Visual 2 / B2). py-2 + the wordmark's
-            own touch target keeps the bar around 56px. */}
-        <div className="mx-auto flex w-full max-w-screen-lg items-center gap-3 px-4 py-2">
+      <header className="app-header h-header border-b border-primary-strong bg-primary">
+        {/* Mobile gives the enlarged mark its own row and keeps all three nav
+            labels intact. At sm+ both regions share one line. The explicit
+            h-header utility stays paired with the map height calculation. */}
+        <div className="mx-auto grid h-full w-full max-w-screen-lg grid-rows-[1fr_2.75rem] items-center px-2 sm:flex sm:gap-4 sm:px-4">
           <Link
             to="/"
             aria-label="navegador sus Erechim — página inicial"
-            className="flex min-h-touch items-center"
+            className="flex min-h-touch items-center justify-self-center sm:justify-self-auto"
           >
             <Logo />
           </Link>
-          <nav aria-label="Seções do guia" className="ms-auto flex gap-1">
+          <nav
+            aria-label="Seções do guia"
+            className="grid w-full grid-cols-3 sm:ms-auto sm:flex sm:w-auto sm:gap-1"
+          >
             {/* `end` is required on the index route — without it, NavLink
                 would treat any path as a child of "/" and render Início as
                 always-active. */}
