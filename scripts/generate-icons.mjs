@@ -9,7 +9,7 @@
  * Per kit §8:
  *  - favicon 16/32: pin on TRANSPARENT background.
  *  - apple-touch (180), PWA any (192/512), maskable (192/512): pin centered
- *    on a WHITE background (#FFFFFF) — never a teal tile. Maskable gets extra
+ *    on a WHITE background (#FFFFFF) — never a green tile. Maskable gets extra
  *    padding so the pin stays inside the Android safe zone.
  */
 import { chromium } from '@playwright/test'
@@ -22,7 +22,7 @@ const publicDir = join(here, '..', 'public')
 /** The kit §8 pin, scaled to `px`. White cross (protected-emblem reason). */
 const pinSvg = (px) =>
   `<svg width="${px}" height="${px}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 1.6c-4.3 0-7.8 3.4-7.8 7.5 0 5.3 7.8 13.3 7.8 13.3s7.8-8 7.8-13.3c0-4.1-3.5-7.5-7.8-7.5z" fill="#0E5E4C"/>
+    <path d="M12 1.6c-4.3 0-7.8 3.4-7.8 7.5 0 5.3 7.8 13.3 7.8 13.3s7.8-8 7.8-13.3c0-4.1-3.5-7.5-7.8-7.5z" fill="#0F5132"/>
     <rect x="10.85" y="5.4" width="2.3" height="7.4" rx="0.5" fill="#FFFFFF"/>
     <rect x="8.4" y="7.95" width="7.2" height="2.3" rx="0.5" fill="#FFFFFF"/>
   </svg>`
