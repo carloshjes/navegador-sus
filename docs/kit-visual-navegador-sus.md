@@ -2,8 +2,8 @@
 
 > Identidade visual definitiva do projeto. Substitui a paleta **provisória**
 > da Fase 1. Adicionar ao conhecimento do projeto.
-> **Versão 1.2** — 15/07/2026 (refinamento Cívico compacto da Etapa
-> Visual 12). Tema: **somente claro** na v1.
+> **Versão 1.3** — 16/07/2026 (dock telefônico e faixa Localizar da Etapa
+> Visual 13). Tema: **somente claro** na v1.
 > Todas as cores foram verificadas por contraste (WCAG); as razões estão
 > anotadas em cada token. Identificadores em inglês; rótulos de UI em PT-BR.
 
@@ -120,8 +120,8 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 - **Selo de status** (confiança): texto sóbrio com cor semântica, rótulo completo e ícone quando necessário; ver §9.2.
 - **Botão primário:** `primary` sólido, texto branco, `radius-md`, altura ≥44px; `primary-strong` somente em hover/active.
 - **Card de unidade:** `surface`, `border`/`edge` 1px, `radius-md`, padding 14–16px; tag de categoria no topo, `unit-name`, `meta` e confiança no rodapé. `box-shadow`, `filter` e `transform` computam como `none` em repouso e hover; a interação permanece no link do título e no foco.
-- **Ação Localizar:** botão `radius-md`, altura mínima de 44px, largura determinada pelo texto e ícone. Fica abaixo e alinhado ao início no mobile; no desktop, à direita da explicação.
-- **Dock de emergência:** `emergency` sólido, rótulo “Emergência” e cápsulas compactas “SAMU 192” e “Bombeiros 193”, ambas `tel:` e sempre visíveis. SAMU usa superfície branca; Bombeiros usa branco translúcido discreto. Sem borda marcada, sombra, pulso, escala ou animação.
+- **Ação Localizar:** faixa aberta no fundo natural da página, sem fundo colorido, card, raio ou régua lateral; `border-top`/`border-bottom` em `edge` separam a utilidade do conteúdo vizinho. O botão usa `primary` sólido, texto branco, `radius-md`, keyline de 1px em `primary-strong`, altura mínima de 44px, padding horizontal de 20px, rótulo 600 e crosshair inline de 18px. A largura segue texto + ícone; fica abaixo e alinhado ao início no mobile e à direita da explicação no desktop.
+- **Dock de emergência:** `emergency` sólido, rótulo “Emergência” e duas cápsulas `tel:` com a mesma estrutura: telefone inline de 14px + nome + número 700 com algarismos tabulares. A caixa visual mede cerca de 32px de altura e um pseudo-elemento transparente expande cada hit area para pelo menos 44×44px. SAMU é preenchida em branco, com texto `emergency` e borda branca de 1px; Bombeiros é transparente, com texto branco e borda branca a 80%. A partir de `sm`, rótulo, divisor vertical branco a 35% e texto de apoio formam uma régua à esquerda, com as ações à direita; abaixo de `sm`, rótulo e ações ocupam duas linhas e o divisor some. Sem sombra, pulso, escala, glow ou animação.
 
 ## 6. Estados de confiança → tratamento na UI
 
@@ -271,6 +271,11 @@ coleção de objetos elevados:
 - “Onde ir?” como mapa textual: faixa aberta de emergência primeiro e,
   abaixo, linhas no fundo natural separadas por divisores, com rótulo de
   acesso na coluna estreita e explicação na coluna principal;
+- a utilidade Localizar como faixa aberta entre divisores horizontais, sem
+  repetir o padrão genérico de callout, e com a ação delimitada por keyline;
+- o dock como régua de serviço no desktop: rótulo, divisor, contexto e par
+  telefônico preenchido × contornado; no mobile, a mesma hierarquia recompõe
+  duas linhas sem sacrificar a área de toque;
 - cor reforça marca, categoria, confiança e emergência, mas divisores,
   tipografia, ordem e alinhamento preservam a leitura em escala de cinza.
 
