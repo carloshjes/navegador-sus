@@ -2,8 +2,8 @@
 
 > Identidade visual definitiva do projeto. Substitui a paleta **provisória**
 > da Fase 1. Adicionar ao conhecimento do projeto.
-> **Versão 1.4** — 16/07/2026 (pinho cívico e placa conectada da Etapa
-> Visual 14). Tema: **somente claro** na v1.
+> **Versão 1.5** — 16/07/2026 (ficha estruturada de unidades da Etapa
+> Visual 15). Tema: **somente claro** na v1.
 > Todas as cores foram verificadas por contraste (WCAG); as razões estão
 > anotadas em cada token. Identificadores em inglês; rótulos de UI em PT-BR.
 
@@ -40,6 +40,7 @@ cadeia de segurança do projeto; (c) privacidade (sem request ao Google);
 | `body` | 16px / 1.6 | Public Sans 400 | texto base (16px ajuda leitura de idosos) |
 | `label` | 14px / 1.4 | Public Sans 500 | rótulos, botões |
 | `meta` | 13px / 1.45 | Public Sans 400 | metadados (bairro, datas) |
+| `eyebrow` | 12px / 1.2 | Public Sans 700 | família da unidade em caixa alta, com tracking de `0.08em` |
 
 Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 
@@ -90,9 +91,11 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 > independentes da família da marca. Semelhança entre verdes não autoriza
 > reutilizar token de status como `primary` ou vice-versa.
 
-**Cores de categoria (tags)** — sólidas, com **texto branco** (todas AA):
+**Cores de categoria (eyebrows)** — aplicadas ao texto sobre o card branco
+(todas AA; a razão de contraste é simétrica e conserva os valores já
+calculados):
 
-| Categoria | Token | Hex | Contraste (branco) |
+| Categoria | Token | Hex | Contraste (branco ↔ cor) |
 |---|---|---|---|
 | UBS / atenção básica | `cat-ubs` | `#185FA5` | 6.52:1 |
 | Urgência / PA | `cat-urgency` | `#B5421F` | 5.58:1 |
@@ -106,28 +109,29 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 
 | Token | Valor | Uso |
 |---|---|---|
-| `radius-sm` | 4px | **tags de categoria** (retangular — o traço de sinalização) |
+| `radius-sm` | 4px | placa ativa da navegação e controles compactos que exijam contenção |
 | `radius-md` | 10px | inputs, ações utilitárias e cards de unidade |
 | `radius-lg` | 14px | agrupamentos grandes legados que ainda exijam contenção |
-| `radius-pill` | 999px | **chamadas telefônicas** compactas |
+| `radius-pill` | 999px | **chamadas telefônicas em destaque** (dock e CTAs) |
 
 - Espaçamento na escala 4 / 8 / 12 / 16 / 24 / 32.
 - **Alvo de toque mínimo 44×44px** (botões, radios com rótulo e links de ação) — regra do projeto.
 - Sem gradientes, sem sombras decorativas (só anel de foco funcional).
 
-> Regra de forma que organiza a UI: **categoria = retângulo curto**
-> (`radius-sm`), **utilidade e registro = retângulo compacto**
-> (`radius-md`) e **telefonia = cápsula** (`radius-pill`). Estados de
-> confiança permanecem texto semântico, conforme §9.2.
+> Regra de forma que organiza a UI: **categoria = eyebrow textual sem
+> contêiner**, **utilidade e registro = retângulo compacto** (`radius-md`) e
+> **telefonia em destaque = cápsula** (`radius-pill`). Um telefone dentro de
+> uma ficha é linha de registro discável, não cápsula. Estados de confiança
+> permanecem texto semântico, conforme §9.2.
 
 ## 5. Componentes
 
 - **Cabeçalho e navegação:** faixa `primary` sólida, sem borda inferior. A rota ativa é uma placa conectada ao conteúdo: `bg`, texto `primary`, peso 600, `radius-sm` somente nos cantos superiores, altura mínima de 44px e encaixe direto no limite inferior do header. Rotas inativas usam texto branco e `hover:bg-white/10`, sem linha ou deslocamento. O foco é `primary` na placa creme e branco nas rotas sobre o header.
 - **Lista de filtro** (Todos / UBS / Urgência…): `fieldset` + `legend` e radios nativos em linhas transparentes com altura mínima de 44px. O radio marcado é o indicador persistente e o texto selecionado usa peso 600; não há faixa preenchida, check duplicado, marcador lateral, card, pílula ou borda fechada por item. No desktop, as listas ficam abertas na lateral sticky. Abaixo de `lg`, cada grupo é um disclosure no fluxo normal; listas longas usam “Ver mais/menos” inline, nunca `<dialog>`.
-- **Tag de categoria** (no card): retangular `radius-sm`, cor da categoria sólida + texto branco, Public Sans 700 / 11px. Letra espaçada (`0.05em`); pode usar caixa alta curta ("UBS", "SAÚDE MENTAL").
+- **Eyebrow de categoria** (no card): texto `cat-*` sobre `surface`, sem fundo, borda, raio ou padding; Public Sans 700 / 12px, caixa alta e `letter-spacing: 0.08em`. O rótulo traduz o jargão na primeira menção, por exemplo “UBS — posto de saúde” e “CAPS — saúde mental”.
 - **Selo de status** (confiança): texto sóbrio com cor semântica, rótulo completo e ícone quando necessário; ver §9.2.
 - **Botão primário:** `primary` sólido, texto branco, `radius-md`, altura ≥44px; `primary-strong` somente em hover/active.
-- **Card de unidade:** `surface`, `border`/`edge` 1px, `radius-md`, padding 14–16px; tag de categoria no topo, `unit-name`, `meta` e confiança no rodapé. `box-shadow`, `filter` e `transform` computam como `none` em repouso e hover; a interação permanece no link do título e no foco.
+- **Card de unidade:** ficha em `surface`, `border`/`edge` 1px, `radius-md` e padding de 14–16px, dividida em duas zonas. Identificação: eyebrow, nome completo e distância opcional. Dados práticos: `border-top` em `edge`, endereço, telefone discável, horário e selo obrigatório, com ícones inline de 14px; `mt-auto` ancora essa zona na base e mantém alturas iguais no grid. Lacunas de endereço e telefone são omitidas, nunca preenchidas. Selos de estado ficam na última linha. Há foco apenas nos links de título e telefone; `box-shadow`, `filter` e `transform` do container permanecem `none` em repouso e hover.
 - **Ação Localizar:** faixa aberta no fundo natural da página, sem fundo colorido, card, raio ou régua lateral; `border-top`/`border-bottom` em `edge` separam a utilidade do conteúdo vizinho. O botão usa `primary` sólido, texto branco, `radius-md`, keyline de 1px em `primary-strong`, altura mínima de 44px, padding horizontal de 20px, rótulo 600 e crosshair inline de 18px. A largura segue texto + ícone; fica abaixo e alinhado ao início no mobile e à direita da explicação no desktop.
 - **Dock de emergência:** `emergency` sólido, rótulo “Emergência” e duas cápsulas `tel:` com a mesma estrutura: telefone inline de 14px + nome + número 700 com algarismos tabulares. A caixa visual mede cerca de 32px de altura e um pseudo-elemento transparente expande cada hit area para pelo menos 44×44px. SAMU é preenchida em branco, com texto `emergency` e borda branca de 1px; Bombeiros é transparente, com texto branco e borda branca a 80%. A partir de `sm`, rótulo, divisor vertical branco a 35% e texto de apoio formam uma régua à esquerda, com as ações à direita; abaixo de `sm`, rótulo e ações ocupam duas linhas e o divisor some. Sem sombra, pulso, escala, glow ou animação.
 
@@ -174,40 +178,31 @@ SVG-fonte (24×24, escalável):
 
 ## 9. Componentes — especificação visual
 
-### 9.1 Tag de categoria (`CategoryTag`) — Etapa Visual 4 / A1
+### 9.1 Eyebrow de categoria (`CategoryTag`) — Etapa Visual 15
 
-Retângulo sólido pequeno, na cor da família, com texto branco.
-**Largura definida pelo conteúdo** — nunca estica.
+Sinal textual compacto no início da zona de identificação. Usa a cor da
+família sem criar outro bloco dentro da ficha.
 
-- `display: inline-flex; align-items: center; align-self: flex-start`
-- `padding: 4px 9px`
-- `border-radius: 3px`
-- texto: Public Sans 700 / 11px / `line-height: 1` /
-  `text-transform: uppercase` / `letter-spacing: 0.05em` / `color: white`
-- background: token `cat-{family}` do §3
-- **Sem foco visível** (a tag não é clicável; a regra
-  `:focus-visible` global só fala de interativos)
+- sem background, borda, raio ou padding;
+- texto: Public Sans 700 / 12px / `line-height: 1.2` /
+  `text-transform: uppercase` / `letter-spacing: 0.08em`;
+- cor: token de texto `cat-{family}` do §3 sobre `surface` branco;
+- conteúdo: família + tradução do jargão quando necessário; o nome canônico
+  completo continua no título;
+- **sem foco visível**: o eyebrow não é interativo e o link permanece no nome.
 
 **Famílias:** `ubs`, `urgency`, `hospital`, `mental`, `specialty`,
 `pharmacy`, `admin` (§3 — *Cores de categoria*).
 
-**Proibido (causa raiz dos bugs já vistos):**
-- `width: 100%`, `display: block`, `flex` *sem* `align-self: flex-start`
-- envelopar em wrapper sem `display: flex`
-- `text-decoration: underline` no hover (a tag não é link)
+O antigo requisito `inline-flex` + `self-start` protegia a largura do fundo
+colorido contra o esticamento de um filho em `flex-column`. Sem superfície,
+padding ou borda, a largura da caixa deixou de produzir um efeito visual; por
+isso a nota de regressão e a asserção de largura não se aplicam. O E2E protege
+o contrato relevante: 12px, peso 700, tracking, token de texto e ausência de
+contêiner.
 
-Em flex-column (UnitCard é `flex flex-col h-full`), filhos ocupam 100%
-da largura por default. **Tanto `inline-flex` quanto `self-start` são
-obrigatórios** — defesa em profundidade caso o pai vire `block` no
-futuro.
-
-> **Curiosidade que assusta no DevTools:** o filho de um flex container
-> tem o `display` *blockificado* — `inline-flex` aparece como `flex` no
-> computed style, `inline-block` aparece como `block`. **A largura
-> permanece correta** (o `inline-` foi escrito para o caso de o pai
-> virar block); o `display` só dá a impressão de ter mudado. O teste em
-> `e2e/directory.spec.ts` valida o contrato pela **classe CSS escrita**,
-> não pelo computed value — é a classe que protege refatorações.
+**Proibido:** recolocar `bg-cat-*`, borda, radius, padding, sublinhado ou
+interatividade no eyebrow.
 
 ### 9.2 Selo de confiança como texto (`Badge`) — Etapa Visual 5 / D
 
@@ -266,7 +261,7 @@ sincronização** — e somam ~400 bytes ao bundle final.
 > `<span>` da Badge; o ícone vai junto. É o equivalente CSS de "faz o
 > que o texto faz".
 
-### 9.3 Sistema de orientação cívica — Etapas Visuais 12–14
+### 9.3 Sistema de orientação cívica — Etapas Visuais 12–15
 
 A composição compartilhada funciona como sinalização pública, não como uma
 coleção de objetos elevados:
@@ -276,8 +271,9 @@ coleção de objetos elevados:
   rotas inativas permanecem brancas sobre o pinho;
 - filtros como listas verticais de consulta, com grupos progressivamente
   revelados no mobile e lateral sticky no desktop;
-- unidades como registros sólidos em `surface` + `edge` + `radius-md`, sem
-  sombras, filtros ou movimento do container;
+- unidades como fichas em `surface` + `edge` + `radius-md`, sem sombras,
+  filtros ou movimento do container: identificação acima e dados práticos
+  abaixo de um divisor interno, ancorados à base por `mt-auto`;
 - “Onde ir?” como mapa textual: faixa aberta de emergência primeiro e,
   abaixo, linhas no fundo natural separadas por divisores, com rótulo de
   acesso na coluna estreita e explicação na coluna principal;
@@ -286,9 +282,9 @@ coleção de objetos elevados:
 - o dock como régua de serviço no desktop: rótulo, divisor, contexto e par
   telefônico preenchido × contornado; no mobile, a mesma hierarquia recompõe
   duas linhas sem sacrificar a área de toque;
-- `.dot-accent` permanece como nome histórico do separador tipográfico, mas
-  agora usa `primary-ink`; aparece somente nos pontos disciplinados do motivo
-  e nunca introduz uma segunda família de marca;
+- `.dot-accent` permanece como nome histórico e utilitário do separador
+  tipográfico em `primary-ink`, mas não é usado na ficha: endereço e bairro
+  pertencem a uma linha de registro própria;
 - cor reforça marca, categoria, confiança e emergência, mas divisores,
   tipografia, ordem e alinhamento preservam a leitura em escala de cinza.
 
