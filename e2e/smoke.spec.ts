@@ -19,7 +19,17 @@ test('home page renders with the real dataset', async ({ page }) => {
     'color',
     'rgb(21, 96, 60)',
   )
-  await expect(page.locator('.dot-accent').first()).toHaveCSS('color', 'rgb(21, 96, 60)')
+  // Unit cards no longer use the middot separator after Visual Stage 15, but
+  // the kit utility remains protected for other compact metadata contexts.
+  const dotAccentColor = await page.evaluate(() => {
+    const dot = document.createElement('span')
+    dot.className = 'dot-accent'
+    document.body.append(dot)
+    const color = getComputedStyle(dot).color
+    dot.remove()
+    return color
+  })
+  expect(dotAccentColor).toBe('rgb(21, 96, 60)')
 })
 
 test('pine header connects the active plate and outlined mark to the page', async ({

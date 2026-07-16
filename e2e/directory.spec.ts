@@ -40,7 +40,7 @@ test('citizen flow: search → filter → detail → confidence seal', async ({ 
     fontWeight: '600',
   })
 
-  await page.getByRole('link', { name: 'UBS Capoerê' }).click()
+  await page.getByRole('link', { name: 'UBS Capoerê', exact: true }).click()
 
   await expect(page.getByRole('heading', { level: 1, name: 'UBS Capoerê' })).toBeVisible()
   // SPA route change must move focus to the new page title.
@@ -107,36 +107,40 @@ test('filters bar shows count + Limpar filtros only when active (V4 / B1)', asyn
   await expect(page.getByRole('button', { name: 'Limpar filtros' })).toHaveCount(0)
 })
 
-test('CategoryTag is its content width, not full card width (V4 / A1)', async ({
+test('CategoryTag is a 12px colored-text eyebrow without a container', async ({
   page,
 }) => {
   await page.goto('/')
   await page.locator('[data-testid="category-tag"]').first().waitFor()
   const result = await page.evaluate(() => {
     const tag = document.querySelector<HTMLElement>('[data-testid="category-tag"]')!
-    const tagRect = tag.getBoundingClientRect()
-    // The flex column ancestor (the Card) is the width benchmark.
-    const card = tag.closest<HTMLElement>('div.flex.flex-col')!
-    const cardRect = card.getBoundingClientRect()
     const cs = getComputedStyle(tag)
     return {
-      tagWidth: tagRect.width,
-      cardWidth: cardRect.width,
-      alignSelf: cs.alignSelf,
+      text: tag.textContent,
       classList: [...tag.classList],
+      backgroundColor: cs.backgroundColor,
+      borderTopWidth: cs.borderTopWidth,
+      borderRadius: cs.borderRadius,
+      paddingTop: cs.paddingTop,
+      paddingRight: cs.paddingRight,
+      fontSize: cs.fontSize,
+      fontWeight: cs.fontWeight,
+      letterSpacing: cs.letterSpacing,
+      textTransform: cs.textTransform,
     }
   })
-  // The author class set must include `inline-flex` and `self-start`. Both
-  // are required (defense in depth — see docs/kit §9.1). Note: computed
-  // `display` is `flex`, not `inline-flex`, because CSS blockifies any
-  // `inline-*` flex/grid item to its block equivalent. The CLASS is what
-  // protects future refactors, so that's what we assert here.
-  expect(result.classList).toContain('inline-flex')
-  expect(result.classList).toContain('self-start')
-  expect(result.alignSelf).toBe('flex-start')
-  // The rendered width stays close to content; the card width is at least
-  // 3× the tag width even on a 375px mobile column.
-  expect(result.tagWidth * 3).toBeLessThan(result.cardWidth)
+  expect(result.text).toBe('UBS — posto de saúde')
+  expect(result.classList).toContain('text-cat-ubs')
+  expect(result.classList.some((name) => name.startsWith('bg-cat-'))).toBe(false)
+  expect(result.backgroundColor).toBe('rgba(0, 0, 0, 0)')
+  expect(result.borderTopWidth).toBe('0px')
+  expect(result.borderRadius).toBe('0px')
+  expect(result.paddingTop).toBe('0px')
+  expect(result.paddingRight).toBe('0px')
+  expect(result.fontSize).toBe('12px')
+  expect(result.fontWeight).toBe('700')
+  expect(result.letterSpacing).toBe('0.96px')
+  expect(result.textTransform).toBe('uppercase')
 })
 
 test('hub cross-links: same address, different services', async ({ page }) => {
@@ -155,9 +159,8 @@ test('hub cross-links: same address, different services', async ({ page }) => {
 })
 
 test('directory cards in a row reach equal heights (no grid holes)', async ({ page }) => {
-  // Etapa Visual 3 / A2: cards are flex columns with mt-auto on the status
-  // block; the grid stretches them so heights match. Use a desktop-sized
-  // viewport so the sm:grid-cols-2 rule kicks in.
+  // The practical zone uses mt-auto; the grid stretches each card so the
+  // internal dividers and card heights align in every two-column row.
   await page.setViewportSize({ width: 1024, height: 800 })
   await page.goto('/')
   const cards = page.locator('section[aria-labelledby="titulo-atendimento"] > ul > li')
@@ -170,6 +173,80 @@ test('directory cards in a row reach equal heights (no grid holes)', async ({ pa
   // must match (allow 1px sub-pixel slack).
   expect(Math.abs(heights[0] - heights[1])).toBeLessThanOrEqual(1)
   expect(Math.abs(heights[2] - heights[3])).toBeLessThanOrEqual(1)
+})
+
+test('unit records expose practical data and preserve honest gaps', async ({ page }) => {
+  await page.goto('/')
+
+  const capoere = page.getByTestId('unit-card').filter({
+    has: page.getByRole('link', { name: 'UBS Capoerê', exact: true }),
+  })
+  await expect(capoere.getByTestId('unit-card-address')).toHaveText(
+    'Distrito de Capoerê (sede do distrito) · Distrito de Capoerê',
+  )
+  const phone = capoere.getByRole('link', { name: 'Ligar para UBS Capoerê' })
+  await expect(phone).toHaveAttribute('href', 'tel:+555433213199')
+  await expect(phone).toHaveText('(54) 3321-3199')
+  await expect(capoere).not.toContainText('UBS (posto de saúde)')
+
+  const prisonName = 'UBS Prisional (Posto do Presídio Estadual de Erechim)'
+  const prison = page.getByTestId('unit-card').filter({
+    has: page.getByRole('link', { name: prisonName, exact: true }),
+  })
+  await expect(prison.getByTestId('unit-card-address')).toHaveCount(0)
+  await expect(prison.getByTestId('unit-card-phone')).toHaveCount(0)
+  await expect(prison.getByTestId('unit-card-hours')).toContainText(
+    'horário não confirmado — ligue antes',
+  )
+
+  const streetOnly = page.getByTestId('unit-card').filter({
+    has: page.getByRole('link', {
+      name: /Hospital Santa Terezinha/,
+      exact: true,
+    }),
+  })
+  await expect(streetOnly.getByTestId('unit-card-address')).toHaveText('Rua Itália, 919')
+
+  const neighborhoodOnly = page.getByTestId('unit-card').filter({
+    has: page.getByRole('link', {
+      name: '11ª Coordenadoria Regional de Saúde (Erechim)',
+      exact: true,
+    }),
+  })
+  await expect(neighborhoodOnly.getByTestId('unit-card-address')).toHaveText('Centro')
+
+  const centroName = 'UBS Centro (Unidade Municipal de Referência em Saúde - UMRS)'
+  const centro = page.getByTestId('unit-card').filter({
+    has: page.getByRole('link', { name: centroName, exact: true }),
+  })
+  await expect(centro.getByTestId('unit-card-hours')).toContainText('Seg-Sex 7h30-19h30')
+  await expect(centro.getByTestId('unit-card-hours')).toContainText(
+    'horário de fonte oficial',
+  )
+
+  const cardCount = await page.getByTestId('unit-card').count()
+  await expect(page.getByTestId('unit-card-hours')).toHaveCount(cardCount)
+  for (const text of await page.getByTestId('unit-card-hours').allTextContents()) {
+    expect(text).toMatch(/horário/)
+  }
+
+  const title = capoere.getByRole('link', { name: 'UBS Capoerê', exact: true })
+  await title.focus()
+  await page.keyboard.press('Tab')
+  await expect(phone).toBeFocused()
+  const geometry = await capoere.evaluate((card) => {
+    const titleLink = card.querySelector<HTMLAnchorElement>('h3 a')!
+    const phoneLink = card.querySelector<HTMLAnchorElement>('[href^="tel:"]')!
+    const titleRect = titleLink.getBoundingClientRect()
+    const phoneRect = phoneLink.getBoundingClientRect()
+    return {
+      titleBottom: titleRect.bottom,
+      phoneTop: phoneRect.top,
+      phoneHeight: phoneRect.height,
+    }
+  })
+  expect(geometry.titleBottom).toBeLessThanOrEqual(geometry.phoneTop)
+  expect(geometry.phoneHeight).toBeGreaterThanOrEqual(44)
 })
 
 test('unit records stay flat at rest and hover without losing content', async ({

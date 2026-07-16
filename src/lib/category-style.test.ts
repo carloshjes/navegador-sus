@@ -9,17 +9,17 @@ import {
 import { CATEGORY_STYLE } from './category-style'
 
 /*
- * Visual kit §4: category color is config, not scattered ifs. These tests are
- * the safety net for that config — every category a citizen can see must
- * resolve to exactly one mapped color.
+ * Visual kit §4: category eyebrow color and wording are config, not scattered
+ * ifs. Every category a citizen can see must resolve to one mapped text color
+ * and an explicit PT-BR label.
  */
 describe('category colors (kit §3/§4)', () => {
   it('maps every unit type to a family that has a color style', () => {
     for (const type of UNIT_TYPES) {
       const style = CATEGORY_STYLE[categoryFamilyForType(type)]
       expect(style, type).toBeDefined()
-      // The class is a real, solid cat-* fill (white text is AA by kit §3).
-      expect(style.className, type).toMatch(/^bg-cat-/)
+      // Category colors are AA as text on the white card surface (kit §3).
+      expect(style.textClassName, type).toMatch(/^text-cat-/)
     }
   })
 
@@ -36,5 +36,10 @@ describe('category colors (kit §3/§4)', () => {
     const cerest = dataset.units.find((u) => u.id === 'cerest-alto-uruguai')
     expect(cerest).toBeDefined()
     expect(categoryFamily(cerest!)).toBe('admin')
+  })
+
+  it('translates first-mention jargon in the configured eyebrow labels', () => {
+    expect(CATEGORY_STYLE.ubs.label).toBe('UBS — posto de saúde')
+    expect(CATEGORY_STYLE.mental.label).toBe('CAPS — saúde mental')
   })
 })
