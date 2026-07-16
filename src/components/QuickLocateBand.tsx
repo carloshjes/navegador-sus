@@ -28,7 +28,7 @@ export function QuickLocateBand({
     <section
       aria-label="Ordenar pelas mais próximas"
       data-testid="quick-locate-band"
-      className="mt-4 rounded-lg border border-edge bg-primary-soft p-3 sm:p-4 lg:mt-5"
+      className="mt-4 border-y border-edge py-4 sm:py-5 lg:mt-5"
     >
       {!granted && (
         <>
