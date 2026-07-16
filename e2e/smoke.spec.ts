@@ -114,6 +114,16 @@ test('shared civic chrome fits every required responsive viewport', async ({
       const actionRadii = Array.from(dock.querySelectorAll('a')).map((action) =>
         Number.parseFloat(getComputedStyle(action).borderRadius),
       )
+      const actionHitAreas = Array.from(dock.querySelectorAll('a')).map((action) => {
+        const pseudo = getComputedStyle(action, '::before')
+        return {
+          width: Number.parseFloat(pseudo.width),
+          height: Number.parseFloat(pseudo.height),
+        }
+      })
+      const divider = dock.querySelector<HTMLElement>(
+        '[data-testid="emergency-divider"]',
+      )!
       const locateButton = document.querySelector<HTMLButtonElement>(
         '[data-testid="quick-locate-band"] button',
       )!
@@ -135,11 +145,17 @@ test('shared civic chrome fits every required responsive viewport', async ({
         actionsWithinViewport: actionRects.every(
           (rect) => rect.left >= 0 && rect.right <= window.innerWidth,
         ),
-        actionsMeetTouchFloor: actionRects.every(
-          (rect) => rect.width >= 44 && rect.height >= 44,
+        actionsMeetTouchFloor: actionHitAreas.every(
+          (area) => area.width >= 44 && area.height >= 44,
         ),
-        actionsStayCompact: actionRects.every((rect) => rect.width < 150),
+        actionsStayCompact: actionRects.every(
+          (rect) => rect.width < 150 && rect.height >= 31 && rect.height <= 33,
+        ),
         actionsArePills: actionRadii.every((radius) => radius >= 22),
+        actionsHavePhoneIcons: dock.querySelectorAll('a svg').length === 2,
+        dividerMatchesBreakpoint:
+          getComputedStyle(divider).display ===
+          (window.innerWidth >= 640 ? 'block' : 'none'),
         locateIsCompact:
           locateRect.height >= 44 && locateRect.width < locateBandRect.width * 0.6,
       }
@@ -153,6 +169,8 @@ test('shared civic chrome fits every required responsive viewport', async ({
       actionsMeetTouchFloor: true,
       actionsStayCompact: true,
       actionsArePills: true,
+      actionsHavePhoneIcons: true,
+      dividerMatchesBreakpoint: true,
       locateIsCompact: true,
     })
 
@@ -179,6 +197,7 @@ test('emergency dock keeps SAMU and Bombeiros visible and one tap away', async (
   await expect(emergencyNav.getByText('SAMU 192')).toBeVisible()
   await expect(emergencyNav.getByText('Bombeiros 193')).toBeVisible()
   await expect(emergencyNav).not.toContainText('Ligar para o SAMU')
+  await expect(emergencyNav.getByTestId('emergency-divider')).toBeHidden()
 
   await expect(emergencyNav.getByRole('link', { name: /SAMU/i })).toHaveAttribute(
     'href',
@@ -192,26 +211,83 @@ test('emergency dock keeps SAMU and Bombeiros visible and one tap away', async (
   const styles = await emergencyNav.locator('a').evaluateAll((links) =>
     links.map((link) => {
       const style = getComputedStyle(link)
+      const hitArea = getComputedStyle(link, '::before')
+      const icon = link.querySelector('svg')!
+      const number = link.querySelector('span')!
       return {
         textDecoration: style.textDecorationLine,
+        backgroundColor: style.backgroundColor,
+        color: style.color,
+        borderColor: style.borderTopColor,
+        borderClass: Array.from(link.classList).find((className) =>
+          className.startsWith('border-white'),
+        ),
+        borderWidth: style.borderTopWidth,
         boxShadow: style.boxShadow,
         transform: style.transform,
         animationName: style.animationName,
         borderRadius: Number.parseFloat(style.borderRadius),
         width: link.getBoundingClientRect().width,
         height: link.getBoundingClientRect().height,
+        hitWidth: Number.parseFloat(hitArea.width),
+        hitHeight: Number.parseFloat(hitArea.height),
+        iconWidth: icon.getBoundingClientRect().width,
+        iconStroke: icon.getAttribute('stroke'),
+        iconAriaHidden: icon.getAttribute('aria-hidden'),
+        numberWeight: getComputedStyle(number).fontWeight,
+        numberVariant: getComputedStyle(number).fontVariantNumeric,
       }
     }),
   )
   for (const style of styles) {
     expect(style.textDecoration).toBe('none')
+    expect(style.borderWidth).toBe('1px')
     expect(style.boxShadow).toBe('none')
     expect(style.transform).toBe('none')
     expect(style.animationName).toBe('none')
     expect(style.borderRadius).toBeGreaterThanOrEqual(22)
     expect(style.width).toBeLessThan(150)
-    expect(style.height).toBeGreaterThanOrEqual(44)
+    expect(style.height).toBeGreaterThanOrEqual(31)
+    expect(style.height).toBeLessThanOrEqual(33)
+    expect(style.hitWidth).toBeGreaterThanOrEqual(44)
+    expect(style.hitHeight).toBeGreaterThanOrEqual(44)
+    expect(style.iconWidth).toBe(14)
+    expect(style.iconStroke).toBe('currentColor')
+    expect(style.iconAriaHidden).toBe('true')
+    expect(style.numberWeight).toBe('700')
+    expect(style.numberVariant).toContain('tabular-nums')
   }
+  expect(styles[0]).toMatchObject({
+    backgroundColor: 'rgb(255, 255, 255)',
+    color: 'rgb(163, 45, 45)',
+    borderColor: 'rgb(255, 255, 255)',
+    borderClass: 'border-white',
+  })
+  expect(styles[1]).toMatchObject({
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    color: 'rgb(255, 255, 255)',
+    borderClass: 'border-white/80',
+  })
+  expect(styles[1].borderColor).toContain('/ 0.8)')
+
+  await page.setViewportSize({ width: 1024, height: 800 })
+  await expect(emergencyNav.getByTestId('emergency-divider')).toBeVisible()
+  const dividerStyle = await emergencyNav
+    .getByTestId('emergency-divider')
+    .evaluate((divider) => ({
+      backgroundColor: getComputedStyle(divider).backgroundColor,
+      backgroundClass: Array.from(divider.classList).find((className) =>
+        className.startsWith('bg-white'),
+      ),
+      height: divider.getBoundingClientRect().height,
+      width: divider.getBoundingClientRect().width,
+    }))
+  expect(dividerStyle).toMatchObject({
+    backgroundClass: 'bg-white/35',
+    height: 20,
+    width: 1,
+  })
+  expect(dividerStyle.backgroundColor).toContain('/ 0.35)')
 
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
   const overlap = await page.evaluate(() => {

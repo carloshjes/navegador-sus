@@ -25,6 +25,53 @@ test('idle: compact action follows its label and keeps search in view', async ({
   expect(geometry[0]!.height).toBeGreaterThanOrEqual(44)
   expect(geometry[0]!.width).toBeLessThan(geometry[1]!.width * 0.6)
 
+  const visualContract = await band.evaluate((element) => {
+    const bandStyle = getComputedStyle(element)
+    const button = element.querySelector('button')!
+    const buttonStyle = getComputedStyle(button)
+    const icon = button.querySelector('svg')!
+    return {
+      band: {
+        backgroundColor: bandStyle.backgroundColor,
+        borderTopWidth: bandStyle.borderTopWidth,
+        borderBottomWidth: bandStyle.borderBottomWidth,
+        borderLeftWidth: bandStyle.borderLeftWidth,
+        borderRightWidth: bandStyle.borderRightWidth,
+        borderRadius: bandStyle.borderRadius,
+        boxShadow: bandStyle.boxShadow,
+      },
+      button: {
+        backgroundColor: buttonStyle.backgroundColor,
+        borderColor: buttonStyle.borderTopColor,
+        borderWidth: buttonStyle.borderTopWidth,
+        borderRadius: buttonStyle.borderRadius,
+        fontWeight: buttonStyle.fontWeight,
+        paddingLeft: buttonStyle.paddingLeft,
+        iconWidth: icon.getBoundingClientRect().width,
+      },
+    }
+  })
+  expect(visualContract).toEqual({
+    band: {
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      borderTopWidth: '1px',
+      borderBottomWidth: '1px',
+      borderLeftWidth: '0px',
+      borderRightWidth: '0px',
+      borderRadius: '0px',
+      boxShadow: 'none',
+    },
+    button: {
+      backgroundColor: 'rgb(14, 94, 76)',
+      borderColor: 'rgb(10, 74, 59)',
+      borderWidth: '1px',
+      borderRadius: '10px',
+      fontWeight: '600',
+      paddingLeft: '20px',
+      iconWidth: 18,
+    },
+  })
+
   // The promoted action is outside the sidebar and compact enough that the
   // search field remains visible in the initial mobile viewport.
   await expect(
