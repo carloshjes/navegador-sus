@@ -3,6 +3,10 @@
 > Executada em **13/07/2026** sobre a regra de profundidade tonal da Etapa
 > Visual 9. Etapa exclusivamente de apresentação: nenhum dado, conteúdo, rota
 > ou política de exibição foi alterado.
+>
+> **Nota posterior:** o coral, `border-accent` e `text-accent` documentados
+> abaixo foram removidos na Etapa Visual 14. O texto permanece como registro
+> do estado daquela etapa.
 
 ## O que mudou
 

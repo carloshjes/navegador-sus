@@ -3,6 +3,9 @@
 > Executada em **13/07/2026**. Etapa exclusivamente de apresentação:
 > nenhum dado canônico, conteúdo, rota ou política de exibição foi alterado.
 > Contraste AA e `prefers-reduced-motion` permaneceram inegociáveis.
+>
+> **Nota posterior:** os valores de marca descritos aqui foram substituídos
+> na Etapa Visual 14; este resumo preserva a decisão histórica, não a paleta atual.
 
 ## O que mudou
 
@@ -28,7 +31,7 @@
 ### Um gradiente, nenhuma matiz nova
 
 `--background-image-primary-tonal` é um único `linear-gradient(to bottom, …)`
-entre `--color-primary` (`#0e5e4c`) e `--color-primary-strong` (`#0a4a3b`). Não
+entre `--color-primary` e `--color-primary-strong`, nos valores então vigentes. Não
 há stop intermediário, transparência, cor literal ou outro matiz.
 
 Branco sobre as duas pontas já havia sido auditado em **7,71:1** e

@@ -2,8 +2,8 @@
 
 > Identidade visual definitiva do projeto. Substitui a paleta **provisória**
 > da Fase 1. Adicionar ao conhecimento do projeto.
-> **Versão 1.3** — 16/07/2026 (dock telefônico e faixa Localizar da Etapa
-> Visual 13). Tema: **somente claro** na v1.
+> **Versão 1.4** — 16/07/2026 (pinho cívico e placa conectada da Etapa
+> Visual 14). Tema: **somente claro** na v1.
 > Todas as cores foram verificadas por contraste (WCAG); as razões estão
 > anotadas em cada token. Identificadores em inglês; rótulos de UI em PT-BR.
 
@@ -60,13 +60,16 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 
 | Token | Hex | Uso | Contraste |
 |---|---|---|---|
-| `primary` | `#0E5E4C` | cor da marca (teal), botões, ícone | 7.71:1 sobre branco (AAA) |
-| `primary-strong` | `#0A4A3B` | hover/active de ações `primary` sólidas | branco 10.22:1 (AAA) |
-| `primary-ink` | `#0F6E56` | texto/realce sobre fundos claros | 5.46:1 sobre `#E1F5EE` (AA) |
-| `accent` | `#D8602F` | coral **decorativo** (ponto do logo, detalhes grandes ≥24px) | 3.73:1 — **não usar em texto pequeno** |
-| `accent-text` | `#B5421F` | coral para **texto** | 5.58:1 sobre branco (AA) |
+| `primary` | `#0F5132` | pinho cívico da marca, botões e ícone | branco 9.36:1 (AAA); 8.97:1 sobre `bg` |
+| `primary-strong` | `#0A3D25` | hover/active de ações `primary` sólidas | branco 12.30:1 (AAA) |
+| `primary-ink` | `#15603C` | texto, separadores e realce sobre fundos claros | 7.58:1 sobre branco; 6.55:1 sobre `primary-soft` (AA) |
+| `primary-soft` | `#E4F2E7` | lavagem verde-pinho para estados discretos | — |
 
-> Achado do cálculo: o coral tem dois tons de propósito — `accent` só para elementos grandes/decorativos, `accent-text` para qualquer texto.
+> A marca não possui mais família `accent`: a interface usa pinho, branco e
+> neutros. Vermelho sobre verde escuro fica perto de 1.1:1 e não sustenta
+> hierarquia ou legibilidade; além disso, vermelho pertence à emergência, não
+> à decoração. `cat-urgency` permanece abaixo como token independente de
+> categoria — não é acento de marca.
 
 **Emergência**
 
@@ -82,6 +85,10 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 | Cautela (`warning`) | `#FAEEDA` | `#854F0B` (5.87:1 AA) | ícone `ti-alert-circle` |
 
 > Achado do cálculo: o âmbar **não** atinge AA como cor sólida (nem com texto branco, nem escuro). Por isso o selo de cautela é sempre **âmbar-claro com texto marrom-escuro**, nunca âmbar sólido.
+
+> `conf-ok-bg`, `conf-ok` e `conf-ok-dot` continuam deliberadamente
+> independentes da família da marca. Semelhança entre verdes não autoriza
+> reutilizar token de status como `primary` ou vice-versa.
 
 **Cores de categoria (tags)** — sólidas, com **texto branco** (todas AA):
 
@@ -115,6 +122,7 @@ Piso de 12px em qualquer texto. Títulos com `letter-spacing: -0.01em`.
 
 ## 5. Componentes
 
+- **Cabeçalho e navegação:** faixa `primary` sólida, sem borda inferior. A rota ativa é uma placa conectada ao conteúdo: `bg`, texto `primary`, peso 600, `radius-sm` somente nos cantos superiores, altura mínima de 44px e encaixe direto no limite inferior do header. Rotas inativas usam texto branco e `hover:bg-white/10`, sem linha ou deslocamento. O foco é `primary` na placa creme e branco nas rotas sobre o header.
 - **Lista de filtro** (Todos / UBS / Urgência…): `fieldset` + `legend` e radios nativos em linhas transparentes com altura mínima de 44px. O radio marcado é o indicador persistente e o texto selecionado usa peso 600; não há faixa preenchida, check duplicado, marcador lateral, card, pílula ou borda fechada por item. No desktop, as listas ficam abertas na lateral sticky. Abaixo de `lg`, cada grupo é um disclosure no fluxo normal; listas longas usam “Ver mais/menos” inline, nunca `<dialog>`.
 - **Tag de categoria** (no card): retangular `radius-sm`, cor da categoria sólida + texto branco, Public Sans 700 / 11px. Letra espaçada (`0.05em`); pode usar caixa alta curta ("UBS", "SAÚDE MENTAL").
 - **Selo de status** (confiança): texto sóbrio com cor semântica, rótulo completo e ícone quando necessário; ver §9.2.
@@ -136,11 +144,12 @@ A proveniência continua exposta: o selo comunica a confiança do dado, nunca a 
 
 ## 7. Logotipo
 
-- **Marca:** `navegador` + `·` + `sus`, em **Figtree 600**, cor `primary`. O ponto `·` é `accent` (coral) com **margin 0.28em de cada lado** (arejado).
+- **Marca:** `navegador` + `·` + `sus`, em **Figtree 600**. O ponto `·` herda a cor do wordmark e mantém **margin 0.28em de cada lado**; não existe acento coral independente.
 - **Qualificador:** "Erechim · rede pública de saúde", em **Public Sans**, `text-secondary`.
 - **Variações:** completa (marca + qualificador) · compacta (só `navegador · sus`) · ícone isolado.
-- Não inclinar, não recolorir o ponto para fora do coral/`primary`, não usar sobre fundos de baixo contraste.
-- **No cabeçalho:** pin com 34px no mobile e 38px a partir de `sm`; wordmark no passo `display` (22px), **Figtree 600**, branco sobre `primary` sólido. Em 320–390px, marca e navegação ocupam duas linhas; a partir de `sm`, uma linha. O link externo fornece o único nome acessível da marca e o SVG/texto interno fica `aria-hidden`.
+- Não inclinar, não separar a cor do ponto da cor do wordmark e não usar sobre fundos de baixo contraste.
+- **No cabeçalho:** pin em contorno branco de aproximadamente 1.6px, sem preenchimento, com extremidades arredondadas e cruz branca preenchida; 34px no mobile e 38px a partir de `sm`. Wordmark e ponto usam branco, no passo `display` (22px), **Figtree 600**, sobre `primary` sólido. Em 320–390px, marca e navegação ocupam duas linhas; a partir de `sm`, uma linha. O link externo fornece o único nome acessível da marca e o SVG/texto interno fica `aria-hidden`.
+- **Nos assets do app:** favicon, PWA, Apple Touch e maskable mantêm o pin **sólido** em `primary`; o contorno branco é exclusivo da variante sobre o cabeçalho.
 
 ## 8. Ícone do app
 
@@ -153,7 +162,7 @@ SVG-fonte (24×24, escalável):
 
 ```svg
 <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="navegador sus Erechim">
-  <path d="M12 1.6c-4.3 0-7.8 3.4-7.8 7.5 0 5.3 7.8 13.3 7.8 13.3s7.8-8 7.8-13.3c0-4.1-3.5-7.5-7.8-7.5z" fill="#0E5E4C"/>
+  <path d="M12 1.6c-4.3 0-7.8 3.4-7.8 7.5 0 5.3 7.8 13.3 7.8 13.3s7.8-8 7.8-13.3c0-4.1-3.5-7.5-7.8-7.5z" fill="#0F5132"/>
   <rect x="10.85" y="5.4" width="2.3" height="7.4" rx="0.5" fill="#FFFFFF"/>
   <rect x="8.4" y="7.95" width="7.2" height="2.3" rx="0.5" fill="#FFFFFF"/>
 </svg>
@@ -161,7 +170,7 @@ SVG-fonte (24×24, escalável):
 
 **Geração de assets:**
 - `favicon` 16/32px e mark no header: pin sobre **fundo transparente**.
-- Ícones de PWA (192/512px), `apple-touch-icon` (180px) e versão **maskable**: pin centralizado com *safe-zone*, sobre **fundo branco** `#FFFFFF` (não o tile teal — respeita "sem bloco colorido"). O recorte do Android vira um círculo branco com o pin, limpo.
+- Ícones de PWA (192/512px), `apple-touch-icon` (180px) e versão **maskable**: pin centralizado com *safe-zone*, sobre **fundo branco** `#FFFFFF` (não um tile verde — respeita "sem bloco colorido"). O recorte do Android vira um círculo branco com o pin, limpo.
 
 ## 9. Componentes — especificação visual
 
@@ -257,13 +266,14 @@ sincronização** — e somam ~400 bytes ao bundle final.
 > `<span>` da Badge; o ícone vai junto. É o equivalente CSS de "faz o
 > que o texto faz".
 
-### 9.3 Sistema de orientação cívica — Etapa Visual 12
+### 9.3 Sistema de orientação cívica — Etapas Visuais 12–14
 
 A composição compartilhada funciona como sinalização pública, não como uma
 coleção de objetos elevados:
 
-- cabeçalho em `primary` sólido, sem `background-image`; a hierarquia da marca
-  vem de tamanho, posição e contraste;
+- cabeçalho em `primary` sólido, sem `background-image` ou borda inferior; a
+  rota ativa forma uma placa `bg` conectada ao conteúdo, enquanto marca e
+  rotas inativas permanecem brancas sobre o pinho;
 - filtros como listas verticais de consulta, com grupos progressivamente
   revelados no mobile e lateral sticky no desktop;
 - unidades como registros sólidos em `surface` + `edge` + `radius-md`, sem
@@ -276,6 +286,9 @@ coleção de objetos elevados:
 - o dock como régua de serviço no desktop: rótulo, divisor, contexto e par
   telefônico preenchido × contornado; no mobile, a mesma hierarquia recompõe
   duas linhas sem sacrificar a área de toque;
+- `.dot-accent` permanece como nome histórico do separador tipográfico, mas
+  agora usa `primary-ink`; aparece somente nos pontos disciplinados do motivo
+  e nunca introduz uma segunda família de marca;
 - cor reforça marca, categoria, confiança e emergência, mas divisores,
   tipografia, ordem e alinhamento preservam a leitura em escala de cinza.
 
