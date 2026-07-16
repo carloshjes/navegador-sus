@@ -149,8 +149,7 @@
      the background, so swap it to white. The skip-link is outside the header
      and keeps its own light surface + primary focus ring. */
   .bg-emergency :focus-visible,
-  .app-header :focus-visible,
-  [class*='bg-cat-'] :focus-visible {
+  .app-header :focus-visible {
     outline-color: var(--color-white);
   }
 
