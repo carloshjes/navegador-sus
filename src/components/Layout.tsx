@@ -5,13 +5,12 @@ import { useRouteFocus } from '../lib/route-focus'
 import { formatDateBR } from '../lib/provenance-ui'
 import { dataset } from '../data/units'
 
-/* Nav items repeat the coral motif on the active state: a 2px coral
-   border-bottom (the brand's coral dot stretched into a line). Inactive
-   items keep a transparent border of equal weight so selection never moves
-   the layout. White labels and focus rings sit on the solid primary header. */
+/* The active route becomes a page-colored wayfinding plate connected to the
+   content below. Inactive routes stay white on the solid primary header and
+   gain only a subtle white wash on hover. */
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `transition-control flex min-h-touch items-center justify-center border-b-2 px-1 pt-0.5 text-label text-white sm:px-2 ${
-    isActive ? 'border-accent font-semibold' : 'border-transparent hover:border-white'
+  `transition-control flex min-h-touch items-center justify-center rounded-t-sm px-1 text-label sm:px-2 ${
+    isActive ? 'bg-bg font-semibold text-primary' : 'text-white hover:bg-white/10'
   }`
 
 /** App chrome shared by every route; pages render into <Outlet />. */
@@ -30,7 +29,7 @@ export function Layout() {
         Pular para o conteúdo
       </a>
 
-      <header className="app-header h-header border-b border-primary-strong bg-primary">
+      <header className="app-header h-header bg-primary">
         {/* Mobile gives the enlarged mark its own row and keeps all three nav
             labels intact. At sm+ both regions share one line. The explicit
             h-header utility stays paired with the map height calculation. */}
@@ -44,7 +43,7 @@ export function Layout() {
           </Link>
           <nav
             aria-label="Seções do guia"
-            className="grid w-full grid-cols-3 sm:ms-auto sm:flex sm:w-auto sm:gap-1"
+            className="grid w-full grid-cols-3 sm:ms-auto sm:flex sm:w-auto sm:self-end sm:gap-1"
           >
             {/* `end` is required on the index route — without it, NavLink
                 would treat any path as a child of "/" and render Início as

@@ -2,7 +2,7 @@
 
 /*
  * ============================================================================
- * DESIGN TOKENS — navegador · sus Erechim  (Kit Visual v1.2, 15/07/2026)
+ * DESIGN TOKENS — navegador · sus Erechim  (Kit Visual v1.4, 16/07/2026)
  * ============================================================================
  * The definitive visual identity lives here. Changing the look = editing this
  * @theme block: components reference tokens, never raw hex values.
@@ -62,12 +62,10 @@
   --color-border-strong: #e0dbd0; /* emphasis borders */
 
   /* ---- Brand (kit §3) -------------------------------------------------- */
-  --color-primary: #0e5e4c; /* teal — 7.71:1 on white (AAA); white on it 7.71:1 */
-  --color-primary-strong: #0a4a3b; /* hover/active (support token; kit silent) — white on it 10.22:1 */
-  --color-primary-ink: #0f6e56; /* teal text on light teal — 5.46:1 on primary-soft (AA) */
-  --color-primary-soft: #e1f5ee; /* soft teal surface (shares hex with conf-ok-bg) */
-  --color-accent: #d8602f; /* coral — DECORATIVE only (≥24px): 3.73:1, never small text */
-  --color-accent-text: #b5421f; /* coral for TEXT — 5.58:1 on white (AA) */
+  --color-primary: #0f5132; /* civic pine — white 9.36:1 (AAA); 8.97:1 on bg cream */
+  --color-primary-strong: #0a3d25; /* hover/active — white 12.30:1 (AAA) */
+  --color-primary-ink: #15603c; /* text/mark — 7.58:1 on white; 6.55:1 on primary-soft (AA) */
+  --color-primary-soft: #e4f2e7; /* pine wash; deliberately independent from conf-ok-bg */
 
   /* ---- Emergency (kit §3, briefing §2) -------------------------------- */
   --color-emergency: #a32d2d; /* SAMU bar — white on it 7.07:1 (AAA) */
@@ -104,7 +102,7 @@
   --radius-pill: 999px; /* status seals — the welcoming pill */
 
   /* Focus ring on the brand color (Etapa Visual 2 / A1). Primary against the
-     two surfaces of the app: 7.71:1 on white, 7.39:1 on the cream `bg`.
+     two surfaces of the app: 9.36:1 on white, 8.97:1 on the cream `bg`.
      WCAG 1.4.11 only needs 3:1 — we're well above. Inside the emergency bar
      (where primary would clash with the red), focus-visible falls back to
      white via the `.bg-emergency :focus-visible` override below (7.07:1). */
@@ -154,6 +152,12 @@
   .app-header :focus-visible,
   [class*='bg-cat-'] :focus-visible {
     outline-color: var(--color-white);
+  }
+
+  /* The active navigation plate uses the cream page background, so its ring
+     returns to primary instead of inheriting the header's white override. */
+  .app-header a[aria-current='page']:focus-visible {
+    outline-color: var(--color-primary);
   }
 
   @media (min-width: 40rem) {
@@ -254,15 +258,15 @@
   background-color: currentColor;
 }
 
-/* Coral middot motif (Etapa Visual 3 / C2). The product's color motif gets
-   ONLY three uses, always as a separator at weight 700:
+/* Pine middot motif (Etapa Visual 14). The product's separator motif stays
+   inside the primary family and gets ONLY three uses at weight 700:
    1. card subtitle "bairro · sublocal"
    2. count phrase "35 unidades."  ← the final dot
    3. eyebrow "TERMO · TERMO"      ← never on the home, available for others
    Anywhere else, a · stays in `currentColor`. Don't sprinkle this class
    ornamentally — it's the discipline behind a brand motif. */
 .dot-accent {
-  color: var(--color-accent);
+  color: var(--color-primary-ink);
   font-weight: 700;
   margin: 0 0.35em;
 }

@@ -9,8 +9,8 @@
  *    count and active-choice actions stay reachable. On lg+ the bar sits naturally
  *    above the results column of the 2-column directory grid.
  *
- * The count's full stop is the coral motif (kit §C2): the same brand mark
- * that closes the hero title closes the count number.
+ * The count's full stop stays in the primary family: the same restrained
+ * brand mark that closes the hero title closes the count number.
  */
 export interface ActiveFilter {
   /** Stable React key. Also the URL-param name in our DirectoryPage. */
@@ -56,7 +56,7 @@ export function FiltersBar({ count, activeFilters, onClearAll }: FiltersBarProps
     <div className="sticky top-0 z-10 -mx-4 mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-edge bg-bg px-4 py-2 lg:static lg:z-auto lg:mx-0 lg:bg-transparent lg:px-0 lg:py-0 lg:pb-3">
       <div className="font-display text-label font-bold text-ink">
         {count} {count === 1 ? 'resultado' : 'resultados'}
-        <span aria-hidden="true" className="text-accent">
+        <span aria-hidden="true" className="text-primary-ink">
           .
         </span>
       </div>

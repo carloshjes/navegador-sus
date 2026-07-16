@@ -21,7 +21,7 @@ import { CategoryTag } from './CategoryTag'
  *    with `line-clamp-2` so a long unit name never blows up the row — the
  *    full name remains in the link's `title` attribute and on the detail
  *    page, so nothing is lost to assistive tech;
- *  - subtitle uses the coral middot motif between type and neighborhood.
+ *  - subtitle uses the pine middot motif between type and neighborhood.
  */
 export function UnitCard({
   unit,

@@ -1,10 +1,9 @@
 /**
- * Wordmark (kit §7) + icon (kit §8). "navegador · sus" in Figtree 600, white
- * with the coral dot `·` (`accent`) and 0.28em of air on each side. The icon
- * is the same pin used as the app favicon; on the solid primary header its
- * pin is coral so the fixed white cross remains visible. The containing link
- * owns the accessible name, so this visual mark stays hidden from assistive
- * technology and is announced only once.
+ * Wordmark (kit §7) + icon (kit §8). "navegador · sus" is white in
+ * Figtree 600, with 0.28em of air around the middot. The header variant uses
+ * a white outline pin and a filled white cross; app icons keep the solid
+ * primary pin. The containing link owns the accessible name, so this visual
+ * mark stays hidden from assistive technology and is announced only once.
  *
  * Variants:
  *  - `full` (default): icon + wordmark — used in the header.
@@ -26,8 +25,12 @@ export function Logo({ variant = 'full' }: { variant?: LogoVariant }) {
         >
           <path
             d="M12 1.6c-4.3 0-7.8 3.4-7.8 7.5 0 5.3 7.8 13.3 7.8 13.3s7.8-8 7.8-13.3c0-4.1-3.5-7.5-7.8-7.5z"
-            fill="currentColor"
-            className="text-accent"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-white"
           />
           <rect
             x="10.85"
@@ -51,7 +54,7 @@ export function Logo({ variant = 'full' }: { variant?: LogoVariant }) {
       )}
       <span className="font-display text-display font-semibold text-white">
         navegador
-        <span aria-hidden="true" className="text-accent" style={{ margin: '0 0.28em' }}>
+        <span aria-hidden="true" style={{ margin: '0 0.28em' }}>
           ·
         </span>
         sus

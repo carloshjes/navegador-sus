@@ -15,19 +15,19 @@ export function markerVariant(unit: HealthUnit): MarkerVariant {
   return 'care'
 }
 
-/* Token colors (resolved to hex because Leaflet injects this HTML outside
-   React; CSS custom properties would not always inherit into the SVG).
-   Kept in sync with the map legend on MapPage. */
+/* Leaflet inserts this SVG into the document, where root theme variables
+   resolve normally. Keeping every variant tokenized prevents the map pins
+   from drifting when the palette changes. */
 const VARIANT_COLOR: Record<MarkerVariant, string> = {
-  care: '#0e5e4c', // --color-primary
-  cautious: '#854f0b', // --color-conf-warn
-  planned: '#5b6b66', // --color-ink-muted
+  care: 'var(--color-primary)',
+  cautious: 'var(--color-conf-warn)',
+  planned: 'var(--color-ink-muted)',
 }
 
 const teardropSvg = (color: string): string =>
   `<svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M14 0C6.27 0 0 6.27 0 14c0 9.5 14 22 14 22s14-12.5 14-22C28 6.27 21.73 0 14 0z" fill="${color}" stroke="#ffffff" stroke-width="2"/>
-    <circle cx="14" cy="14" r="5" fill="#ffffff"/>
+    <path d="M14 0C6.27 0 0 6.27 0 14c0 9.5 14 22 14 22s14-12.5 14-22C28 6.27 21.73 0 14 0z" fill="${color}" stroke="var(--color-white)" stroke-width="2"/>
+    <circle cx="14" cy="14" r="5" fill="var(--color-white)"/>
   </svg>`
 
 const iconCache = new Map<MarkerVariant, L.DivIcon>()

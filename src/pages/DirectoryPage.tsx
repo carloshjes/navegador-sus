@@ -402,8 +402,8 @@ export function DirectoryPage() {
     <>
       <Eyebrow>Erechim — RS</Eyebrow>
       {/* Hero (Etapa Visual 3 / C1): Figtree 700, tightened metrics; the
-          phrase "rede pública" takes the brand teal, ending with the coral
-          dot — the kit motif applied at title scale. The page title is the
+          phrase "rede pública" takes the brand pine, ending with a darker
+          primary dot — the kit motif applied at title scale. The page title is the
           same a11y target (id="page-title", tabIndex={-1}) so route-focus
           keeps working. */}
       <h1
@@ -414,7 +414,7 @@ export function DirectoryPage() {
         Encontre a sua unidade da{' '}
         <span className="text-primary">
           rede pública
-          <span aria-hidden="true" className="text-accent">
+          <span aria-hidden="true" className="text-primary-ink">
             .
           </span>
         </span>
@@ -422,12 +422,12 @@ export function DirectoryPage() {
       <p className="mt-3 text-ink-muted">
         O guia conhece hoje{' '}
         {/* Count phrase (C2): Figtree 700 with the sentence-final dot in
-            coral — the brand motif applied to a number that matters.
+            primary-ink — the brand motif applied to a number that matters.
             "ativas" stays in to distinguish from planned/deactivated units
             (data-honesty word from briefing §5). */}
         <strong className="font-display text-ink">
           {activeUnits.length} unidades ativas
-          <span aria-hidden="true" className="text-accent">
+          <span aria-hidden="true" className="text-primary-ink">
             .
           </span>
         </strong>{' '}
