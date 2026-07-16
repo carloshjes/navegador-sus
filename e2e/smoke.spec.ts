@@ -15,9 +15,14 @@ test('home page renders with the real dataset', async ({ page }) => {
 
   // The unit count comes from the JSON: any number proves the pipeline.
   await expect(page.getByText(/\d+ unidades ativas/)).toBeVisible()
+  await expect(page.locator('.text-primary-ink').first()).toHaveCSS(
+    'color',
+    'rgb(21, 96, 60)',
+  )
+  await expect(page.locator('.dot-accent').first()).toHaveCSS('color', 'rgb(21, 96, 60)')
 })
 
-test('solid header enlarges the mark without colliding with navigation', async ({
+test('pine header connects the active plate and outlined mark to the page', async ({
   page,
 }) => {
   for (const viewport of [
@@ -37,21 +42,48 @@ test('solid header enlarges the mark without colliding with navigation', async (
       const brandLink = element.querySelector<HTMLAnchorElement>('a[aria-label]')!
       const pin = element.querySelector<SVGElement>('svg')!
       const pinPath = pin.querySelector('path')!
+      const pinCross = pin.querySelector('rect')!
       const wordmark = element.querySelector<HTMLElement>('.font-display')!
+      const wordmarkDot = wordmark.querySelector<HTMLElement>('span')!
       const nav = element.querySelector<HTMLElement>('nav')!
       const active = element.querySelector<HTMLElement>('a[aria-current="page"]')!
+      const inactive = Array.from(nav.querySelectorAll('a')).find(
+        (link) => !link.hasAttribute('aria-current'),
+      )!
+      const main = document.querySelector<HTMLElement>('main#conteudo')!
+      const headerRect = element.getBoundingClientRect()
       const brandRect = brandLink.getBoundingClientRect()
       const navRect = nav.getBoundingClientRect()
+      const activeRect = active.getBoundingClientRect()
       return {
         backgroundImage: getComputedStyle(element).backgroundImage,
         backgroundColor: getComputedStyle(element).backgroundColor,
+        borderBottomWidth: getComputedStyle(element).borderBottomWidth,
         pinFill: getComputedStyle(pinPath).fill,
+        pinStroke: getComputedStyle(pinPath).stroke,
+        pinStrokeWidth: getComputedStyle(pinPath).strokeWidth,
+        pinStrokeLinecap: getComputedStyle(pinPath).strokeLinecap,
+        pinStrokeLinejoin: getComputedStyle(pinPath).strokeLinejoin,
+        pinCrossFill: getComputedStyle(pinCross).fill,
         pinWidth: pin.getBoundingClientRect().width,
         wordmark: getComputedStyle(wordmark).color,
+        wordmarkDot: getComputedStyle(wordmarkDot).color,
         wordmarkSize: Number.parseFloat(getComputedStyle(wordmark).fontSize),
         wordmarkWeight: getComputedStyle(wordmark).fontWeight,
         activeText: getComputedStyle(active).color,
-        activeBorder: getComputedStyle(active).borderBottomColor,
+        activeBackground: getComputedStyle(active).backgroundColor,
+        activeWeight: getComputedStyle(active).fontWeight,
+        activeBorderWidth: getComputedStyle(active).borderBottomWidth,
+        activeTopRadius: getComputedStyle(active).borderTopLeftRadius,
+        activeBottomRadius: getComputedStyle(active).borderBottomLeftRadius,
+        activeHeight: activeRect.height,
+        activeFlush: Math.abs(activeRect.bottom - headerRect.bottom) <= 0.5,
+        contentConnected:
+          Math.abs(main.getBoundingClientRect().top - headerRect.bottom) <= 0.5,
+        inactiveText: getComputedStyle(inactive).color,
+        inactiveBackground: getComputedStyle(inactive).backgroundColor,
+        inactiveBorderWidth: getComputedStyle(inactive).borderBottomWidth,
+        inactiveClasses: Array.from(inactive.classList),
         noCollision: brandRect.bottom <= navRect.top + 1,
         navWithinViewport: navRect.left >= 0 && navRect.right <= window.innerWidth,
         noHorizontalOverflow:
@@ -60,19 +92,44 @@ test('solid header enlarges the mark without colliding with navigation', async (
     })
 
     expect(state.backgroundImage).toBe('none')
-    expect(state.backgroundColor).toBe('rgb(14, 94, 76)')
-    expect(state.pinFill).toBe('rgb(216, 96, 47)')
+    expect(state.backgroundColor).toBe('rgb(15, 81, 50)')
+    expect(state.borderBottomWidth).toBe('0px')
+    expect(state.pinFill).toBe('none')
+    expect(state.pinStroke).toBe('rgb(255, 255, 255)')
+    expect(state.pinStrokeWidth).toBe('1.6px')
+    expect(state.pinStrokeLinecap).toBe('round')
+    expect(state.pinStrokeLinejoin).toBe('round')
+    expect(state.pinCrossFill).toBe('rgb(255, 255, 255)')
     expect(state.pinWidth).toBeGreaterThanOrEqual(34)
     expect(state.wordmarkSize).toBeGreaterThanOrEqual(22)
     expect(state.wordmarkWeight).toBe('600')
     expect(state.wordmark).toBe('rgb(255, 255, 255)')
-    expect(state.activeText).toBe('rgb(255, 255, 255)')
-    expect(state.activeBorder).toBe('rgb(216, 96, 47)')
+    expect(state.wordmarkDot).toBe('rgb(255, 255, 255)')
+    expect(state.activeText).toBe('rgb(15, 81, 50)')
+    expect(state.activeBackground).toBe('rgb(251, 250, 247)')
+    expect(state.activeWeight).toBe('600')
+    expect(state.activeBorderWidth).toBe('0px')
+    expect(state.activeTopRadius).toBe('4px')
+    expect(state.activeBottomRadius).toBe('0px')
+    expect(state.activeHeight).toBeGreaterThanOrEqual(44)
+    expect(state.activeFlush).toBe(true)
+    expect(state.contentConnected).toBe(true)
+    expect(state.inactiveText).toBe('rgb(255, 255, 255)')
+    expect(state.inactiveBackground).toBe('rgba(0, 0, 0, 0)')
+    expect(state.inactiveBorderWidth).toBe('0px')
+    expect(state.inactiveClasses).toContain('hover:bg-white/10')
     expect(state.noCollision).toBe(true)
     expect(state.navWithinViewport).toBe(true)
     expect(state.noHorizontalOverflow).toBe(true)
 
-    await inactiveLink.focus()
+    // Keyboard order: skip link → brand → active plate → next route.
+    await page.keyboard.press('Tab')
+    await page.keyboard.press('Tab')
+    await page.keyboard.press('Tab')
+    await expect(activeLink).toBeFocused()
+    await expect(activeLink).toHaveCSS('outline-color', 'rgb(15, 81, 50)')
+    await page.keyboard.press('Tab')
+    await expect(inactiveLink).toBeFocused()
     await expect(inactiveLink).toHaveCSS('outline-color', 'rgb(255, 255, 255)')
     await expect(activeLink).toHaveAttribute('aria-current', 'page')
   }
@@ -105,6 +162,8 @@ test('shared civic chrome fits every required responsive viewport', async ({
       const header = document.querySelector<HTMLElement>('header.app-header')!
       const brand = header.querySelector<HTMLAnchorElement>('a[aria-label]')!
       const guideNav = header.querySelector<HTMLElement>('nav')!
+      const activeRoute = guideNav.querySelector<HTMLElement>('a[aria-current="page"]')!
+      const main = document.querySelector<HTMLElement>('main#conteudo')!
       const dock = document.querySelector<HTMLElement>(
         'nav[aria-label="Telefones de emergência"]',
       )!
@@ -134,6 +193,8 @@ test('shared civic chrome fits every required responsive viewport', async ({
       const locateBandRect = locateBand.getBoundingClientRect()
       const brandRect = brand.getBoundingClientRect()
       const guideRect = guideNav.getBoundingClientRect()
+      const headerRect = header.getBoundingClientRect()
+      const activeRouteRect = activeRoute.getBoundingClientRect()
       return {
         noHorizontalOverflow:
           document.documentElement.scrollWidth <= document.documentElement.clientWidth,
@@ -142,6 +203,10 @@ test('shared civic chrome fits every required responsive viewport', async ({
             ? brandRect.bottom <= guideRect.top + 1
             : brandRect.right <= guideRect.left,
         navWithinViewport: guideRect.left >= 0 && guideRect.right <= window.innerWidth,
+        activePlateFlush:
+          Math.abs(activeRouteRect.bottom - headerRect.bottom) <= 0.5 &&
+          Math.abs(main.getBoundingClientRect().top - headerRect.bottom) <= 0.5,
+        activePlateKeepsTouchFloor: activeRouteRect.height >= 44,
         actionsWithinViewport: actionRects.every(
           (rect) => rect.left >= 0 && rect.right <= window.innerWidth,
         ),
@@ -165,6 +230,8 @@ test('shared civic chrome fits every required responsive viewport', async ({
       noHorizontalOverflow: true,
       brandAndNavSeparated: true,
       navWithinViewport: true,
+      activePlateFlush: true,
+      activePlateKeepsTouchFloor: true,
       actionsWithinViewport: true,
       actionsMeetTouchFloor: true,
       actionsStayCompact: true,
@@ -315,11 +382,45 @@ test('skip-link is the first tab stop and targets the main content', async ({
   await expect(skipLink).toBeFocused()
   await expect(skipLink).toBeVisible()
   await expect(skipLink).toHaveCSS('background-color', 'rgb(255, 255, 255)')
-  await expect(skipLink).toHaveCSS('color', 'rgb(14, 94, 76)')
-  await expect(skipLink).toHaveCSS('outline-color', 'rgb(14, 94, 76)')
+  await expect(skipLink).toHaveCSS('color', 'rgb(15, 81, 50)')
+  await expect(skipLink).toHaveCSS('outline-color', 'rgb(15, 81, 50)')
 
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(/#conteudo$/)
   // The target must exist and be the main landmark.
   await expect(page.locator('main#conteudo')).toBeVisible()
+})
+
+test('brand metadata and app icon expose the solid pine mark', async ({ page }) => {
+  await page.goto('/')
+
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+    'content',
+    '#0F5132',
+  )
+
+  const manifestResponse = await page.request.get('/manifest.webmanifest')
+  expect(manifestResponse.ok()).toBe(true)
+  expect((await manifestResponse.json()).theme_color).toBe('#0F5132')
+
+  const faviconResponse = await page.request.get('/favicon.svg')
+  expect(faviconResponse.ok()).toBe(true)
+  const favicon = await faviconResponse.text()
+  expect(favicon).toContain('fill="#0F5132"')
+  expect(favicon).toContain('fill="#FFFFFF"')
+
+  for (const asset of [
+    '/favicon-16.png',
+    '/favicon-32.png',
+    '/apple-touch-icon.png',
+    '/icon-192.png',
+    '/icon-512.png',
+    '/maskable-192.png',
+    '/maskable-512.png',
+  ]) {
+    const response = await page.request.get(asset)
+    expect(response.ok()).toBe(true)
+    expect(response.headers()['content-type']).toBe('image/png')
+    expect((await response.body()).byteLength).toBeGreaterThan(0)
+  }
 })

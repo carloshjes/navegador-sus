@@ -62,8 +62,8 @@ test('idle: compact action follows its label and keeps search in view', async ({
       boxShadow: 'none',
     },
     button: {
-      backgroundColor: 'rgb(14, 94, 76)',
-      borderColor: 'rgb(10, 74, 59)',
+      backgroundColor: 'rgb(15, 81, 50)',
+      borderColor: 'rgb(10, 61, 37)',
       borderWidth: '1px',
       borderRadius: '10px',
       fontWeight: '600',
